@@ -15,6 +15,36 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public IActionResult Index()
         {
+            /*TESTING FEATURES*/
+            AresCommunicator aresCommunicator = new AresCommunicator();
+            Dictionary<string, string> data = aresCommunicator.getInfoBySubjectName("ASSECO a.s.");
+
+            if (int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == -1)
+            {
+                Console.Error.WriteLine("result -1 !!!");
+            }
+            else if ( int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 0)
+            {
+                Console.WriteLine("Nenalezeny zadne odpovidajici zaznamy v ARESu");
+            }
+            else if(int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 1)
+            {
+                Console.WriteLine(data["Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"]);
+            }
+            else if(int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) > 1)
+            {
+                foreach (KeyValuePair<string, string> keyValuePair in data)
+                {
+                    if (keyValuePair.Key.Contains("Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"))
+                        Console.WriteLine(keyValuePair.Value);
+                }
+            }
+            else
+            {
+                Console.Error.WriteLine("Unexpected value on key 'Pocet_zaznamu'");
+            }
+            
+
             return View();
         }
 
