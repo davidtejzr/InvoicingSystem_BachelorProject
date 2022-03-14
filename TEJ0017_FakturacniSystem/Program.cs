@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using TEJ0017_FakturacniSystem.Models.User;
+using TEJ0017_FakturacniSystem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
