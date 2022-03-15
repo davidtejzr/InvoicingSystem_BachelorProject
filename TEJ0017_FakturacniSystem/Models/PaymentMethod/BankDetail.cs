@@ -7,7 +7,5 @@
         public string BankCode { get; private set; }
         public string Swift { get; private set; }
         public string Iban { get; private set; }
-        public string? VariableSymbol { get; private set; }
-        public string? ConstantSymbol { get; private set; }
     }
 }

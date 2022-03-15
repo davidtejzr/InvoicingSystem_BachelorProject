@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TEJ0017_FakturacniSystem.Migrations
 {
-    public partial class FirstMigrateModelsToDb : Migration
+    public partial class SubjectModelKeyChanged : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -79,8 +79,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "Subjects",
                 columns: table => new
                 {
-                    Ico = table.Column<int>(type: "int", nullable: false)
+                    SubjectId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Ico = table.Column<int>(type: "int", nullable: false),
                     Dic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsVatPayer = table.Column<bool>(type: "bit", nullable: false),
@@ -90,7 +91,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subjects", x => x.Ico);
+                    table.PrimaryKey("PK_Subjects", x => x.SubjectId);
                     table.ForeignKey(
                         name: "FK_Subjects_SubjectAddresses_AddressId",
                         column: x => x.AddressId,
@@ -135,19 +136,19 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Ico = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
                     AresUpdateAllowed = table.Column<bool>(type: "bit", nullable: false),
                     ContactName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactSurname = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.Ico);
+                    table.PrimaryKey("PK_Customers", x => x.SubjectId);
                     table.ForeignKey(
-                        name: "FK_Customers_Subjects_Ico",
-                        column: x => x.Ico,
+                        name: "FK_Customers_Subjects_SubjectId",
+                        column: x => x.SubjectId,
                         principalTable: "Subjects",
-                        principalColumn: "Ico");
+                        principalColumn: "SubjectId");
                 });
 
             migrationBuilder.CreateTable(
@@ -157,16 +158,29 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     InvoiceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    CustomerIco = table.Column<int>(type: "int", nullable: false)
+                    CustomerSubjectId = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
+                    VariableSymbol = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConstantSymbol = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Discount = table.Column<float>(type: "real", nullable: true),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoices", x => x.InvoiceId);
                     table.ForeignKey(
-                        name: "FK_Invoices_Customers_CustomerIco",
-                        column: x => x.CustomerIco,
+                        name: "FK_Invoices_Customers_CustomerSubjectId",
+                        column: x => x.CustomerSubjectId,
                         principalTable: "Customers",
-                        principalColumn: "Ico",
+                        principalColumn: "SubjectId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Invoices_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Invoices_Pursers_UserId",
@@ -276,9 +290,14 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_CustomerIco",
+                name: "IX_Invoices_CustomerSubjectId",
                 table: "Invoices",
-                column: "CustomerIco");
+                column: "CustomerSubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_PaymentMethodId",
+                table: "Invoices",
+                column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_UserId",
@@ -308,9 +327,6 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "NoVatInvoices");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethods");
-
-            migrationBuilder.DropTable(
                 name: "VatInvoiceItems");
 
             migrationBuilder.DropTable(
@@ -327,6 +343,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "Pursers");

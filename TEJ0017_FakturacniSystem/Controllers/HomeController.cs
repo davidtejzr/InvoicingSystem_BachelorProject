@@ -43,9 +43,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 Console.Error.WriteLine("Unexpected value on key 'Pocet_zaznamu'");
             }
-            
 
-            return View();
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            return View(ourCompany);
         }
 
         public IActionResult Privacy()

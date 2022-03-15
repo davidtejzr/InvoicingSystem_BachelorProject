@@ -9,6 +9,16 @@
         public string Zip { get; private set; }
         public string State { get; private set; }
 
+        public Address() { }
+
+        public Address(string street, string houseNumber, string city, string zip, string state)
+        {
+            this.Street = street;
+            this.HouseNumber = houseNumber;
+            this.City = city;
+            this.Zip = zip;
+            this.State = state;
+        }
 
     }
 }

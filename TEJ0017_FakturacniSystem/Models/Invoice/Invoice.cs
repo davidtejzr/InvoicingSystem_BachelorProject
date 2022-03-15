@@ -8,6 +8,12 @@ namespace TEJ0017_FakturacniSystem.Models.Invoice
         public User.Purser User { get; protected set; }
         public Subject.Customer Customer { get; protected set; }
         public List<InvoiceItem.InvoiceItem> InvoiceItems { get; protected set; }
-
+        public PaymentMethod.PaymentMethod PaymentMethod { get; protected set; }
+        public string? VariableSymbol { get; private set; }
+        public string? ConstantSymbol { get; private set; }
+        public DateTime IssueDate { get; protected set; }
+        public DateTime DueDate { get; protected set; }
+        public float? Discount { get; protected set; }
+        public bool IsPaid { get; protected set; }
     }
 }

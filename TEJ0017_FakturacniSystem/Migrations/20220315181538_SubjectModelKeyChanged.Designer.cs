@@ -12,8 +12,8 @@ using TEJ0017_FakturacniSystem.Models;
 namespace TEJ0017_FakturacniSystem.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220314212116_FirstMigrateModelsToDb")]
-    partial class FirstMigrateModelsToDb
+    [Migration("20220315181538_SubjectModelKeyChanged")]
+    partial class SubjectModelKeyChanged
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,15 +32,38 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"), 1L, 1);
 
-                    b.Property<int>("CustomerIco")
+                    b.Property<string>("ConstantSymbol")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerSubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("Discount")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("VariableSymbol")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("InvoiceId");
 
-                    b.HasIndex("CustomerIco");
+                    b.HasIndex("CustomerSubjectId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("UserId");
 
@@ -156,11 +179,11 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Subject.Subject", b =>
                 {
-                    b.Property<int>("Ico")
+                    b.Property<int>("SubjectId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ico"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubjectId"), 1L, 1);
 
                     b.Property<int>("AddressId")
                         .HasColumnType("int");
@@ -170,6 +193,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Ico")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsVatPayer")
                         .HasColumnType("bit");
@@ -181,7 +207,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<string>("Telephone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Ico");
+                    b.HasKey("SubjectId");
 
                     b.HasIndex("AddressId");
 
@@ -302,7 +328,13 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 {
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Subject.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerIco")
+                        .HasForeignKey("CustomerSubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -313,6 +345,8 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("PaymentMethod");
 
                     b.Navigation("User");
                 });
@@ -383,7 +417,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 {
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Subject.Subject", null)
                         .WithOne()
-                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Subject.Customer", "Ico")
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Subject.Customer", "SubjectId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });

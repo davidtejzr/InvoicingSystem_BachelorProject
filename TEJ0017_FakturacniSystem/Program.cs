@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TEJ0017_FakturacniSystem;
 using TEJ0017_FakturacniSystem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,8 +27,21 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
+
+if(DataInitializer.getInstance().initConfigFile())
+{
+    app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+}
+else
+{
+    //run entry guide
+    app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+}
 
 app.Run();

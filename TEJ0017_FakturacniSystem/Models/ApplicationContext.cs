@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TEJ0017_FakturacniSystem.Models.InvoiceItem;
 using TEJ0017_FakturacniSystem.Models.Invoice;
+using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Models
 {
@@ -37,5 +38,7 @@ namespace TEJ0017_FakturacniSystem.Models
         public DbSet<TEJ0017_FakturacniSystem.Models.Invoice.InvoiceVat> InvoiceVat { get; set; }
 
         public DbSet<TEJ0017_FakturacniSystem.Models.Invoice.InvoiceNoVat> InvoiceNoVat { get; set; }
+
+        public DbSet<TEJ0017_FakturacniSystem.Models.Subject.Customer> Customer { get; set; }
     }
 }
