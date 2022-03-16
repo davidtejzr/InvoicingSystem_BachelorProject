@@ -16,3 +16,9 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.loginPageDiv
+{
+    max-width: 500px;
+    margin: 10% auto;
+}

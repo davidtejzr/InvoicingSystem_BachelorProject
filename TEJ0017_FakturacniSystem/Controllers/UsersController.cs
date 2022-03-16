@@ -13,7 +13,7 @@ using TEJ0017_FakturacniSystem.Models.User;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "TEJ0017_FakturacniSystem.Models.User.Admin")]
     public class UsersController : Controller
     {
         private readonly ApplicationContext _context;

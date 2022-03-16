@@ -28,17 +28,11 @@ builder.Services.AddSession(opts =>
 });
 
 //Authentication
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => Configuration.Bind("JwtSettings", options))
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => Configuration.Bind("CookieSettings", options));*/
-
 builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
 {
-    options.AccessDeniedPath = "/account/denied";
+    options.AccessDeniedPath = "/Home/err403";
     options.LoginPath = "/Home/Login";
 });
-//builder.Services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
-
 
 var app = builder.Build();
 

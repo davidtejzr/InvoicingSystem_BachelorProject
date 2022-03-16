@@ -62,17 +62,20 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(IFormCollection user)
+        public async Task<IActionResult> Login(IFormCollection user, string returnUrl = null)
         {
-            if(ModelState.IsValid)
+            ViewData["ReturnUrl"] = returnUrl;
+
+            if (ModelState.IsValid)
             {
                 var searchedUser = _context.Users.Where(u => u.Login.Equals(user["Login"])).FirstOrDefault();
                 if ((searchedUser != null) && Crypto.VerifyHashedPassword(searchedUser.Password, user["Password"]))
@@ -85,14 +88,18 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
                     await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")));
                     //HttpContext.Session.SetString("Login", searchedUser.Login);
-                    return RedirectToAction(nameof(Index));
-                    return Redirect("/Home/Index");
+
+                    if (Url.IsLocalUrl(returnUrl))
+                        return Redirect(returnUrl);
+                    else
+                        return RedirectToAction(nameof(Index));
                 }
                 else
                 {
-                    return Unauthorized();
+                    ViewBag.message = "Špatné uživatelské jméno nebo heslo!";
                 }
             }
+            
             return View();
         }
 
@@ -100,11 +107,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             //HttpContext.Session.Clear();
             await HttpContext.SignOutAsync();
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction(nameof(Index));
         }
 
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult err403()
         {
             return View();
         }
