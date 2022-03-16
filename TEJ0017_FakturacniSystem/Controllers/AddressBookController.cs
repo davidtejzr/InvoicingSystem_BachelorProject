@@ -53,7 +53,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: AddressBook/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.C:\Users\david\AppData\Local\Temp\Temp1_projekt.zip\tej0017-vis\web\VIS-rezervacniSystem\Models\REZERVACE.cs
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IFormCollection values)
         {
@@ -71,11 +71,11 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
-        }
+        }*/
 
 
         //proc nefunguje ???
-        /*[HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Customer customer, Address address)
         {
@@ -88,7 +88,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
 
             return RedirectToAction("Index");
-        }*/
+        }
 
         // GET: AddressBook/Edit/5
         public async Task<IActionResult> Edit(int? id)

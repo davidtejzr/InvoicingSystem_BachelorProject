@@ -7,12 +7,12 @@ namespace TEJ0017_FakturacniSystem.Models.Subject
         public int SubjectId { get; protected set; }
 
         [Required]
-        public int Ico { get; protected set; }
+        public int Ico { get; set; }
 
-        public string? Dic { get; protected set; }
+        public string? Dic { get; set; }
 
         [Required]
-        public string Name { get; protected set; }
+        public string Name { get; set; }
 
         public bool IsVatPayer { get; protected set; }
 
