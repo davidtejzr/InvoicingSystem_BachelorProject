@@ -2,6 +2,6 @@
 {
     public class InvoiceVat : Invoice
     {
-        public DateTime TaxDate { get; private set; }
+        public DateTime TaxDate { get; set; }
     }
 }

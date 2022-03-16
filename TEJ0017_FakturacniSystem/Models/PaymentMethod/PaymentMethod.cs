@@ -2,8 +2,8 @@
 {
     public class PaymentMethod
     {
-        public int PaymentMethodId { get; protected set; }
-        public string Name { get; protected set; }
-        public string? Description { get; protected set; }
+        public int PaymentMethodId { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
     }
 }

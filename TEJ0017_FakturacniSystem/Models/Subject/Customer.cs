@@ -4,28 +4,14 @@ namespace TEJ0017_FakturacniSystem.Models.Subject
 {
     public class Customer : Subject
     {
-        public bool AresUpdateAllowed { get; private set; }
+        public bool AresUpdateAllowed { get; set; }
 
-        [Required]
-        public string ContactName { get; private set; }
+        [Required(ErrorMessage = "Jméno kontaktní osoby je povinné.")]
+        [Display(Name = "Jméno")]
+        public string ContactName { get; set; }
 
-        [Required]
-        public string ContactSurname { get; private set; }
-
-        public Customer() { }
-
-        public Customer(int ico, string dic, string name, bool isVatPayer, string? email, string? telephone, Address address, bool aresUpdateAllowed, string contactName, string contactSurname)
-        {
-            this.Ico = ico;
-            this.Dic = dic;
-            this.Name = name;
-            this.IsVatPayer = isVatPayer;
-            this.Email = email;
-            this.Telephone = telephone;
-            this.Address = address;
-            this.AresUpdateAllowed = aresUpdateAllowed;
-            this.ContactName = contactName;
-            this.ContactSurname = contactSurname;
-        }
+        [Required(ErrorMessage = "Příjmení kontaktní osoby je povinné.")]
+        [Display(Name = "Příjmení")]
+        public string ContactSurname { get; set; }
     }
 }

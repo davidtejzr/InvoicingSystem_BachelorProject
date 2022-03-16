@@ -13,17 +13,17 @@
             <h4>Základní údaje</h4>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label">Název subjektu:</label>
+                <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Ico" class="control-label">IČO:</label>
+                <label asp-for="Ico" class="control-label"></label>
                 <input asp-for="Ico" type="number" class="form-control" />
                 <span asp-validation-for="Ico" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Dic" class="control-label">DIČ:</label>
+                <label asp-for="Dic" class="control-label"></label>
                 <input asp-for="Dic" class="form-control" />
                 <span asp-validation-for="Dic" class="text-danger"></span>
             </div>
@@ -31,40 +31,43 @@
             <br />
             <h4>Sídlo</h4>
             <div class="form-group">
-                <label asp-for="Address.Street" class="control-label">Ulice:</label>
+                <label asp-for="Address.Street" class="control-label"></label>
                 <input asp-for="Address.Street" class="form-control" />
                 <span asp-validation-for="Address.Street" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address.HouseNumber" class="control-label">Číslo popisné:</label>
+                <label asp-for="Address.HouseNumber" class="control-label"></label>
                 <input asp-for="Address.HouseNumber" class="form-control" />
                 <span asp-validation-for="Address.HouseNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address.City" class="control-label">Město:</label>
+                <label asp-for="Address.City" class="control-label"></label>
                 <input asp-for="Address.City" class="form-control" />
                 <span asp-validation-for="Address.City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address.Zip" class="control-label">PSČ:</label>
+                <label asp-for="Address.Zip" class="control-label"></label>
                 <input asp-for="Address.Zip" class="form-control" />
                 <span asp-validation-for="Address.Zip" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Address.State" class="control-label">Stát:</label>
-                <input asp-for="Address.State" class="form-control" />
+            <div class="form-group" onload="getStatesFromApi">
+                <label asp-for="Address.State" class="control-label"></label>
+                <select asp-for="Address.State" class="form-select" id="stateSelector">
+                    <option value="Česká Republika" selected>Česká Republika</option>
+                    <option value="Slovenská republika">Slovenská republika</option>
+                </select>
                 <span asp-validation-for="Address.State" class="text-danger"></span>
             </div>
 
             <br />
             <h4>Kontaktní údaje</h4>
             <div class="form-group">
-                <label asp-for="Email" class="control-label">E-mail:</label>
+                <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" type="email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Telephone" class="control-label">Telefon:</label>
+                <label asp-for="Telephone" class="control-label"></label>
                 <input asp-for="Telephone" type="tel" class="form-control" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
@@ -72,12 +75,12 @@
             <br />
             <h4>Kontaktní osoba</h4>
             <div class="form-group">
-                <label asp-for="ContactName" class="control-label">Jméno:</label>
+                <label asp-for="ContactName" class="control-label"></label>
                 <input asp-for="ContactName" class="form-control" />
                 <span asp-validation-for="ContactName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ContactSurname" class="control-label">Příjmení:</label>
+                <label asp-for="ContactSurname" class="control-label"></label>
                 <input asp-for="ContactSurname" class="form-control" />
                 <span asp-validation-for="ContactSurname" class="text-danger"></span>
             </div>

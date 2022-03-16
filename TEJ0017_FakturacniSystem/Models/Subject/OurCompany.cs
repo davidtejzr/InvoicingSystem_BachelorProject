@@ -2,7 +2,7 @@
 {
     public class OurCompany : Subject
     {
-        public string? WebPage { get; private set; }
+        public string? WebPage { get; set; }
         private static OurCompany _instance = null;
         private OurCompany()
         {

@@ -2,6 +2,6 @@
 {
     public class InvoiceItemVat : InvoiceItem
     {
-        public TaxRate TaxRate { get; private set; }
+        public TaxRate TaxRate { get; set; }
     }
 }

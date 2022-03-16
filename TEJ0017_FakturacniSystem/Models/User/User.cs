@@ -1,16 +1,39 @@
-﻿namespace TEJ0017_FakturacniSystem.Models.User
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TEJ0017_FakturacniSystem.Models.User
 {
     public abstract class User
     {
-        public int UserId { get; protected set; }
-        public string Login { get; protected set; }
-        public string Password { get; protected set; }
-        public string Name { get; protected set; }
-        public string Surname { get; protected set; }
-        public string Email { get; protected set; }
-        public string? Telephone { get; protected set; }
-        public DateTime LastLoginTmstmp { get; protected set; }
-        public DateTime RegisteredTmpstmp { get; protected set; }
+        public int UserId { get; set; }
 
+        [Required]
+        public string Login { get; set; }
+
+        [Required(ErrorMessage = "Heslo je vyžadováno!")]
+        [Display(Name = "Heslo")]
+        public string Password { get; set; }
+
+        [NotMapped]
+        [Required(ErrorMessage = "Ověření hesla je vyžadováno!")]
+        [Compare("Password", ErrorMessage = "Zadaná hesla se neshodují!")]
+        [Display(Name = "Heslo")]
+        public string PasswordVerify { get; set; }
+
+        [Required]
+        [Display(Name = "Jméno")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Příjmení")]
+        public string Surname { get; set; }
+
+        [Display(Name = "E-mail")]
+        public string Email { get; set; }
+
+        [Display(Name = "Telefon")]
+        public string? Telephone { get; set; }
+        public DateTime LastLoginTmstmp { get; set; }
+        public DateTime RegisteredTmpstmp { get; set; }
     }
 }

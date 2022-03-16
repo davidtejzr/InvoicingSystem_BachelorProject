@@ -2,9 +2,9 @@
 {
     public class TaxRate
     {
-        public int TaxRateId { get; private set; }
-        public string Name { get; private set; }
-        public float Rate { get; private set; }
-        public string? GoodsTypes { get; private set; }
+        public int TaxRateId { get; set; }
+        public string Name { get; set; }
+        public float Rate { get; set; }
+        public string? GoodsTypes { get; set; }
     }
 }

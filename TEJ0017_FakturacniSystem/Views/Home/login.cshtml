@@ -1,0 +1,38 @@
+﻿@model TEJ0017_FakturacniSystem.Models.User.User
+
+@{
+    ViewData["Title"] = "login";
+}
+
+@using (Html.BeginForm("Login", "Home", FormMethod.Post))
+{
+    <fieldset>
+        <legend>Přihlášení</legend>
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @if (@ViewBag.Message != null)
+        {
+            <div style="border: 1px solid red">
+                @ViewBag.Message
+            </div>
+        }
+
+        <div class="form-group">
+            <label asp-for="Login" class="control-label">E-mail</label>
+            <input asp-for="Login" type="text" class="form-control" />
+            <span asp-validation-for="Login" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password" class="control-label">Heslo</label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Přihlásit se" class="btn btn-primary" />
+        </div>
+
+    </fieldset>
+}

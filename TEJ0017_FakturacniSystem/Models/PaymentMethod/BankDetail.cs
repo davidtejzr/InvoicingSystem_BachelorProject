@@ -2,10 +2,10 @@
 {
     public class BankDetail : PaymentMethod
     {
-        public string BankName { get; private set; }
-        public string AccountNumber { get; private set; }
-        public string BankCode { get; private set; }
-        public string Swift { get; private set; }
-        public string Iban { get; private set; }
+        public string BankName { get; set; }
+        public string AccountNumber { get; set; }
+        public string BankCode { get; set; }
+        public string Swift { get; set; }
+        public string Iban { get; set; }
     }
 }

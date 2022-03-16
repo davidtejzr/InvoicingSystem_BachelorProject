@@ -1,24 +1,29 @@
-﻿namespace TEJ0017_FakturacniSystem.Models.Subject
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TEJ0017_FakturacniSystem.Models.Subject
 {
     public class Address
     {
-        public int AddressId { get; private set; }
-        public string Street { get; private set; }
-        public string HouseNumber { get; private set; }
-        public string City { get; private set; }
-        public string Zip { get; private set; }
-        public string State { get; private set; }
+        public int AddressId { get; set; }
 
-        public Address() { }
+        [Required(ErrorMessage = "Ulice je povinná.")]
+        [Display(Name = "Ulice")]
+        public string Street { get; set; }
 
-        public Address(string street, string houseNumber, string city, string zip, string state)
-        {
-            this.Street = street;
-            this.HouseNumber = houseNumber;
-            this.City = city;
-            this.Zip = zip;
-            this.State = state;
-        }
+        [Required(ErrorMessage = "Číslo popisné je povinné.")]
+        [Display(Name = "Číslo popisné")]
+        public string HouseNumber { get; set; }
+
+        [Required(ErrorMessage = "Město je povinné.")]
+        [Display(Name = "Město")]
+        public string City { get; set; }
+
+        [Required(ErrorMessage = "PSČ je povinné.")]
+        [Display(Name = "PSČ")]
+        public string Zip { get; set; }
+
+        [Display(Name = "Stát")]
+        public string State { get; set; }
 
     }
 }

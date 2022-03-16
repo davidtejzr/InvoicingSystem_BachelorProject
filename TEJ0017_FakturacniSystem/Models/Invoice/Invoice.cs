@@ -4,16 +4,16 @@ namespace TEJ0017_FakturacniSystem.Models.Invoice
 {
     public abstract class Invoice
     {
-        public int InvoiceId { get; protected set; }
-        public User.Purser User { get; protected set; }
-        public Subject.Customer Customer { get; protected set; }
-        public List<InvoiceItem.InvoiceItem> InvoiceItems { get; protected set; }
-        public PaymentMethod.PaymentMethod PaymentMethod { get; protected set; }
-        public string? VariableSymbol { get; private set; }
-        public string? ConstantSymbol { get; private set; }
-        public DateTime IssueDate { get; protected set; }
-        public DateTime DueDate { get; protected set; }
-        public float? Discount { get; protected set; }
-        public bool IsPaid { get; protected set; }
+        public int InvoiceId { get; set; }
+        public User.Purser User { get; set; }
+        public Subject.Customer Customer { get; set; }
+        public List<InvoiceItem.InvoiceItem> InvoiceItems { get; set; }
+        public PaymentMethod.PaymentMethod PaymentMethod { get; set; }
+        public string? VariableSymbol { get; set; }
+        public string? ConstantSymbol { get; set; }
+        public DateTime IssueDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public float? Discount { get; set; }
+        public bool IsPaid { get; set; }
     }
 }

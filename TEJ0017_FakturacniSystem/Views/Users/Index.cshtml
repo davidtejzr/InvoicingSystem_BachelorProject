@@ -16,9 +16,6 @@
                 @Html.DisplayNameFor(model => model.Login)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
@@ -46,9 +43,6 @@
                 @Html.DisplayFor(modelItem => item.Login)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
@@ -68,7 +62,6 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
             </td>
         </tr>

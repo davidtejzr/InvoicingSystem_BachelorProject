@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TEJ0017_FakturacniSystem.Models.InvoiceItem;
-using TEJ0017_FakturacniSystem.Models.Invoice;
-using TEJ0017_FakturacniSystem.Models.Subject;
+//using TEJ0017_FakturacniSystem.Models.InvoiceItem;
+//using TEJ0017_FakturacniSystem.Models.Invoice;
+//using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Models
 {
@@ -18,6 +18,10 @@ namespace TEJ0017_FakturacniSystem.Models
         public DbSet<Subject.Subject> Subjects { get; set; }
         public DbSet<Subject.Address> SubjectAddresses { get; set; }
         public DbSet<Invoice.Invoice> Invoices { get; set; }
+        public DbSet<Subject.Customer> Customers { get; set; }
+        public DbSet<InvoiceItem.InvoiceItemVat> InvoicesItemVat { get; set; }
+        public DbSet<Invoice.InvoiceVat> InvoicesVat { get; set; }
+        public DbSet<Invoice.InvoiceNoVat> InvoicesNoVat { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,12 +37,8 @@ namespace TEJ0017_FakturacniSystem.Models
             builder.Entity<Invoice.InvoiceNoVat>().ToTable("NoVatInvoices");
         }
 
-        public DbSet<TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemVat> InvoiceItemVat { get; set; }
 
-        public DbSet<TEJ0017_FakturacniSystem.Models.Invoice.InvoiceVat> InvoiceVat { get; set; }
 
-        public DbSet<TEJ0017_FakturacniSystem.Models.Invoice.InvoiceNoVat> InvoiceNoVat { get; set; }
-
-        public DbSet<TEJ0017_FakturacniSystem.Models.Subject.Customer> Customer { get; set; }
+        
     }
 }

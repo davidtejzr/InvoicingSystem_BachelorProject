@@ -14,14 +14,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserId" />
             <div class="form-group">
+                <label class="control-label">Typ účtu</label>
+                <input name="UserType" value=@ViewBag.UserType class="form-control" disabled />
+            </div>
+            <div class="form-group">
                 <label asp-for="Login" class="control-label"></label>
                 <input asp-for="Login" class="form-control" />
                 <span asp-validation-for="Login" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -35,24 +34,41 @@
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" type="email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telephone" class="control-label"></label>
-                <input asp-for="Telephone" class="form-control" />
+                <input asp-for="Telephone" class="form-control" type="tel" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastLoginTmstmp" class="control-label"></label>
-                <input asp-for="LastLoginTmstmp" class="form-control" />
+                <input asp-for="LastLoginTmstmp" class="form-control" disabled />
                 <span asp-validation-for="LastLoginTmstmp" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RegisteredTmpstmp" class="control-label"></label>
-                <input asp-for="RegisteredTmpstmp" class="form-control" />
+                <input asp-for="RegisteredTmpstmp" class="form-control" disabled />
                 <span asp-validation-for="RegisteredTmpstmp" class="text-danger"></span>
             </div>
+
+            <h3>Změna hesla</h3>
+            <div class="form-group">
+                <label class="control-label">Původní heslo</label>
+                <input class="form-control" name="OldPassword" type="password" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PasswordVerify" class="control-label"></label>
+                <input asp-for="PasswordVerify" class="form-control" type="password" />
+                <span asp-validation-for="PasswordVerify" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
