@@ -3,34 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using TEJ0017_FakturacniSystem.Models;
-using TEJ0017_FakturacniSystem.Models.Subject;
+using TEJ0017_FakturacniSystem.Models.PaymentMethod;
 
-namespace TEJ0017_FakturacniSystem.Controllers
+namespace TEJ0017_FakturacniSystem.Controllers.Settings
 {
-    [Authorize]
-    public class AddressBookController : Controller
+    public class BankDetailsController : Controller
     {
         private readonly ApplicationContext _context;
 
-        public AddressBookController(ApplicationContext context)
+        public BankDetailsController(ApplicationContext context)
         {
             _context = context;
         }
 
-        // GET: AddressBook
+        // GET: BankDetails
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return View(await _context.BankDetails.ToListAsync());
         }
 
-        // GET: AddressBook/Details/5
+        // GET: BankDetails/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,37 +34,39 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.SubjectId == id);
-            if (customer == null)
+            var bankDetail = await _context.BankDetails
+                .FirstOrDefaultAsync(m => m.PaymentMethodId == id);
+            if (bankDetail == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
+            return View(bankDetail);
         }
 
-        // GET: AddressBook/Create
+        // GET: BankDetails/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: AddressBook/Create
+        // POST: BankDetails/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Customer customer)
+        public async Task<IActionResult> Create([Bind("BankName,AccountNumber,BankCode,Swift,Iban,PaymentMethodId,Name,Description")] BankDetail bankDetail)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
+                _context.Add(bankDetail);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(customer);
-            
+
+            ViewBag.ErrorMessage = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
+            return View(bankDetail);
         }
 
-        // GET: AddressBook/Edit/5
+        // GET: BankDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,22 +74,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+            var bankDetail = await _context.BankDetails.FindAsync(id);
+            if (bankDetail == null)
             {
                 return NotFound();
             }
-            return View(customer);
+            return View(bankDetail);
         }
 
-        // POST: AddressBook/Edit/5
+        // POST: BankDetails/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AresUpdateAllowed,ContactName,ContactSurname,Ico,Dic,Name,IsVatPayer,Email,Telephone")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("BankName,AccountNumber,BankCode,Swift,Iban,PaymentMethodId,Name,Description")] BankDetail bankDetail)
         {
-            if (id != customer.SubjectId)
+            if (id != bankDetail.PaymentMethodId)
             {
                 return NotFound();
             }
@@ -100,12 +98,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 try
                 {
-                    _context.Update(customer);
+                    _context.Update(bankDetail);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.SubjectId))
+                    if (!BankDetailExists(bankDetail.PaymentMethodId))
                     {
                         return NotFound();
                     }
@@ -116,10 +114,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(customer);
+            return View(bankDetail);
         }
 
-        // GET: AddressBook/Delete/5
+        // GET: BankDetails/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -127,47 +125,30 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.SubjectId == id);
-            if (customer == null)
+            var bankDetail = await _context.BankDetails
+                .FirstOrDefaultAsync(m => m.PaymentMethodId == id);
+            if (bankDetail == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
+            return View(bankDetail);
         }
 
-        // POST: AddressBook/Delete/5
+        // POST: BankDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            var address = await _context.SubjectAddresses.FindAsync(customer.AddressId);
-            _context.Customers.Remove(customer);
-            _context.SubjectAddresses.Remove(address);
+            var bankDetail = await _context.BankDetails.FindAsync(id);
+            _context.BankDetails.Remove(bankDetail);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerExists(int id)
+        private bool BankDetailExists(int id)
         {
-            return _context.Customers.Any(e => e.SubjectId == id);
-        }
-
-        public ContentResult AresDataIco(string ico)
-        {
-            AresCommunicator aresCom = new AresCommunicator();
-            string jsonResult = JsonConvert.SerializeObject(aresCom.getInfoByIco(ico));
-
-            return Content(jsonResult);
-        }
-
-        public ContentResult AresDataName(string name)
-        {
-            AresCommunicator aresCom = new AresCommunicator();
-            string jsonResult = JsonConvert.SerializeObject(aresCom.getInfoBySubjectName(name));
-
-            return Content(jsonResult);
+            return _context.BankDetails.Any(e => e.PaymentMethodId == id);
         }
     }
 }

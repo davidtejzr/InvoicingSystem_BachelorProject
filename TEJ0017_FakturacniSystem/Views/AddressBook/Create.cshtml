@@ -1,12 +1,23 @@
 ﻿@model TEJ0017_FakturacniSystem.Models.Subject.Customer
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nový zákazník";
 }
 
 <h1>Adresář - nový kontakt</h1>
 
 <hr />
+
+<div class="alert alert-danger d-flex align-items-center" id="msgErrDiv" style="display: none !important" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div id="msgErrText"></div>
+</div>
+
+<div class="alert alert-success d-flex align-items-center" id="msgInfoDiv" style="display: none !important" role="alert">
+  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+  <div id="msgInfoText"></div>
+</div>
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -14,17 +25,25 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" type="search" id="SubjectSearchInput" class="form-control" placeholder="Vyhledat společnost podle názvu..." autocomplete="off" />
+                <div class="list-group" id="SubjectSearchResult"></div>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Ico" class="control-label"></label>
-                <input asp-for="Ico" type="number" class="form-control" />
+            <div class="row">
+                <div class="form-group col-md-8">
+                    <label asp-for="Ico" class="control-label"></label>
+                    <input asp-for="Ico" id="SubjectIco" type="number" class="form-control" />   
+                </div>
+                <div class="form-group col">
+                    <label></label>
+                    <input type="button" class="btn btn-primary form-control" onclick="getDataFromAresByIco()" value="ARES"/>
+                </div>
                 <span asp-validation-for="Ico" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Dic" class="control-label"></label>
-                <input asp-for="Dic" class="form-control" />
+                <input asp-for="Dic" id="SubjectDic" class="form-control" />
                 <span asp-validation-for="Dic" class="text-danger"></span>
             </div>
 
@@ -32,22 +51,22 @@
             <h4>Sídlo</h4>
             <div class="form-group">
                 <label asp-for="Address.Street" class="control-label"></label>
-                <input asp-for="Address.Street" class="form-control" />
+                <input asp-for="Address.Street" id="SubjectStreet" class="form-control" />
                 <span asp-validation-for="Address.Street" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address.HouseNumber" class="control-label"></label>
-                <input asp-for="Address.HouseNumber" class="form-control" />
+                <input asp-for="Address.HouseNumber" id="SubjectHouseNumber" class="form-control" />
                 <span asp-validation-for="Address.HouseNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address.City" class="control-label"></label>
-                <input asp-for="Address.City" class="form-control" />
+                <input asp-for="Address.City" id="SubjectCity" class="form-control" />
                 <span asp-validation-for="Address.City" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address.Zip" class="control-label"></label>
-                <input asp-for="Address.Zip" class="form-control" />
+                <input asp-for="Address.Zip" id="SubjectZip" class="form-control" />
                 <span asp-validation-for="Address.Zip" class="text-danger"></span>
             </div>
             <div class="form-group" onload="getStatesFromApi">
@@ -108,4 +127,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-

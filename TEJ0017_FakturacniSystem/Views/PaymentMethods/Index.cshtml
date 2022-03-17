@@ -1,0 +1,58 @@
+﻿@model IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#">Aplikace</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Uživatel</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Firma</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/PaymentMethods">Platební metody</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/BankDetails">Bankovní účty</a>
+    </li>
+</ul>
+
+<h1>Platební metody</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsBank)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsBank)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaymentMethodId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

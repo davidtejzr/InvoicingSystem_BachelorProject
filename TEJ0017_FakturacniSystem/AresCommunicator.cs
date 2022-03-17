@@ -1,23 +1,58 @@
-﻿using System.Xml.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace TEJ0017_FakturacniSystem
 {
     public class AresCommunicator
     {
         private string xmlResult;
-        public Dictionary<string, string> parsedDict;
+        private XmlDocument xmlDocument;
+        public Dictionary<string, string> parsedData;
         private static readonly HttpClient httpClient = new HttpClient();
         private static readonly string aresUrl = "https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?";
 
         public AresCommunicator()
         {
             xmlResult = String.Empty;
-            parsedDict = new Dictionary<string, string>();
+            parsedData = new Dictionary<string, string>();
+            xmlDocument = new XmlDocument();
         }
 
-        private void parseData()
+        private void parseDataByIco(string jsonText)
+        {
+            dynamic jsonDataRaw = JObject.Parse(jsonText);
+
+            if (jsonDataRaw["are:Ares_odpovedi"]["are:Odpoved"]["are:Pocet_zaznamu"] == "1")
+            {
+                dynamic jsonDataRecord = jsonDataRaw["are:Ares_odpovedi"]["are:Odpoved"]["are:Zaznam"];
+                dynamic jsonDataAddress = jsonDataRecord["are:Identifikace"]["are:Adresa_ARES"];
+
+                string subjectName = jsonDataRecord["are:Obchodni_firma"];
+                string subjectStreet = jsonDataAddress["dtt:Nazev_ulice"];
+                string subjectHouseNumber = jsonDataAddress["dtt:Cislo_domovni"];
+                string subjectCity = jsonDataAddress["dtt:Nazev_obce"];
+                string subjectZip = jsonDataAddress["dtt:PSC"];
+
+                parsedData.Add("SubjectName", subjectName);
+                parsedData.Add("SubjectStreet", subjectStreet);
+                parsedData.Add("SubjectHouseNumber", subjectHouseNumber);
+                parsedData.Add("SubjectCity", subjectCity);
+                parsedData.Add("SubjectZip", subjectZip);
+
+                parsedData.Add("InfoMsg", "Data úšpěšně stažena z databáze ARES.");
+            }
+            else
+            {
+                parsedData.Add("ErrorMsg", "Subjekt nenalezen.");
+            }
+        }
+
+        private void parseDataBySubjectName()
         {
             XDocument data = XDocument.Parse(xmlResult);
+            Dictionary<string, string> dictionaryXmlData = new Dictionary<string, string>();
 
             foreach (XElement element in data.Descendants().Where(x => x.HasElements == false))
             {
@@ -25,28 +60,72 @@ namespace TEJ0017_FakturacniSystem
                 string keyName = element.Name.LocalName;
 
                 var parent = element.Parent;
-                while(parent != null)
+                while (parent != null)
                 {
                     keyName = parent.Name.LocalName + "." + keyName;
                     parent = parent.Parent;
                 }
 
-                while(parsedDict.ContainsKey(keyName))
+                while (dictionaryXmlData.ContainsKey(keyName))
                 {
                     keyName = keyName + "_" + keyInt++;
                 }
 
-                parsedDict.Add(keyName, element.Value);
+                dictionaryXmlData.Add(keyName, element.Value);
             }
+
+            if (int.Parse(dictionaryXmlData["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == -1)
+            {
+                Console.Error.WriteLine("result -1 !!!");
+            }
+            else if (int.Parse(dictionaryXmlData["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 0)
+            {
+                Console.WriteLine("Nenalezeny zadne odpovidajici zaznamy v ARESu");
+            }
+            else if (int.Parse(dictionaryXmlData["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 1)
+            {
+                string subjectName = dictionaryXmlData["Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"];
+                string ico = dictionaryXmlData["Ares_odpovedi.Odpoved.Zaznam.ICO"];
+                parsedData.Add(subjectName, ico);
+            }
+            else if (int.Parse(dictionaryXmlData["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) > 1)
+            {
+                string subjectName = string.Empty;
+                string ico = string.Empty;
+                foreach (KeyValuePair<string, string> keyValuePair in dictionaryXmlData)
+                {
+                    if (keyValuePair.Key.Contains("Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"))
+                    {
+                        subjectName = keyValuePair.Value;       
+                    }
+                    else if (keyValuePair.Key.Contains("Ares_odpovedi.Odpoved.Zaznam.ICO"))
+                    {
+                        ico = keyValuePair.Value;
+                    }
+
+                    if((subjectName.Length != 0) && (ico.Length != 0))
+                    {
+                        parsedData.Add(subjectName, ico);
+
+                        subjectName = string.Empty;
+                        ico = string.Empty;
+                    }
+                }
+            }
+            else
+            {
+                Console.Error.WriteLine("Unexpected value on key 'Pocet_zaznamu'");
+            }
+
         }
 
         public Dictionary<string, string> getInfoByIco(string ico)
         {
             var result = httpClient.GetStringAsync(aresUrl + "ico=" + ico);
-            xmlResult = result.Result;
-            parseData();
+            xmlDocument.LoadXml(result.Result);
+            parseDataByIco(JsonConvert.SerializeXmlNode(xmlDocument));
 
-            return parsedDict;
+            return parsedData;
         }
 
         public Dictionary<string, string> getInfoBySubjectName(string subjectName)
@@ -54,9 +133,9 @@ namespace TEJ0017_FakturacniSystem
             subjectName = subjectName.Replace(" ", "%20");
             var result = httpClient.GetStringAsync(aresUrl + "obchodni_firma=" + subjectName);
             xmlResult= result.Result;
-            parseData();
+            parseDataBySubjectName();
 
-            return parsedDict;
+            return parsedData;
         }
 
     }

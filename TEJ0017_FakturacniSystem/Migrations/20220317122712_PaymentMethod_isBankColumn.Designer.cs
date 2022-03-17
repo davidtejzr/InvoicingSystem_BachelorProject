@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TEJ0017_FakturacniSystem.Models;
 
@@ -11,9 +12,10 @@ using TEJ0017_FakturacniSystem.Models;
 namespace TEJ0017_FakturacniSystem.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220317122712_PaymentMethod_isBankColumn")]
+    partial class PaymentMethod_isBankColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,9 +312,11 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Iban")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Swift")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("BankDetails", (string)null);

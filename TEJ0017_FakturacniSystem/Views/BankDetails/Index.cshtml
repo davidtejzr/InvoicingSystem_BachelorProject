@@ -1,0 +1,71 @@
+﻿@model IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="#">Aplikace</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Uživatel</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Firma</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/PaymentMethods">Platební metody</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/BankDetails">Bankovní účty</a>
+    </li>
+</ul>
+
+<h1>Bankovní účty</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BankName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BankCode)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BankName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BankCode)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PaymentMethodId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaymentMethodId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

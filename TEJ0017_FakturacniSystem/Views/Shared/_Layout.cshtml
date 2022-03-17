@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
+    ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
+}
+
+<!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +14,7 @@
     <link rel="stylesheet" href="~/TEJ0017_FakturacniSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <!--Status message icons-->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
         <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -24,33 +30,56 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TEJ0017_FakturacniSystem</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Faktura.cz</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="exDocDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Výdejové doklady
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Faktury</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Zálohové faktury</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Zálohové faktury</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Opravné daňové doklady</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Pravidelné faktury</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Šablony</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Invoices" asp-action="Index">Faktury</a>
-                        </li>
+
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="AddressBook" asp-action="Index">Adresář</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Uživatelé</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Settings" asp-action="Index">Nastavení</a>
+                    </ul>
+                    <ul class="navbar-nav d-flex">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="SettingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Nastavení
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Aplikace</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Uživatel</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Platební metody</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="BankDetails" asp-action="Index">Bankovní účty</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Logout">Odhlásit se</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="UserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @ViewData["UserName"]
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="Index">Profil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Logout">Odhlásit se</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

@@ -13,6 +13,7 @@ namespace TEJ0017_FakturacniSystem.Models
         }
         public DbSet<User.User> Users { get; set; }
         public DbSet<PaymentMethod.PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<PaymentMethod.BankDetail> BankDetails { get; set; }
         public DbSet<InvoiceItem.InvoiceItem> InvoiceItems { get; set; }
         public DbSet<InvoiceItem.TaxRate> InvoiceItemsTaxRates { get; set; }
         public DbSet<Subject.Subject> Subjects { get; set; }
@@ -25,6 +26,8 @@ namespace TEJ0017_FakturacniSystem.Models
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<PaymentMethod.BankDetail>().ToTable("BankDetails");
+
             builder.Entity<User.Admin>().ToTable("Administrators");
             builder.Entity<User.Purser>().ToTable("Pursers");
 

@@ -15,47 +15,14 @@ namespace TEJ0017_FakturacniSystem.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationContext _context;
 
-        /*public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }*/
-
-        public HomeController(ApplicationContext context)
+        public HomeController(ApplicationContext context, ILogger<HomeController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-            /*TESTING FEATURES*/
-            AresCommunicator aresCommunicator = new AresCommunicator();
-            Dictionary<string, string> data = aresCommunicator.getInfoBySubjectName("ASSECO a.s.");
-
-            if (int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == -1)
-            {
-                Console.Error.WriteLine("result -1 !!!");
-            }
-            else if ( int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 0)
-            {
-                Console.WriteLine("Nenalezeny zadne odpovidajici zaznamy v ARESu");
-            }
-            else if(int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == 1)
-            {
-                Console.WriteLine(data["Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"]);
-            }
-            else if(int.Parse(data["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) > 1)
-            {
-                foreach (KeyValuePair<string, string> keyValuePair in data)
-                {
-                    if (keyValuePair.Key.Contains("Ares_odpovedi.Odpoved.Zaznam.Obchodni_firma"))
-                        Console.WriteLine(keyValuePair.Value);
-                }
-            }
-            else
-            {
-                Console.Error.WriteLine("Unexpected value on key 'Pocet_zaznamu'");
-            }
-
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
 
             return View(ourCompany);
@@ -83,11 +50,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim("user", searchedUser.Login),
-                        new Claim("role", searchedUser.GetType().ToString())
+                        new Claim("role", searchedUser.GetType().ToString()),
+                        new Claim("userName", searchedUser.Name + " " + searchedUser.Surname)
                     };
 
                     await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")));
-                    //HttpContext.Session.SetString("Login", searchedUser.Login);
+                    //HttpContext.Session.SetString("UserName", searchedUser.Name + " " + searchedUser.Surname);
 
                     if (Url.IsLocalUrl(returnUrl))
                         return Redirect(returnUrl);
