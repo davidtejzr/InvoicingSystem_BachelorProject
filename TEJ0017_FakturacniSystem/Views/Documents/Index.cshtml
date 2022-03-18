@@ -1,0 +1,83 @@
+﻿@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Document>
+
+@{
+    ViewData["Title"] = "Vydané faktury";
+}
+
+<h1>Vydané faktury</h1>
+
+<p>
+    <a asp-action="CreateBasicInvoice">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VariableSymbol)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConstantSymbol)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IssueDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DueDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaxDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Discount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsPaid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.headerDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.footerDescription)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.VariableSymbol)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConstantSymbol)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IssueDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsPaid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.headerDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.footerDescription)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

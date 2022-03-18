@@ -22,13 +22,13 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.Document", b =>
                 {
-                    b.Property<int>("InvoiceId")
+                    b.Property<int>("DocumentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentId"), 1L, 1);
 
                     b.Property<string>("ConstantSymbol")
                         .HasColumnType("nvarchar(max)");
@@ -51,13 +51,22 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("TaxDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("VariableSymbol")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("InvoiceId");
+                    b.Property<string>("footerDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("headerDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DocumentId");
 
                     b.HasIndex("CustomerSubjectId");
 
@@ -65,26 +74,29 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Documents");
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentItem", b =>
                 {
-                    b.Property<int>("InvoiceItemId")
+                    b.Property<int>("DocumentItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceItemId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentItemId"), 1L, 1);
 
                     b.Property<float>("Amount")
                         .HasColumnType("real");
 
-                    b.Property<int?>("InvoiceId")
+                    b.Property<int?>("DocumentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TaxRateId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Unit")
                         .HasColumnType("nvarchar(max)");
@@ -92,14 +104,16 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<float>("UnitPrice")
                         .HasColumnType("real");
 
-                    b.HasKey("InvoiceItemId");
+                    b.HasKey("DocumentItemId");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("DocumentId");
 
-                    b.ToTable("InvoiceItems");
+                    b.HasIndex("TaxRateId");
+
+                    b.ToTable("DocumentItems");
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.TaxRate", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.TaxRate", b =>
                 {
                     b.Property<int>("TaxRateId")
                         .ValueGeneratedOnAdd()
@@ -119,7 +133,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasKey("TaxRateId");
 
-                    b.ToTable("InvoiceItemsTaxRates");
+                    b.ToTable("TaxRate");
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod", b =>
@@ -257,40 +271,53 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceNoVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.BasicInvoice", b =>
                 {
-                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Invoice.Invoice");
+                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Document.Document");
 
-                    b.ToTable("NoVatInvoices", (string)null);
+                    b.ToTable("BasicInvoices", (string)null);
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.CorrectiveTaxDocument", b =>
                 {
-                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Invoice.Invoice");
+                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Document.Document");
 
-                    b.Property<DateTime>("TaxDate")
-                        .HasColumnType("datetime2");
-
-                    b.ToTable("VatInvoices", (string)null);
+                    b.ToTable("CorrectiveTaxDocuments", (string)null);
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemNoVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.InvoiceTemplate", b =>
                 {
-                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem");
+                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Document.Document");
 
-                    b.ToTable("NoVatInvoiceItems", (string)null);
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("InvoiceTemplates", (string)null);
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.ProformaInvoice", b =>
                 {
-                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem");
+                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Document.Document");
 
-                    b.Property<int>("TaxRateId")
+                    b.ToTable("proformaInvoices", (string)null);
+                });
+
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.RegularInvoice", b =>
+                {
+                    b.HasBaseType("TEJ0017_FakturacniSystem.Models.Document.Document");
+
+                    b.Property<string>("EndCondition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RepeatPeriod")
                         .HasColumnType("int");
 
-                    b.HasIndex("TaxRateId");
-
-                    b.ToTable("VatInvoiceItems", (string)null);
+                    b.ToTable("RegularInvoices", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail", b =>
@@ -350,7 +377,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.ToTable("Pursers", (string)null);
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.Document", b =>
                 {
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Subject.Customer", "Customer")
                         .WithMany()
@@ -377,11 +404,17 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentItem", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
                         .WithMany("InvoiceItems")
-                        .HasForeignKey("InvoiceId");
+                        .HasForeignKey("DocumentId");
+
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.TaxRate", "TaxRate")
+                        .WithMany()
+                        .HasForeignKey("TaxRateId");
+
+                    b.Navigation("TaxRate");
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Subject.Subject", b =>
@@ -395,48 +428,49 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceNoVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.BasicInvoice", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
                         .WithOne()
-                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceNoVat", "InvoiceId")
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.BasicInvoice", "DocumentId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.CorrectiveTaxDocument", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
                         .WithOne()
-                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Invoice.InvoiceVat", "InvoiceId")
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.CorrectiveTaxDocument", "DocumentId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemNoVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.InvoiceTemplate", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
                         .WithOne()
-                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemNoVat", "InvoiceItemId")
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.InvoiceTemplate", "DocumentId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemVat", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.ProformaInvoice", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItem", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
                         .WithOne()
-                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.InvoiceItem.InvoiceItemVat", "InvoiceItemId")
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.ProformaInvoice", "DocumentId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.InvoiceItem.TaxRate", "TaxRate")
-                        .WithMany()
-                        .HasForeignKey("TaxRateId")
-                        .OnDelete(DeleteBehavior.Cascade)
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.RegularInvoice", b =>
+                {
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
+                        .WithOne()
+                        .HasForeignKey("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.RegularInvoice", "DocumentId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
-
-                    b.Navigation("TaxRate");
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail", b =>
@@ -475,7 +509,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Invoice.Invoice", b =>
+            modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.Document", b =>
                 {
                     b.Navigation("InvoiceItems");
                 });

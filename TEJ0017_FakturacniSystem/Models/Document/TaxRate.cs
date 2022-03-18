@@ -1,4 +1,4 @@
-﻿namespace TEJ0017_FakturacniSystem.Models.InvoiceItem
+﻿namespace TEJ0017_FakturacniSystem.Models.Document
 {
     public class TaxRate
     {

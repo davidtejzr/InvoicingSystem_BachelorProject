@@ -3,32 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TEJ0017_FakturacniSystem.Models;
-using TEJ0017_FakturacniSystem.Models.Invoice;
+using TEJ0017_FakturacniSystem.Models.Document;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
-    [Authorize]
-    public class InvoicesController : Controller
+    public class DocumentsController : Controller
     {
         private readonly ApplicationContext _context;
 
-        public InvoicesController(ApplicationContext context)
+        public DocumentsController(ApplicationContext context)
         {
             _context = context;
         }
 
-        // GET: Invoices
+        // GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Invoices.ToListAsync());
+            return View(await _context.Documents.ToListAsync());
         }
 
-        // GET: Invoices/Details/5
+        // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,39 +34,45 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var invoice = await _context.Invoices
-                .FirstOrDefaultAsync(m => m.InvoiceId == id);
-            if (invoice == null)
+            var document = await _context.Documents
+                .FirstOrDefaultAsync(m => m.DocumentId == id);
+            if (document == null)
             {
                 return NotFound();
             }
 
-            return View(invoice);
+            return View(document);
         }
 
-        // GET: Invoices/Create
-        public IActionResult CreateVat()
+        // GET: Documents/CreateBasicInvoice
+        public async Task<IActionResult> CreateBasicInvoice()
         {
+            var bankDetails = await _context.BankDetails.ToListAsync();
+            var paymentMethods = await _context.PaymentMethods.ToListAsync();
+            var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+
+            ViewData["Customers"] = await _context.Customers.ToListAsync();
+            ViewData["PaymentMethods"] = paymentMethodsOnly;
+            ViewData["BankDetails"] = bankDetails;
+
             return View();
         }
 
-        // POST: Invoices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Documents/CreateBasicInvoice
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateVat([Bind("InvoiceId")] InvoiceVat invoice)
+        public async Task<IActionResult> CreateBasicInvoice([Bind("DocumentId,VariableSymbol,ConstantSymbol,IssueDate,DueDate,TaxDate,Discount,IsPaid,headerDescription,footerDescription")] Document document)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(invoice);
+                _context.Add(document);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(invoice);
+            return View(document);
         }
 
-        // GET: Invoices/Edit/5
+        // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,22 +80,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var invoice = await _context.Invoices.FindAsync(id);
-            if (invoice == null)
+            var document = await _context.Documents.FindAsync(id);
+            if (document == null)
             {
                 return NotFound();
             }
-            return View(invoice);
+            return View(document);
         }
 
-        // POST: Invoices/Edit/5
+        // POST: Documents/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("InvoiceId")] Invoice invoice)
+        public async Task<IActionResult> Edit(int id, [Bind("DocumentId,VariableSymbol,ConstantSymbol,IssueDate,DueDate,TaxDate,Discount,IsPaid,headerDescription,footerDescription")] Document document)
         {
-            if (id != invoice.InvoiceId)
+            if (id != document.DocumentId)
             {
                 return NotFound();
             }
@@ -100,12 +104,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 try
                 {
-                    _context.Update(invoice);
+                    _context.Update(document);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InvoiceExists(invoice.InvoiceId))
+                    if (!DocumentExists(document.DocumentId))
                     {
                         return NotFound();
                     }
@@ -116,10 +120,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(invoice);
+            return View(document);
         }
 
-        // GET: Invoices/Delete/5
+        // GET: Documents/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -127,30 +131,30 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var invoice = await _context.Invoices
-                .FirstOrDefaultAsync(m => m.InvoiceId == id);
-            if (invoice == null)
+            var document = await _context.Documents
+                .FirstOrDefaultAsync(m => m.DocumentId == id);
+            if (document == null)
             {
                 return NotFound();
             }
 
-            return View(invoice);
+            return View(document);
         }
 
-        // POST: Invoices/Delete/5
+        // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var invoice = await _context.Invoices.FindAsync(id);
-            _context.Invoices.Remove(invoice);
+            var document = await _context.Documents.FindAsync(id);
+            _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InvoiceExists(int id)
+        private bool DocumentExists(int id)
         {
-            return _context.Invoices.Any(e => e.InvoiceId == id);
+            return _context.Documents.Any(e => e.DocumentId == id);
         }
     }
 }

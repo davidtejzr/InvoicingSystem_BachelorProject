@@ -5,25 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TEJ0017_FakturacniSystem.Migrations
 {
-    public partial class SubjectModelKeyChanged : Migration
+    public partial class DocumentsChange : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "InvoiceItemsTaxRates",
-                columns: table => new
-                {
-                    TaxRateId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rate = table.Column<float>(type: "real", nullable: false),
-                    GoodsTypes = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InvoiceItemsTaxRates", x => x.TaxRateId);
-                });
-
             migrationBuilder.CreateTable(
                 name: "PaymentMethods",
                 columns: table => new
@@ -31,7 +16,8 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsBank = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,6 +42,21 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaxRate",
+                columns: table => new
+                {
+                    TaxRateId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rate = table.Column<float>(type: "real", nullable: false),
+                    GoodsTypes = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaxRate", x => x.TaxRateId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -73,6 +74,27 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BankDetails",
+                columns: table => new
+                {
+                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
+                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Swift = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BankDetails", x => x.PaymentMethodId);
+                    table.ForeignKey(
+                        name: "FK_BankDetails_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "PaymentMethodId");
                 });
 
             migrationBuilder.CreateTable(
@@ -152,10 +174,10 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoices",
+                name: "Documents",
                 columns: table => new
                 {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     CustomerSubjectId = table.Column<int>(type: "int", nullable: false),
@@ -164,26 +186,29 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     ConstantSymbol = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TaxDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Discount = table.Column<float>(type: "real", nullable: true),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    headerDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    footerDescription = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Invoices", x => x.InvoiceId);
+                    table.PrimaryKey("PK_Documents", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_Invoices_Customers_CustomerSubjectId",
+                        name: "FK_Documents_Customers_CustomerSubjectId",
                         column: x => x.CustomerSubjectId,
                         principalTable: "Customers",
                         principalColumn: "SubjectId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Invoices_PaymentMethods_PaymentMethodId",
+                        name: "FK_Documents_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethods",
                         principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Invoices_Pursers_UserId",
+                        name: "FK_Documents_Pursers_UserId",
                         column: x => x.UserId,
                         principalTable: "Pursers",
                         principalColumn: "UserId",
@@ -191,128 +216,146 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InvoiceItems",
+                name: "BasicInvoices",
                 columns: table => new
                 {
-                    InvoiceItemId = table.Column<int>(type: "int", nullable: false)
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BasicInvoices", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_BasicInvoices_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CorrectiveTaxDocuments",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CorrectiveTaxDocuments", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_CorrectiveTaxDocuments_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentItems",
+                columns: table => new
+                {
+                    DocumentItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UnitPrice = table.Column<float>(type: "real", nullable: false),
                     Amount = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    InvoiceId = table.Column<int>(type: "int", nullable: true)
+                    TaxRateId = table.Column<int>(type: "int", nullable: true),
+                    DocumentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InvoiceItems", x => x.InvoiceItemId);
+                    table.PrimaryKey("PK_DocumentItems", x => x.DocumentItemId);
                     table.ForeignKey(
-                        name: "FK_InvoiceItems_Invoices_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoices",
-                        principalColumn: "InvoiceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoVatInvoices",
-                columns: table => new
-                {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoVatInvoices", x => x.InvoiceId);
+                        name: "FK_DocumentItems_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_NoVatInvoices_Invoices_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoices",
-                        principalColumn: "InvoiceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VatInvoices",
-                columns: table => new
-                {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    TaxDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VatInvoices", x => x.InvoiceId);
-                    table.ForeignKey(
-                        name: "FK_VatInvoices_Invoices_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoices",
-                        principalColumn: "InvoiceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NoVatInvoiceItems",
-                columns: table => new
-                {
-                    InvoiceItemId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NoVatInvoiceItems", x => x.InvoiceItemId);
-                    table.ForeignKey(
-                        name: "FK_NoVatInvoiceItems_InvoiceItems_InvoiceItemId",
-                        column: x => x.InvoiceItemId,
-                        principalTable: "InvoiceItems",
-                        principalColumn: "InvoiceItemId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VatInvoiceItems",
-                columns: table => new
-                {
-                    InvoiceItemId = table.Column<int>(type: "int", nullable: false),
-                    TaxRateId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VatInvoiceItems", x => x.InvoiceItemId);
-                    table.ForeignKey(
-                        name: "FK_VatInvoiceItems_InvoiceItems_InvoiceItemId",
-                        column: x => x.InvoiceItemId,
-                        principalTable: "InvoiceItems",
-                        principalColumn: "InvoiceItemId");
-                    table.ForeignKey(
-                        name: "FK_VatInvoiceItems_InvoiceItemsTaxRates_TaxRateId",
+                        name: "FK_DocumentItems_TaxRate_TaxRateId",
                         column: x => x.TaxRateId,
-                        principalTable: "InvoiceItemsTaxRates",
-                        principalColumn: "TaxRateId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "TaxRate",
+                        principalColumn: "TaxRateId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceTemplates",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceTemplates", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_InvoiceTemplates_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "proformaInvoices",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_proformaInvoices", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_proformaInvoices_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RegularInvoices",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    RepeatPeriod = table.Column<int>(type: "int", nullable: false),
+                    EndCondition = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegularInvoices", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_RegularInvoices_Documents_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Documents",
+                        principalColumn: "DocumentId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceItems_InvoiceId",
-                table: "InvoiceItems",
-                column: "InvoiceId");
+                name: "IX_DocumentItems_DocumentId",
+                table: "DocumentItems",
+                column: "DocumentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_CustomerSubjectId",
-                table: "Invoices",
+                name: "IX_DocumentItems_TaxRateId",
+                table: "DocumentItems",
+                column: "TaxRateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_CustomerSubjectId",
+                table: "Documents",
                 column: "CustomerSubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_PaymentMethodId",
-                table: "Invoices",
+                name: "IX_Documents_PaymentMethodId",
+                table: "Documents",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_UserId",
-                table: "Invoices",
+                name: "IX_Documents_UserId",
+                table: "Documents",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subjects_AddressId",
                 table: "Subjects",
                 column: "AddressId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VatInvoiceItems_TaxRateId",
-                table: "VatInvoiceItems",
-                column: "TaxRateId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -321,25 +364,31 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "Administrators");
 
             migrationBuilder.DropTable(
-                name: "NoVatInvoiceItems");
+                name: "BankDetails");
 
             migrationBuilder.DropTable(
-                name: "NoVatInvoices");
+                name: "BasicInvoices");
 
             migrationBuilder.DropTable(
-                name: "VatInvoiceItems");
+                name: "CorrectiveTaxDocuments");
 
             migrationBuilder.DropTable(
-                name: "VatInvoices");
+                name: "DocumentItems");
 
             migrationBuilder.DropTable(
-                name: "InvoiceItems");
+                name: "InvoiceTemplates");
 
             migrationBuilder.DropTable(
-                name: "InvoiceItemsTaxRates");
+                name: "proformaInvoices");
 
             migrationBuilder.DropTable(
-                name: "Invoices");
+                name: "RegularInvoices");
+
+            migrationBuilder.DropTable(
+                name: "TaxRate");
+
+            migrationBuilder.DropTable(
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "Customers");
