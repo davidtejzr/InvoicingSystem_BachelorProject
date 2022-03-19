@@ -49,13 +49,14 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Documents/CreateBasicInvoice
         public async Task<IActionResult> CreateBasicInvoice()
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
             var bankDetails = await _context.BankDetails.ToListAsync();
             var paymentMethods = await _context.PaymentMethods.ToListAsync();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
-
             ViewData["Customers"] = await _context.Customers.ToListAsync();
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
+            ViewData["OurCompany"] = ourCompany;
 
             return View();
         }
@@ -65,20 +66,54 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateBasicInvoice(BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            var bankDetails =  _context.BankDetails.ToList();
+            var paymentMethods =  _context.PaymentMethods.ToList();
+            var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+            ViewData["Customers"] =  _context.Customers.ToList();
+            ViewData["PaymentMethods"] = paymentMethodsOnly;
+            ViewData["BankDetails"] = bankDetails;
+            ViewData["OurCompany"] = ourCompany;
+
             var itemsNames = itemsValues["ItemName"];
             var itemsPrices = itemsValues["ItemPrice"];
             var itemsAmounts = itemsValues["ItemAmount"];
             var itemsUnits = itemsValues["ItemUnit"];
 
-            /*if (ModelState.IsValid)
+            List<DocumentItem> documentItems = new List<DocumentItem>();
+            for(int i = 0; i < itemsNames.Count; i++)
             {
-                _context.Add(document);
-                await _context.SaveChangesAsync();
+                DocumentItem documentItem = new DocumentItem();
+                documentItem.Name = itemsNames[i];
+                string commaChange = itemsPrices[i].Replace(".", ",");
+                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.Amount = float.Parse(itemsAmounts[i]);
+                documentItem.Unit = itemsUnits[i];
+
+                documentItems.Add(documentItem);
+            }
+
+            basicInvoice.InvoiceItems = documentItems;
+            basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+            var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
+            string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
+            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+            basicInvoice.IsPaid = false;
+            basicInvoice.IssueDate = DateTime.Now;
+
+            basicInvoice.TotalAmount = 0;
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(basicInvoice);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            return View(document);*/
 
-            return View();
+            ViewData["BasicInvoice"] = basicInvoice;
+            return View(basicInvoice);
         }
 
         // GET: Documents/Edit/5

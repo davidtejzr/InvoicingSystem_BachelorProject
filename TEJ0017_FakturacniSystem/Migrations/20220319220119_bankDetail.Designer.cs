@@ -12,8 +12,8 @@ using TEJ0017_FakturacniSystem.Models;
 namespace TEJ0017_FakturacniSystem.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220318184933_DocumentsChange")]
-    partial class DocumentsChange
+    [Migration("20220319220119_bankDetail")]
+    partial class bankDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentId"), 1L, 1);
+
+                    b.Property<int>("BankDetailPaymentMethodId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConstantSymbol")
                         .HasColumnType("nvarchar(max)");
@@ -56,6 +59,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<DateTime?>("TaxDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<float>("TotalAmount")
+                        .HasColumnType("real");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -69,6 +75,8 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DocumentId");
+
+                    b.HasIndex("BankDetailPaymentMethodId");
 
                     b.HasIndex("CustomerSubjectId");
 
@@ -90,7 +98,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<float>("Amount")
                         .HasColumnType("real");
 
-                    b.Property<int?>("DocumentId")
+                    b.Property<int>("DocumentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -381,6 +389,12 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.Document", b =>
                 {
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail", "BankDetail")
+                        .WithMany()
+                        .HasForeignKey("BankDetailPaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Subject.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerSubjectId")
@@ -393,11 +407,13 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.User.Purser", "User")
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.User.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BankDetail");
 
                     b.Navigation("Customer");
 
@@ -408,13 +424,17 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentItem", b =>
                 {
-                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", null)
+                    b.HasOne("TEJ0017_FakturacniSystem.Models.Document.Document", "Document")
                         .WithMany("InvoiceItems")
-                        .HasForeignKey("DocumentId");
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Document.TaxRate", "TaxRate")
                         .WithMany()
                         .HasForeignKey("TaxRateId");
+
+                    b.Navigation("Document");
 
                     b.Navigation("TaxRate");
                 });

@@ -65,6 +65,7 @@ if (DataInitializer.getInstance().initConfigFile())
 else
 {
     //run entry guide
+    DataInitializer.getInstance().runEntryGuide();
     app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

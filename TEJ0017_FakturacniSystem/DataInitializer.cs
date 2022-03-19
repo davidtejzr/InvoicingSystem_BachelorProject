@@ -39,8 +39,14 @@ namespace TEJ0017_FakturacniSystem
 
         public void initOurCompany()
         {
+            Address address = new Address();
+            address.Street = this.JsonDict["AddressStreet"];
+            address.HouseNumber = this.JsonDict["AddressHouseNumber"];
+            address.City = this.JsonDict["AddressCity"];
+            address.Zip = this.JsonDict["AddressZip"];
+
             OurCompany.getInstance().fillData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
-                bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], this.JsonDict["WebPage"]);
+                bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"]);
         }
 
         public void runEntryGuide()
@@ -53,8 +59,12 @@ namespace TEJ0017_FakturacniSystem
             data.Add("Email", "firma@firma.cz");
             data.Add("Telephone", "+420 123 456 789");
             data.Add("WebPage", "https://www.firma.cz/");
+            data.Add("AddressStreet", "Hořínůška");
+            data.Add("AddressHouseNumber", "252");
+            data.Add("AddressCity", "Dolní Lhota");
+            data.Add("AddressZip", "747 66");
 
-            using(StreamWriter s = new StreamWriter(this.Path))
+            using (StreamWriter s = new StreamWriter(this.Path))
             {
                 var json = JsonConvert.SerializeObject(data);
                 s.Write(json);

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TEJ0017_FakturacniSystem.Migrations
 {
-    public partial class DocumentsChange : Migration
+    public partial class bankDetail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -182,12 +182,14 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     CustomerSubjectId = table.Column<int>(type: "int", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false),
+                    BankDetailPaymentMethodId = table.Column<int>(type: "int", nullable: false),
                     VariableSymbol = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConstantSymbol = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TaxDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Discount = table.Column<float>(type: "real", nullable: true),
+                    TotalAmount = table.Column<float>(type: "real", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     headerDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     footerDescription = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -195,6 +197,12 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Documents", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_Documents_BankDetails_BankDetailPaymentMethodId",
+                        column: x => x.BankDetailPaymentMethodId,
+                        principalTable: "BankDetails",
+                        principalColumn: "PaymentMethodId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Documents_Customers_CustomerSubjectId",
                         column: x => x.CustomerSubjectId,
@@ -208,9 +216,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Documents_Pursers_UserId",
+                        name: "FK_Documents_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Pursers",
+                        principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -258,7 +266,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     Amount = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TaxRateId = table.Column<int>(type: "int", nullable: true),
-                    DocumentId = table.Column<int>(type: "int", nullable: true)
+                    DocumentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -267,7 +275,8 @@ namespace TEJ0017_FakturacniSystem.Migrations
                         name: "FK_DocumentItems_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId");
+                        principalColumn: "DocumentId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DocumentItems_TaxRate_TaxRateId",
                         column: x => x.TaxRateId,
@@ -338,6 +347,11 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 column: "TaxRateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Documents_BankDetailPaymentMethodId",
+                table: "Documents",
+                column: "BankDetailPaymentMethodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Documents_CustomerSubjectId",
                 table: "Documents",
                 column: "CustomerSubjectId");
@@ -364,9 +378,6 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "Administrators");
 
             migrationBuilder.DropTable(
-                name: "BankDetails");
-
-            migrationBuilder.DropTable(
                 name: "BasicInvoices");
 
             migrationBuilder.DropTable(
@@ -382,6 +393,9 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "proformaInvoices");
 
             migrationBuilder.DropTable(
+                name: "Pursers");
+
+            migrationBuilder.DropTable(
                 name: "RegularInvoices");
 
             migrationBuilder.DropTable(
@@ -391,19 +405,19 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 name: "Documents");
 
             migrationBuilder.DropTable(
+                name: "BankDetails");
+
+            migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "PaymentMethods");
 
             migrationBuilder.DropTable(
-                name: "Pursers");
-
-            migrationBuilder.DropTable(
                 name: "Subjects");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "SubjectAddresses");
