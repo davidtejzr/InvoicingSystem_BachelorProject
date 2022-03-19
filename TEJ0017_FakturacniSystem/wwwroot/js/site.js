@@ -94,4 +94,3 @@ $('#SubjectSearchInput').keyup(delay(function (e) {
     }
 }, 500));
 
-

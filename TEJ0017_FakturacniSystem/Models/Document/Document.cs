@@ -7,7 +7,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
         public int DocumentId { get; set; }
         public User.Purser User { get; set; }
         public Subject.Customer Customer { get; set; }
-        public List<DocumentItem> InvoiceItems { get; set; }
+        public ICollection<DocumentItem> InvoiceItems { get; set; }
         public PaymentMethod.PaymentMethod PaymentMethod { get; set; }
         public string? VariableSymbol { get; set; }
         public string? ConstantSymbol { get; set; }

@@ -4,24 +4,54 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Document</h4>
+<h1>Nová faktura</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateBasicInvoice">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label class="control-label">Odběratel</label>
-                <select class="form-select">
-                    @foreach(var item in ViewData["Customers"] as IEnumerable<TEJ0017_FakturacniSystem.Models.Subject.Customer>) {
-                        <option>@item.Name</option>              
-                    }
-                </select>
+<form asp-action="CreateBasicInvoice">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col">
+            <h3>Dodavatel</h3>
+            <div class="col-md-7">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">firma</li>
+                    <li class="list-group-item">ulice</li>
+                    <li class="list-group-item">mesto</li>
+                    <li class="list-group-item">ico</li>
+                    <li class="list-group-item">dic</li>
+                </ul>
             </div>
+        </div>
+        <div class="col">
+            <h3>Odběratel</h3>
+            <select class="form-select">
+                @foreach(var item in ViewData["Customers"] as IEnumerable<TEJ0017_FakturacniSystem.Models.Subject.Customer>) {
+                    <option>@item.Name</option>              
+                }
+            </select>
+            <div class="col-md-7">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">ulice</li>
+                    <li class="list-group-item">mesto</li>
+                    <li class="list-group-item">ico</li>
+                    <li class="list-group-item">dic</li>
+                </ul>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col">
+            <h3>Platební údaje</h3>
+        </div>
+        <div class="col">
+            <h3>Splatnost</h3>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
             <div class="form-group">
                 <label class="control-label">Způsob platby</label>
                 <select class="form-select">
@@ -30,7 +60,13 @@
                     }
                 </select>
             </div>
-
+            <div class="form-group">
+                <label asp-for="VariableSymbol" class="control-label"></label>
+                <input asp-for="VariableSymbol" class="form-control" />
+                <span asp-validation-for="VariableSymbol" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label class="control-label">Bankovní účet</label>
                 <select class="form-select">
@@ -39,60 +75,75 @@
                     }
                 </select>
             </div>
-
-
-            <div class="form-group">
-                <label asp-for="VariableSymbol" class="control-label"></label>
-                <input asp-for="VariableSymbol" class="form-control" />
-                <span asp-validation-for="VariableSymbol" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="ConstantSymbol" class="control-label"></label>
                 <input asp-for="ConstantSymbol" class="form-control" />
                 <span asp-validation-for="ConstantSymbol" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IssueDate" class="control-label"></label>
-                <input asp-for="IssueDate" class="form-control" />
-                <span asp-validation-for="IssueDate" class="text-danger"></span>
-            </div>
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label asp-for="DueDate" class="control-label"></label>
                 <input asp-for="DueDate" class="form-control" />
                 <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label asp-for="TaxDate" class="control-label"></label>
                 <input asp-for="TaxDate" class="form-control" />
                 <span asp-validation-for="TaxDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Discount" class="control-label"></label>
-                <input asp-for="Discount" class="form-control" />
-                <span asp-validation-for="Discount" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPaid" /> @Html.DisplayNameFor(model => model.IsPaid)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="headerDescription" class="control-label"></label>
-                <input asp-for="headerDescription" class="form-control" />
-                <span asp-validation-for="headerDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="footerDescription" class="control-label"></label>
-                <input asp-for="footerDescription" class="form-control" />
-                <span asp-validation-for="footerDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
+    <h3>Položky faktury</h3>
+    <div class="row" id="item_0">
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <label class="control-label">Položka</label>
+        </div>
+        <div class="col">
+            <label class="control-label">Cena</label>
+        </div>
+        <div class="col">
+            <label class="control-label">Množství</label>
+        </div>
+        <div class="col">
+            <label class="control-label">Jednotka</label>
+        </div>
+        <div class="col">
+            <label class="control-label">Celkem</label>
+        </div>       
+    </div>
+
+    <div id="DocumentItemsBox"></div>
+
+    <div class="col-md-0">
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem()">Další položka</button>
+    </div>
+    
+
+
+    <div class="form-group">
+        <label asp-for="Discount" class="control-label"></label>
+        <input asp-for="Discount" class="form-control" />
+        <span asp-validation-for="Discount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="headerDescription" class="control-label"></label>
+        <input asp-for="headerDescription" class="form-control" />
+        <span asp-validation-for="headerDescription" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="footerDescription" class="control-label"></label>
+        <input asp-for="footerDescription" class="form-control" />
+        <span asp-validation-for="footerDescription" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

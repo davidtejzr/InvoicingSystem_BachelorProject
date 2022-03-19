@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TEJ0017_FakturacniSystem.Models;
 using TEJ0017_FakturacniSystem.Models.Document;
+using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
@@ -61,15 +63,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: Documents/CreateBasicInvoice
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateBasicInvoice([Bind("DocumentId,VariableSymbol,ConstantSymbol,IssueDate,DueDate,TaxDate,Discount,IsPaid,headerDescription,footerDescription")] Document document)
+        public IActionResult CreateBasicInvoice(BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
-            if (ModelState.IsValid)
+            var itemsNames = itemsValues["ItemName"];
+            var itemsPrices = itemsValues["ItemPrice"];
+            var itemsAmounts = itemsValues["ItemAmount"];
+            var itemsUnits = itemsValues["ItemUnit"];
+
+            /*if (ModelState.IsValid)
             {
                 _context.Add(document);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(document);
+            return View(document);*/
+
+            return View();
         }
 
         // GET: Documents/Edit/5
