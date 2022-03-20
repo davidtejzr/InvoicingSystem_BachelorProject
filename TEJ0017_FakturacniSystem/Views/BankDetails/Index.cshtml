@@ -22,10 +22,11 @@
     </li>
 </ul>
 
-<h1>Bankovní účty</h1>
+<br />
+<h1><i class="bi bi-credit-card"></i> Bankovní účty</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nový bankovní účet</a>
 </p>
 <table class="table">
     <thead>
@@ -49,7 +50,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BankName)
@@ -61,11 +62,18 @@
                 @Html.DisplayFor(modelItem => item.BankCode)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PaymentMethodId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PaymentMethodId">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.PaymentMethodId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Odstranění bankovního účtu"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<!--Tooltip trigger-->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl)
+    {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

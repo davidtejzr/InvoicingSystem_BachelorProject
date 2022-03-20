@@ -48,7 +48,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(documents);
         }
 
-        // GET: Documents/ExportPdf/5
+        // GET: Documents/BasicInvoiceDetail/5
         public async Task<FileResult> BasicInvoiceDetail(int? id)
         {
             if (id == null)

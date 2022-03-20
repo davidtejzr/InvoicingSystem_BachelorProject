@@ -23,7 +23,10 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // GET: PaymentMethods
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PaymentMethods.ToListAsync());
+            var bankDetails = await _context.BankDetails.ToListAsync();
+            var paymentMethods = await _context.PaymentMethods.ToListAsync();
+            var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+            return View(paymentMethodsOnly);
         }
 
         // GET: PaymentMethods/Create
