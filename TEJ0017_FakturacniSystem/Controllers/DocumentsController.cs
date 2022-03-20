@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using TEJ0017_FakturacniSystem.Models;
 using TEJ0017_FakturacniSystem.Models.Document;
@@ -22,6 +24,20 @@ namespace TEJ0017_FakturacniSystem.Controllers
             _context = context;
         }
 
+        public static string RenderViewToString(Controller controller, string viewName, object model = null)
+        {
+            controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+                ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, false);
+                ViewContext viewContext = new ViewContext(controller.ControllerContext, viewResult.View, controller.ViewData, controller.TempData, sw, new HtmlHelperOptions());
+                viewResult.View.RenderAsync(viewContext);
+
+                return sw.GetStringBuilder().ToString();
+            }
+        }
+
         // GET: Documents
         public async Task<IActionResult> Index()
         {
@@ -30,7 +46,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         // GET: Documents/ExportPdf/5
-        public async Task<FileResult> ExportBasicInvoiceToPdf(int? id)
+        public async Task<FileResult> BasicInvoiceDetail(int? id)
         {
             if (id == null)
                 return null;
@@ -42,7 +58,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
-            MemoryStream output = htmlToPdfConvertor.getBasicInvoicePdf(document);
+            string outputHtml = RenderViewToString(this, "BasicInvoiceDetail", document);
+            MemoryStream output = htmlToPdfConvertor.getBasicInvoicePdf(outputHtml);
             output.Position = 0;
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);

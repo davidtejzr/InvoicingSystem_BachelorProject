@@ -7,21 +7,18 @@ namespace TEJ0017_FakturacniSystem
     {
         public HtmlToPdfConvertor() { }
 
-        public MemoryStream getBasicInvoicePdf(BasicInvoice basicInvoice)
+        public MemoryStream getBasicInvoicePdf(string outputHtml)
         {
             HtmlToPdf converter = new HtmlToPdf();
 
             converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 1024;
+            converter.Options.WebPageWidth = 1240;
+            converter.Options.WebPageHeight = 1754;
 
-            string html = "<html><body><h1>"+ basicInvoice.DocumentId +"</h1></body></html>";
-            PdfDocument pdfDocument = converter.ConvertHtmlString(html);
-
-            var tt = basicInvoice.BankDetailId;
-
+            PdfDocument pdfDocument = converter.ConvertHtmlString(outputHtml);
+            PdfDocument pdfDocument2 = converter.ConvertHtmlString(outputHtml);
             MemoryStream output = new MemoryStream();
-            //pdfDocument.Save("test.pdf");
             pdfDocument.Save(output);
             pdfDocument.Close();
 
