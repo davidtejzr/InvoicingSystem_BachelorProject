@@ -33,7 +33,11 @@ namespace TEJ0017_FakturacniSystem.Models.User
 
         [Display(Name = "Telefon")]
         public string? Telephone { get; set; }
+
+        [Display(Name = "Poslední přihlášení")]
         public DateTime LastLoginTmstmp { get; set; }
+
+        [Display(Name = "Registrace")]
         public DateTime RegisteredTmpstmp { get; set; }
     }
 }

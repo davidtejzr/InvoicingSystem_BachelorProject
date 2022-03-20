@@ -4,10 +4,10 @@
     ViewData["Title"] = "Vydané faktury";
 }
 
-<h1>Vydané faktury</h1>
+<h1><i class="bi bi-receipt"></i> Vydané faktury</h1>
 
 <p>
-    <a asp-action="CreateBasicInvoice">Create New</a>
+    <a class="btn btn-primary" asp-action="CreateBasicInvoice"><i class="bi bi-plus"></i>Nová faktura</a>
 </p>
 <table class="table">
     <thead>
@@ -30,13 +30,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.DueDate)
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DocumentId)
+                <a asp-action="Edit" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentId)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsPaid)
@@ -54,11 +55,19 @@
                 @Html.DisplayFor(modelItem => item.DueDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
-                <a asp-action="BasicInvoiceDetail" asp-route-id="@item.DocumentId">Export</a> |
-                <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
+                <a asp-action="BasicInvoiceDetail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Smazat fakturu"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<!--Tooltip trigger-->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl)
+    {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

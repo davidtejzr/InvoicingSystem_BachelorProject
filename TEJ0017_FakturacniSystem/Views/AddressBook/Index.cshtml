@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Adresář</h1>
+<h1><i class="bi bi-person-lines-fill"></i> Adresář</h1>
 
 <p>
-    <a asp-action="Create">Nový kontakt</a>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nový kontakt</a>
 </p>
 <table class="table">
     <thead>
@@ -49,3 +49,12 @@
 }
     </tbody>
 </table>
+
+<!--Tooltip trigger-->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl)
+    {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
