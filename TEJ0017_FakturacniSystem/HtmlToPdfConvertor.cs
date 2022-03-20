@@ -7,17 +7,17 @@ namespace TEJ0017_FakturacniSystem
     {
         public HtmlToPdfConvertor() { }
 
-        public MemoryStream getBasicInvoicePdf(string outputHtml)
+        public MemoryStream getDocumentPdf(string outputHtml)
         {
             HtmlToPdf converter = new HtmlToPdf();
 
             converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1240;
-            converter.Options.WebPageHeight = 1754;
+            converter.Options.MarginTop = 25;
+            converter.Options.MarginBottom = 25;
 
             PdfDocument pdfDocument = converter.ConvertHtmlString(outputHtml);
-            PdfDocument pdfDocument2 = converter.ConvertHtmlString(outputHtml);
             MemoryStream output = new MemoryStream();
             pdfDocument.Save(output);
             pdfDocument.Close();

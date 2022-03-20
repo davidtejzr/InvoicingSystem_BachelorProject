@@ -7,28 +7,16 @@
 <h1>Adresář</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Nový kontakt</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.AresUpdateAllowed)
+                Subjekt
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ContactName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactSurname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsVatPayer)
+                Kontaktní osoba
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
@@ -43,22 +31,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.AresUpdateAllowed)
+                <a asp-action="Edit" asp-route-id="@item.SubjectId">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ContactName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactSurname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsVatPayer)
+                @Html.DisplayFor(modelItem => item.ContactName) @Html.DisplayFor(modelItem => item.ContactSurname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
@@ -67,9 +43,7 @@
                 @Html.DisplayFor(modelItem => item.Telephone)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.SubjectId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Odstranit kontakt"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
 }

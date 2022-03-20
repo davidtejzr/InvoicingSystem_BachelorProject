@@ -19,7 +19,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
         public Subject.Customer Customer { get; set; }
 
         [ValidateNever]
-        public ICollection<DocumentItem> InvoiceItems { get; set; }
+        public ICollection<DocumentItem> DocumentItems { get; set; }
 
         public int? PaymentmethodId { get; set; }
         [ValidateNever]

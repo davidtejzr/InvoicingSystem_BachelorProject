@@ -8,6 +8,10 @@ function showModal() {
     $('#myModal').modal('show');
 }
 
+//tooltips
+$(function () {
+    $("[rel='tooltip']").tooltip();
+});
 
 //delaying input typing
 function delay(callback, ms) {

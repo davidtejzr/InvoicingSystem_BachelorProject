@@ -27,6 +27,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public static string RenderViewToString(Controller controller, string viewName, object model = null)
         {
             controller.ViewData.Model = model;
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            controller.ViewData["OurCompany"] = ourCompany;
+
             using (var sw = new StringWriter())
             {
                 IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
@@ -51,7 +54,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             if (id == null)
                 return null;
 
-            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).FirstOrDefaultAsync(m => m.DocumentId == id);
+            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
+                Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(m => m.DocumentId == id);
             if (document == null)
             {
                 return null;
@@ -59,7 +63,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
             string outputHtml = RenderViewToString(this, "BasicInvoiceDetail", document);
-            MemoryStream output = htmlToPdfConvertor.getBasicInvoicePdf(outputHtml);
+            MemoryStream output = htmlToPdfConvertor.getDocumentPdf(outputHtml);
             output.Position = 0;
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
@@ -112,7 +116,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 documentItems.Add(documentItem);
             }
 
-            basicInvoice.InvoiceItems = documentItems;
+            basicInvoice.DocumentItems = documentItems;
             basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
 
             basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
@@ -129,7 +133,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             basicInvoice.TotalAmount = 0;
 
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
-                && basicInvoice.User != null && basicInvoice.InvoiceItems != null)
+                && basicInvoice.User != null && basicInvoice.DocumentItems != null)
             {
                 _context.Add(basicInvoice);
                 _context.SaveChanges();

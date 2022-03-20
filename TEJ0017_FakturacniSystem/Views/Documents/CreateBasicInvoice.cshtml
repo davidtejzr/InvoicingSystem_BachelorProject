@@ -161,7 +161,7 @@
     <div id="DocumentItemsBox"></div>
     @if(basicInvoice != null)
     {
-        foreach(var item in basicInvoice.InvoiceItems)
+        foreach(var item in basicInvoice.DocumentItems)
         {
                 <script type="text/javascript">DocumentAddItemWithValues(@item.Name, @item.UnitPrice, @item.Amount, @item.Unit)</script>
             }
