@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TEJ0017_FakturacniSystem.Models;
 
 namespace TEJ0017_FakturacniSystem.Models.Document
@@ -6,10 +8,25 @@ namespace TEJ0017_FakturacniSystem.Models.Document
     public abstract class Document
     {
         public int DocumentId { get; set; }
+
+        [ForeignKey("User")]
+        public int? UserId { get; set; }
+        [ValidateNever]
         public User.User User { get; set; }
+
+        public int? CustomerId { get; set; }
+        [ValidateNever]
         public Subject.Customer Customer { get; set; }
+
+        [ValidateNever]
         public ICollection<DocumentItem> InvoiceItems { get; set; }
+
+        public int? PaymentmethodId { get; set; }
+        [ValidateNever]
         public PaymentMethod.PaymentMethod PaymentMethod { get; set; }
+
+        public int? BankDetailId { get; set; }
+        [ValidateNever]
         public PaymentMethod.BankDetail BankDetail { get; set; }
 
         [Display(Name = "Variabilní symbol")]

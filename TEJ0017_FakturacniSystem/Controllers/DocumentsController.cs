@@ -25,25 +25,27 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Documents.ToListAsync());
+            var documents = await _context.Documents.Include(c => c.Customer).ToListAsync();
+            return View(documents);
         }
 
-        // GET: Documents/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Documents/ExportPdf/5
+        public async Task<FileResult> ExportBasicInvoiceToPdf(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return null;
 
-            var document = await _context.Documents
-                .FirstOrDefaultAsync(m => m.DocumentId == id);
+            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).FirstOrDefaultAsync(m => m.DocumentId == id);
             if (document == null)
             {
-                return NotFound();
+                return null;
             }
 
-            return View(document);
+            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
+            MemoryStream output = htmlToPdfConvertor.getBasicInvoicePdf(document);
+            output.Position = 0;
+
+            return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
 
         // GET: Documents/CreateBasicInvoice
@@ -95,17 +97,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             basicInvoice.InvoiceItems = documentItems;
             basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+
             basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+
             basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
             basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+
             basicInvoice.IsPaid = false;
             basicInvoice.IssueDate = DateTime.Now;
 
             basicInvoice.TotalAmount = 0;
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
+                && basicInvoice.User != null && basicInvoice.InvoiceItems != null)
             {
                 _context.Add(basicInvoice);
                 _context.SaveChanges();
@@ -113,6 +120,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             ViewData["BasicInvoice"] = basicInvoice;
+            ViewBag.ErrorMessage = "Chyba validity formuláře!";
             return View(basicInvoice);
         }
 

@@ -20,6 +20,16 @@
         <div id="DocumentWarningMessage"></div>
     </div>
 
+    @if (@ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+            <div>
+                @ViewBag.ErrorMessage
+            </div>
+        </div>
+    }
+
     <div class="row">
         <div class="col">
             <h3>Dodavatel</h3>
@@ -122,7 +132,7 @@
         <div class="col">
             <div class="form-group">
                 <label asp-for="TaxDate" class="control-label"></label>
-                <input asp-for="TaxDate" id="DocumentTaxDate" type="date" value= class="form-control" required/>
+                <input asp-for="TaxDate" id="DocumentTaxDate" type="date" class="form-control" required/>
                 <span asp-validation-for="TaxDate" class="text-danger"></span>
             </div>
         </div>
@@ -153,9 +163,20 @@
     {
         foreach(var item in basicInvoice.InvoiceItems)
         {
-            <script type="text/javascript">DocumentAddItemWithValues(@item.Name, @item.UnitPrice, @item.Amount, @item.Unit)</script>
+                <script type="text/javascript">DocumentAddItemWithValues(@item.Name, @item.UnitPrice, @item.Amount, @item.Unit)</script>
+            }
         }
-    }
+        else
+        {
+            <script type="text/javascript">
+                DocumentAddItem();
+                var dateIncrement = new Date();
+                dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + 14);
+                document.getElementById("DocumentTaxDate").valueAsDate = new Date(dateIncrement);
+                document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
+            </script>
+
+        }
 
 
     <div class="col-md-0">

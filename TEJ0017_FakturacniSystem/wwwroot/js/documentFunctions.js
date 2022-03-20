@@ -216,11 +216,3 @@ function RemoveItemId(itemId) {
     }
 
 }
-
-$(document).ready(function () {
-    DocumentAddItem();
-    var dateIncrement = new Date();
-    dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + 14);
-    document.getElementById("DocumentTaxDate").valueAsDate = new Date(dateIncrement);
-    document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
-});

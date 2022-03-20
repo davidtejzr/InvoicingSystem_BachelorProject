@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TEJ0017_FakturacniSystem.Models;
 
@@ -11,9 +12,10 @@ using TEJ0017_FakturacniSystem.Models;
 namespace TEJ0017_FakturacniSystem.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220320090210_documnetsids")]
+    partial class documnetsids
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,13 +32,13 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentId"), 1L, 1);
 
-                    b.Property<int?>("BankDetailId")
+                    b.Property<int>("BankDetailId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConstantSymbol")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<float?>("Discount")
@@ -51,7 +53,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<DateTime>("IssueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PaymentmethodId")
+                    b.Property<int>("PaymentmethodId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("TaxDate")
@@ -60,7 +62,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
                     b.Property<float>("TotalAmount")
                         .HasColumnType("real");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("VariableSymbol")
@@ -389,19 +391,27 @@ namespace TEJ0017_FakturacniSystem.Migrations
                 {
                     b.HasOne("TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail", "BankDetail")
                         .WithMany()
-                        .HasForeignKey("BankDetailId");
+                        .HasForeignKey("BankDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TEJ0017_FakturacniSystem.Models.Subject.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod", "PaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PaymentmethodId");
+                        .HasForeignKey("PaymentmethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TEJ0017_FakturacniSystem.Models.User.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BankDetail");
 

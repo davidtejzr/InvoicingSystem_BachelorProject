@@ -13,10 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.VariableSymbol)
+                @Html.DisplayNameFor(model => model.DocumentId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ConstantSymbol)
+                @Html.DisplayNameFor(model => model.IsPaid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalAmount)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IssueDate)
@@ -24,32 +30,22 @@
             <th>
                 @Html.DisplayNameFor(model => model.DueDate)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaxDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Discount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPaid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.headerDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.footerDescription)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.VariableSymbol)
+                @Html.DisplayFor(modelItem => item.DocumentId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ConstantSymbol)
+                @Html.DisplayFor(modelItem => item.IsPaid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IssueDate)
@@ -58,23 +54,8 @@
                 @Html.DisplayFor(modelItem => item.DueDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TaxDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Discount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPaid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.headerDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.footerDescription)
-            </td>
-            <td>
                 <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
+                <a asp-action="ExportBasicInvoiceToPdf" asp-route-id="@item.DocumentId">Export</a> |
                 <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
             </td>
         </tr>
