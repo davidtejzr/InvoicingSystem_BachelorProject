@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TEJ0017_FakturacniSystem.Models;
 using TEJ0017_FakturacniSystem.Models.Document;
 using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes;
+using TEJ0017_FakturacniSystem.Models.PaymentMethod;
 using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
@@ -233,11 +235,26 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public ContentResult CustomerData(string customerName)
         {
-            var customer = _context.Customers.FirstOrDefaultAsync(m => m.Name == customerName);
+            Customer customer = _context.Customers.Include("Address").FirstOrDefault(m => m.Name == customerName);
             Dictionary<string, string> customerData = new Dictionary<string, string>();
-            //customerData.Add("customerStreet", customer.Street);
+            customerData.Add("customerStreet", customer.Address.Street);
+            customerData.Add("customerHouseNumber", customer.Address.HouseNumber);
+            customerData.Add("customerCity", customer.Address.City);
+            customerData.Add("customerZip", customer.Address.Zip);
+            customerData.Add("customerIco", customer.Ico.ToString());
+            customerData.Add("customerDic", customer.Dic);
 
-            return Content("aa");
+            string jsonResult = JsonConvert.SerializeObject(customerData);
+            return Content(jsonResult);
+        }
+
+        public ContentResult IsBankMethod(string paymentMethodName)
+        {
+            PaymentMethod paymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == paymentMethodName);
+            if(paymentMethod.IsBank)
+                return Content("true");
+            else
+                return Content("false");
         }
     }
 }

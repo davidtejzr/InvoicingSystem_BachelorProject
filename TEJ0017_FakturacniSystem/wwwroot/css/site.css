@@ -22,3 +22,8 @@ body {
     max-width: 500px;
     margin: 10% auto;
 }
+
+.basicElementPadding
+{
+    padding-top: 25px;
+}

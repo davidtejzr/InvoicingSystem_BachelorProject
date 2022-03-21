@@ -27,7 +27,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
 
         public int? BankDetailId { get; set; }
         [ValidateNever]
-        public PaymentMethod.BankDetail BankDetail { get; set; }
+        public PaymentMethod.BankDetail? BankDetail { get; set; }
 
         [Display(Name = "Variabilní symbol")]
         public string? VariableSymbol { get; set; }

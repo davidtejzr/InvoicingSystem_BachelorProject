@@ -6,7 +6,9 @@ function DocumentAddItem() {
 
     //items
     const removeButton = document.createElement("button");
-    removeButton.innerHTML = "-";
+    const removeIcon = document.createElement("i");
+    removeIcon.className = "bi bi-trash2";
+    removeButton.appendChild(removeIcon);
     removeButton.className = "btn btn-outline-danger";
     removeButton.type = "button";
     removeButton.id = itemId;
@@ -87,12 +89,14 @@ function DocumentAddItem() {
     //row
     const ItemRow = document.createElement("div");
     ItemRow.className = "row";
-    ItemRow.appendChild(removeButtonCol);
+    ItemRow.style = "padding-top: 5px;"
+
     ItemRow.appendChild(ItemNameInputCol);
     ItemRow.appendChild(ItemPriceInputCol);
     ItemRow.appendChild(ItemAmountInputCol);
     ItemRow.appendChild(ItemUnitInputCol);
     ItemRow.appendChild(ItemTotalAmountCol);
+    ItemRow.appendChild(removeButtonCol);
     ItemRow.id = itemId;
 
     //parent
@@ -217,24 +221,40 @@ function RemoveItemId(itemId) {
 }
 
 
-function CustomerSelect() {
+function CustomerSelector() {
     var customerName = document.getElementById("customerSelector").value;
 
     $.ajax({
         type: "GET",
-        url: "/Document/CustomerData",
+        url: "/Documents/CustomerData",
         dataType: "json",
         data: {
-            name: customerName
+            customerName: customerName
         }
 
     }).done(function (data) {
+        document.getElementById("labelCustomerAddressFirstRow").innerHTML = data["customerStreet"] + data["customerHouseNumber"];
+        document.getElementById("labelCustomerAddressSecondRow").innerHTML = data["customerZip"] + "&nbsp;&nbsp;" + data["customerCity"];
+        document.getElementById("labelCustomerIco").innerHTML = "IČO: " + data["customerIco"];
+        document.getElementById("labelCustomerDic").innerHTML = "DIČ: " + data["customerDic"];
+    });
+}
 
 
-        document.getElementById("labelCustomerAddressFirstRow").innerHTML = "prvni radek";
-        document.getElementById("labelCustomerAddressSecondRow").innerHTML = "druhy radej";
-        document.getElementById("labelCustomerIco").innerHTML = "ico";
-        document.getElementById("labelCustomerDic").innerHTML = "dic";
+function PaymentMethodSelector() {
+    var paymentMethodName = document.getElementById("paymentMethodSelector").value;
 
+    $.ajax({
+        type: "GET",
+        url: "/Documents/IsBankMethod",
+        dataType: "text",
+        data: {
+            paymentMethodName: paymentMethodName
+        }
+    }).done(function (data) {
+        if (data == "true")
+            document.getElementById("bankMethodSelector").disabled = false;
+        else
+            document.getElementById("bankMethodSelector").disabled = true;
     });
 }

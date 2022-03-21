@@ -38,7 +38,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // POST: PaymentMethods/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PaymentMethodId,Name,Description")] PaymentMethod paymentMethod)
+        public async Task<IActionResult> Create(PaymentMethod paymentMethod)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // POST: PaymentMethods/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PaymentMethodId,Name,Description")] PaymentMethod paymentMethod)
+        public async Task<IActionResult> Edit(int id, PaymentMethod paymentMethod)
         {
             if (id != paymentMethod.PaymentMethodId)
             {

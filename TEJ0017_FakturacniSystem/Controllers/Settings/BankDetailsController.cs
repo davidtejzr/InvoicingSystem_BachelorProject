@@ -53,7 +53,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // POST: BankDetails/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BankName,AccountNumber,BankCode,Swift,Iban,PaymentMethodId,Name,Description")] BankDetail bankDetail)
+        public async Task<IActionResult> Create(BankDetail bankDetail)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BankName,AccountNumber,BankCode,Swift,Iban,PaymentMethodId,Name,Description")] BankDetail bankDetail)
+        public async Task<IActionResult> Edit(int id, BankDetail bankDetail)
         {
             if (id != bankDetail.PaymentMethodId)
             {
