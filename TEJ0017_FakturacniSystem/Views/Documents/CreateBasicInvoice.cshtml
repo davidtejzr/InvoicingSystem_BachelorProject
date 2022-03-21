@@ -45,7 +45,7 @@
         </div>
         <div class="col">
             <h3>Odběratel</h3>
-            <select class="form-select" asp-for=Customer>
+            <select class="form-select" id="customerSelector" asp-for=Customer onchange="CustomerSelect()">
                 @foreach(var item in ViewData["Customers"] as IEnumerable<TEJ0017_FakturacniSystem.Models.Subject.Customer>) {
                     if ((@basicInvoice != null) && (@basicInvoice.Customer.Name == item.Name))
                     {
@@ -59,10 +59,10 @@
             </select>
             <div class="col-md-7">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">ulice</li>
-                    <li class="list-group-item">mesto</li>
-                    <li class="list-group-item">ico</li>
-                    <li class="list-group-item">dic</li>
+                    <li class="list-group-item" id="labelCustomerAddressFirstRow"></li>
+                    <li class="list-group-item" id="labelCustomerAddressSecondRow"></li>
+                    <li class="list-group-item" id="labelCustomerIco"></li>
+                    <li class="list-group-item" id="labelCustomerDic"></li>
                 </ul>
         </div>
     </div>
@@ -206,3 +206,5 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script type="text/javascript">CustomerSelect()</script>

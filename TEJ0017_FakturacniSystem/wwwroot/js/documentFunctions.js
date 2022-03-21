@@ -214,5 +214,27 @@ function RemoveItemId(itemId) {
         document.getElementById("DocumentWarningMessageDiv").style = "display: relative";
         document.getElementById("DocumentWarningMessage").innerHTML = "Doklad musí mít alespoň jednu položku!";
     }
+}
 
+
+function CustomerSelect() {
+    var customerName = document.getElementById("customerSelector").value;
+
+    $.ajax({
+        type: "GET",
+        url: "/Document/CustomerData",
+        dataType: "json",
+        data: {
+            name: customerName
+        }
+
+    }).done(function (data) {
+
+
+        document.getElementById("labelCustomerAddressFirstRow").innerHTML = "prvni radek";
+        document.getElementById("labelCustomerAddressSecondRow").innerHTML = "druhy radej";
+        document.getElementById("labelCustomerIco").innerHTML = "ico";
+        document.getElementById("labelCustomerDic").innerHTML = "dic";
+
+    });
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using TEJ0017_FakturacniSystem.Models;
 using TEJ0017_FakturacniSystem.Models.Document;
 using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes;
+using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
@@ -228,6 +229,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
         private bool DocumentExists(int id)
         {
             return _context.Documents.Any(e => e.DocumentId == id);
+        }
+
+        public ContentResult CustomerData(string customerName)
+        {
+            var customer = _context.Customers.FirstOrDefaultAsync(m => m.Name == customerName);
+            Dictionary<string, string> customerData = new Dictionary<string, string>();
+            //customerData.Add("customerStreet", customer.Street);
+
+            return Content("aa");
         }
     }
 }
