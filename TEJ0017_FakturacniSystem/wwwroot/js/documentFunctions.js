@@ -1,4 +1,35 @@
-﻿let rowCounter = 0;
+﻿//bugs: fix calc total amount when remove not last column
+
+let rowCounter = 0;
+let sum = 0;
+
+function calcTotalAmount() {
+    sum = 0
+    for (let i = 0; i < rowCounter; i++) {
+        var rowItem = document.getElementById("item" + i);
+        const amount = rowItem.childNodes[4].childNodes[0].value;
+        sum += parseFloat(amount);
+    }
+    CalcDiscount();
+}
+
+function CalcDiscount() {
+    const discountInputAmount = document.getElementById("discountInputAmount").value;
+    const discountAmount = document.getElementById("discountAmount");
+
+    if (parseFloat(discountInputAmount) > 0) {
+        const computedDiscount = -(sum * (discountInputAmount/100));
+        discountAmount.innerHTML = parseFloat(computedDiscount) + ",- Kč";
+        const sumWithDiscount = sum + computedDiscount;
+        document.getElementById("totalAmount").innerHTML = sumWithDiscount + ",- Kč";
+        document.getElementById("totalAmountInput").value = sumWithDiscount;
+    }
+    else {
+        discountAmount.innerHTML = "0.0,- Kč";
+        document.getElementById("totalAmount").innerHTML = sum + ",- Kč";
+        document.getElementById("totalAmountInput").value = sum;
+    }
+}
 
 function DocumentAddItem() {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
@@ -30,9 +61,10 @@ function DocumentAddItem() {
     ItemPriceInput.value = "0.00"
     ItemPriceInput.onchange = function () {
         var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[2].childNodes[0].value;
-        const amount = rowItem.childNodes[3].childNodes[0].value;
-        rowItem.childNodes[5].childNodes[0].value = price * amount;
+        const price = rowItem.childNodes[1].childNodes[0].value;
+        const amount = rowItem.childNodes[2].childNodes[0].value;
+        rowItem.childNodes[4].childNodes[0].value = price * amount;
+        calcTotalAmount();
     }
 
     const ItemAmountInput = document.createElement("input");
@@ -44,13 +76,15 @@ function DocumentAddItem() {
     ItemAmountInput.min = 1;
     ItemAmountInput.onchange = function () {
         var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[2].childNodes[0].value;
-        const amount = rowItem.childNodes[3].childNodes[0].value;
-        rowItem.childNodes[5].childNodes[0].value = price * amount;
+        const price = rowItem.childNodes[1].childNodes[0].value;
+        const amount = rowItem.childNodes[2].childNodes[0].value;
+        rowItem.childNodes[4].childNodes[0].value = price * amount;
+        calcTotalAmount();
     }
 
     const ItemUnitInput = document.createElement("input");
     ItemUnitInput.name = "ItemUnit";
+    ItemUnitInput.value = "";
     ItemUnitInput.className = "form-control";
 
     const ItemTotalAmount = document.createElement("input");
@@ -134,9 +168,9 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     ItemPriceInput.value = price;
     ItemPriceInput.onchange = function () {
         var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[2].childNodes[0].value;
-        const amount = rowItem.childNodes[3].childNodes[0].value;
-        rowItem.childNodes[5].childNodes[0].value = price * amount;
+        const price = rowItem.childNodes[1].childNodes[0].value;
+        const amount = rowItem.childNodes[2].childNodes[0].value;
+        rowItem.childNodes[4].childNodes[0].value = price * amount;
     }
 
     const ItemAmountInput = document.createElement("input");
@@ -148,9 +182,9 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     ItemAmountInput.min = 1;
     ItemAmountInput.onchange = function () {
         var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[2].childNodes[0].value;
-        const amount = rowItem.childNodes[3].childNodes[0].value;
-        rowItem.childNodes[5].childNodes[0].value = price * amount;
+        const price = rowItem.childNodes[1].childNodes[0].value;
+        const amount = rowItem.childNodes[2].childNodes[0].value;
+        rowItem.childNodes[4].childNodes[0].value = price * amount;
     }
 
     const ItemUnitInput = document.createElement("input");
@@ -213,13 +247,13 @@ function RemoveItemId(itemId) {
         var rowItem = document.getElementById(itemId);
         rowItem.remove();
         rowCounter--;
+        calcTotalAmount();
     }
     else {
         document.getElementById("DocumentWarningMessageDiv").style = "display: relative";
         document.getElementById("DocumentWarningMessage").innerHTML = "Doklad musí mít alespoň jednu položku!";
     }
 }
-
 
 function CustomerSelector() {
     var customerName = document.getElementById("customerSelector").value;

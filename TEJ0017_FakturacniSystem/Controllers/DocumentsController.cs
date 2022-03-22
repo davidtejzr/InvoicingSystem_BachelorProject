@@ -132,8 +132,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             basicInvoice.IsPaid = false;
             basicInvoice.IssueDate = DateTime.Now;
+            basicInvoice.Discount = float.Parse(itemsValues["Discount"].ToString().Replace(".", ","));
 
-            basicInvoice.TotalAmount = 0;
+            //basicInvoice.TotalAmount = 0;
 
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
                 && basicInvoice.User != null && basicInvoice.DocumentItems != null)
