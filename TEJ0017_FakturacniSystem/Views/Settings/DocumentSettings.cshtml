@@ -1,7 +1,7 @@
-﻿@model TEJ0017_FakturacniSystem.Models.Subject.OurCompany
-
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
 @{
     ViewData["Title"] = "Nastavení dokladu";
+    var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
 <ul class="nav nav-tabs">
@@ -47,6 +47,26 @@
 }
 
 
-<form asp-action="DocumentSettings">
-
-</form>
+<div class="col-md-8">
+    <form asp-action="DocumentSettings">
+        <div class="form-group">
+            <label class="control-label">Výchozí doba splatnosti ve dnech</label>
+            <div class="col-md-1">
+                <input type="number" name="defaultDueInterval" min="1" value="@ourCompany.DueInterval" class="form-control col-md-1" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Hlavička dokladu</label>
+            <textarea name="headerDescription" class="form-control" rows="3">@ourCompany.HeaderDesc</textarea>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Patička dokladu</label>
+            <textarea name="footerDescription" class="form-control" rows="3">@ourCompany.FooterDesc</textarea>
+        </div>
+        <div class="form-group d-flex">
+            <div class="ms-auto basicElementPadding">
+                <input class="btn btn-primary" type="submit" value="Uložit změny"/>
+            </div>
+        </div>
+    </form>
+</div>

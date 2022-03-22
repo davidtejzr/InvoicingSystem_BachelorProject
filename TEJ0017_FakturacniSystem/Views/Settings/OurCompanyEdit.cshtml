@@ -135,6 +135,13 @@
                     <input asp-for="Telephone" type="tel" class="form-control" />
                     <span asp-validation-for="Telephone" class="text-danger"></span>
                 </div>
+
+                <br />
+                <h4>Další možnosti</h4>
+                <div class="form-group">
+                    <label class="control-label">Webová stránka</label>
+                    <input name="WebPage" value="@ViewData["WebPage"]" type="text" class="form-control" />
+                </div>
             </div>
             <div class="row">
                 <div class="form-group d-flex basicElementPadding">

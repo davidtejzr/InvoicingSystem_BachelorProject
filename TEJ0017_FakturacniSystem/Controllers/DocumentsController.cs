@@ -137,8 +137,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             string discountVal = itemsValues["DiscountVal"];
             basicInvoice.Discount = float.Parse(discountVal.Replace(".", ","));
-            float calcTotalWithDiscount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum - calcTotalWithDiscount, 2);
+            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
+            basicInvoice.TotalAmount = (float?)Math.Round(sum - calcDiscountAmount, 2);
 
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
                 && basicInvoice.User != null && basicInvoice.DocumentItems != null)

@@ -45,8 +45,36 @@ namespace TEJ0017_FakturacniSystem
             address.City = this.JsonDict["AddressCity"];
             address.Zip = this.JsonDict["AddressZip"];
 
-            OurCompany.getInstance().fillData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
-                bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"]);
+            OurCompany.getInstance().fillAllData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
+                bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"], this.JsonDict["HeaderDesc"],
+                this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]));
+        }
+
+        public void updateOurCompanyDataInJson()
+        {
+            OurCompany ourCompany = OurCompany.getInstance();
+
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            data.Add("Ico", ourCompany.Ico.ToString());
+            data.Add("Dic", ourCompany.Dic);
+            data.Add("Name", ourCompany.Name);
+            data.Add("IsVatPayer", ourCompany.IsVatPayer.ToString());
+            data.Add("Email", ourCompany.Email);
+            data.Add("Telephone", ourCompany.Telephone);
+            data.Add("WebPage", ourCompany.WebPage);
+            data.Add("AddressStreet", ourCompany.Address.Street);
+            data.Add("AddressHouseNumber", ourCompany.Address.HouseNumber);
+            data.Add("AddressCity", ourCompany.Address.City);
+            data.Add("AddressZip", ourCompany.Address.Zip);
+            data.Add("HeaderDesc", ourCompany.HeaderDesc);
+            data.Add("FooterDesc", ourCompany.FooterDesc);
+            data.Add("DueInterval", ourCompany.DueInterval.ToString());
+
+            using (StreamWriter s = new StreamWriter(this.Path))
+            {
+                var json = JsonConvert.SerializeObject(data);
+                s.Write(json);
+            }
         }
 
         public void runEntryGuide()
@@ -63,6 +91,9 @@ namespace TEJ0017_FakturacniSystem
             data.Add("AddressHouseNumber", "252");
             data.Add("AddressCity", "Dolní Lhota");
             data.Add("AddressZip", "747 66");
+            data.Add("HeaderDesc", "");
+            data.Add("FooterDesc", "");
+            data.Add("DueInterval", "14");
 
             using (StreamWriter s = new StreamWriter(this.Path))
             {

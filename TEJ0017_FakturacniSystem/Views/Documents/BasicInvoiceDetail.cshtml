@@ -83,21 +83,33 @@
           @foreach(var item in @Model.DocumentItems)
             {
                 itemCounter++;
+                float sum = float.Parse(@item.UnitPrice.ToString()) * float.Parse(@item.Amount.ToString());
+
                 <tr>
                     <td>@itemCounter</td>
                     <th scope="col">@item.Name</th>
                     <td>@item.UnitPrice,- kč</td>
                     <td>@item.Amount</td>
                     <td>@item.Unit</td>
-                    <td>600,- kč</td>
+                    <td>@sum,- kč</td>
                 </tr>
             }
       </tbody>
     </table>
 
     <br />
+    @if(@Model.Discount > 0)
+    {
+        float discountAmount = (float)-(Model.TotalAmount * (Model.Discount / 100));
+        float roundedDiscountAmount = (float)Math.Round(discountAmount, 2);
+
+        <h4>- Sleva @Model.Discount% (@roundedDiscountAmount,- Kč)</h4>
+    }
+
+    <h3>Celková částka: @Model.TotalAmount,- Kč</h3>
+
+    <br />
     <p>@Model.footerDescription</p>
-    <h3>Celková částka</h3>
 
     <div class="position-absolute bottom-0" style="width: 1024px">
       <div

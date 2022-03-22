@@ -18,19 +18,28 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public IActionResult OurCompanyEdit()
         {
             OurCompany ourCompany = OurCompany.getInstance();
+            @ViewData["WebPage"] = ourCompany.WebPage;
             return View(ourCompany);
         }
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult OurCompanyEdit(SubjectNotMapped subject)
+        public IActionResult OurCompanyEdit(SubjectNotMapped subject, IFormCollection values)
         {
             OurCompany ourCompany = OurCompany.getInstance();
+            @ViewData["WebPage"] = values["WebPage"];
 
             if (ModelState.IsValid)
             {
-                //_context.Add(ourCompany);
-                //_context.SaveChangesAsync();
+                Address address = new Address();
+                address.Street = subject.Address.Street;
+                address.HouseNumber = subject.Address.HouseNumber;
+                address.City = subject.Address.City;
+                address.Zip = subject.Address.Zip;
+
+                ourCompany.fillCompanyData(subject.Ico, subject.Dic, subject.Name, subject.IsVatPayer, subject.Email, subject.Telephone, address, values["WebPage"]);
+                DataInitializer.getInstance().updateOurCompanyDataInJson();
+
                 ViewBag.SuccessMessage = "Změný úspěšně uloženy.";
                 return View(ourCompany);
             }
@@ -41,7 +50,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public IActionResult DocumentSettings()
         {
+            OurCompany ourCompany = OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DocumentSettings(IFormCollection values)
+        {
+            OurCompany ourCompany = OurCompany.getInstance();
+            ourCompany.fillDocSetData(values["headerDescription"], values["footerDescription"], Int32.Parse(values["defaultDueInterval"]));
+            DataInitializer.getInstance().updateOurCompanyDataInJson();
+            ViewData["OurCompany"] = ourCompany;
+
+            ViewBag.SuccessMessage = "Změny úspěšně uloženy.";
+            return View(ourCompany);
         }
 
         public IActionResult EmailTemplate()
