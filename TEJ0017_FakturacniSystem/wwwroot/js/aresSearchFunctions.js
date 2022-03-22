@@ -32,11 +32,19 @@ function getDataFromAresByIco() {
             }
             else {
                 document.getElementById("SubjectSearchInput").value = data["SubjectName"]
-                document.getElementById("SubjectDic").value = "CZ" + ico;
                 document.getElementById("SubjectStreet").value = data["SubjectStreet"]
                 document.getElementById("SubjectHouseNumber").value = data["SubjectHouseNumber"]
                 document.getElementById("SubjectCity").value = data["SubjectCity"]
                 document.getElementById("SubjectZip").value = data["SubjectZip"]
+
+                if (data["SubjectDic"] !== undefined) {
+                    document.getElementById("SubjectDic").value = data["SubjectDic"];
+                    document.getElementById("SubjectDicCheckBox").checked = true;
+                }
+                else {
+                    document.getElementById("SubjectDic").value = "";
+                    document.getElementById("SubjectDicCheckBox").checked = false;
+                }
 
                 document.getElementById("msgInfoDiv").style = "display: relative;"
                 document.getElementById("msgInfoText").innerHTML = data["InfoMsg"];

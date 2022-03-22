@@ -1,0 +1,52 @@
+﻿@model TEJ0017_FakturacniSystem.Models.Subject.OurCompany
+
+@{
+    ViewData["Title"] = "Šablona emailu";
+}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="/Settings/OurCompanyEdit">Fakturační údaje</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/PaymentMethods">Platební metody</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/BankDetails">Bankovní účty</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/Settings/DocumentSettings">Nastavení dokladu</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/Settings/EmailTemplate">Šablona E-mailu</a>
+    </li>
+</ul>
+
+<br />
+<h1><i class="bi bi-envelope"></i> Šablona emailu</h1>
+<hr />
+
+@if (@ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+            @ViewBag.ErrorMessage
+        </div>
+    </div>
+}
+
+@if (@ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+            @ViewBag.SuccessMessage
+        </div>
+    </div>
+}
+
+
+<form asp-action="DocumentSettings">
+
+</form>

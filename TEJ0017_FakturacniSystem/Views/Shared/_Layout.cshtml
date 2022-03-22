@@ -50,14 +50,14 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Zálohové faktury</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Zálohové faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Opravné daňové doklady</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Pravidelné faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Šablony</a></li>
                             </ul>
                         </li>
-
-
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Ceník</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="AddressBook" asp-action="Index">Adresář</a>
                         </li>
@@ -71,10 +71,11 @@
                                 Nastavení
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Aplikace</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Uživatel</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="OurCompanyEdit">Fakturační údaje</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Platební metody</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="BankDetails" asp-action="Index">Bankovní účty</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="DocumentSettings">Nastavení dokladu</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="EmailTemplate">Šablona E-mailu</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">

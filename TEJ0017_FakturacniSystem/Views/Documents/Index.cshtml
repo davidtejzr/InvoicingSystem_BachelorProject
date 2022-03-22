@@ -4,7 +4,23 @@
     ViewData["Title"] = "Vydané faktury";
 }
 
-<h1><i class="bi bi-receipt"></i> Vydané faktury</h1>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Faktury</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Zálohové faktury</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Opravné daňové doklady</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Pravidelné faktury</a>
+    </li>
+
+</ul>
+
+<h1 class="basicElementPadding"><i class="bi bi-receipt"></i> Vydané faktury</h1>
 
 <p>
     <a class="btn btn-primary" asp-action="CreateBasicInvoice"><i class="bi bi-plus"></i>Nová faktura</a>

@@ -7,7 +7,7 @@ namespace TEJ0017_FakturacniSystem.Models.User
     {
         public int UserId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Login je vyžadován!")]
         public string Login { get; set; }
 
         [Required(ErrorMessage = "Heslo je vyžadováno!")]
@@ -20,11 +20,11 @@ namespace TEJ0017_FakturacniSystem.Models.User
         [Display(Name = "Heslo")]
         public string PasswordVerify { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Jméno je vyžadováno!")]
         [Display(Name = "Jméno")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Příjmení je vyžadováno!")]
         [Display(Name = "Příjmení")]
         public string Surname { get; set; }
 

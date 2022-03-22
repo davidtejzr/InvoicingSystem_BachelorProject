@@ -64,6 +64,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.ErrorMessage = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(customer);
             
         }

@@ -9,23 +9,28 @@ namespace TEJ0017_FakturacniSystem
     {
         private string xmlResult;
         private XmlDocument xmlDocument;
+        private XmlDocument xmlDocumentDph;
         public Dictionary<string, string> parsedData;
         private static readonly HttpClient httpClient = new HttpClient();
         private static readonly string aresUrl = "https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?";
+        private static readonly string aresUrlDph = "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi?";
 
         public AresCommunicator()
         {
             xmlResult = String.Empty;
             parsedData = new Dictionary<string, string>();
             xmlDocument = new XmlDocument();
+            xmlDocumentDph = new XmlDocument();
         }
 
-        private void parseDataByIco(string jsonText)
+        private void parseDataByIco(string jsonText, string jsonTextDph)
         {
             dynamic jsonDataRaw = JObject.Parse(jsonText);
+            dynamic jsonDataRawDph = JObject.Parse(jsonTextDph);
 
             if (jsonDataRaw["are:Ares_odpovedi"]["are:Odpoved"]["are:Pocet_zaznamu"] == "1")
             {
+                //ico
                 dynamic jsonDataRecord = jsonDataRaw["are:Ares_odpovedi"]["are:Odpoved"]["are:Zaznam"];
                 dynamic jsonDataAddress = jsonDataRecord["are:Identifikace"]["are:Adresa_ARES"];
 
@@ -40,6 +45,15 @@ namespace TEJ0017_FakturacniSystem
                 parsedData.Add("SubjectHouseNumber", subjectHouseNumber);
                 parsedData.Add("SubjectCity", subjectCity);
                 parsedData.Add("SubjectZip", subjectZip);
+
+                //dic
+                try
+                {
+                    string subjectDic = jsonDataRawDph["are:Ares_odpovedi"]["are:Odpoved"]["D:VBAS"]["D:DIC"]["#text"];
+                    if (subjectDic != null)
+                        parsedData.Add("SubjectDic", subjectDic);
+                }
+                catch (Exception ex) { }
 
                 parsedData.Add("InfoMsg", "Data úšpěšně stažena z databáze ARES.");
             }
@@ -122,8 +136,11 @@ namespace TEJ0017_FakturacniSystem
         public Dictionary<string, string> getInfoByIco(string ico)
         {
             var result = httpClient.GetStringAsync(aresUrl + "ico=" + ico);
+            var resultDph = httpClient.GetStringAsync(aresUrlDph + "ico=" + ico);
+
             xmlDocument.LoadXml(result.Result);
-            parseDataByIco(JsonConvert.SerializeXmlNode(xmlDocument));
+            xmlDocumentDph.LoadXml(resultDph.Result);
+            parseDataByIco(JsonConvert.SerializeXmlNode(xmlDocument), JsonConvert.SerializeXmlNode(xmlDocumentDph));
 
             return parsedData;
         }
@@ -132,7 +149,7 @@ namespace TEJ0017_FakturacniSystem
         {
             subjectName = subjectName.Replace(" ", "%20");
             var result = httpClient.GetStringAsync(aresUrl + "obchodni_firma=" + subjectName);
-            xmlResult= result.Result;
+            xmlResult = result.Result;
             parseDataBySubjectName();
 
             return parsedData;
