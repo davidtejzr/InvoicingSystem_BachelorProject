@@ -18,114 +18,123 @@
   <div id="msgInfoText"></div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <h4>Základní údaje</h4>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" type="search" id="SubjectSearchInput" class="form-control" placeholder="Vyhledat společnost podle názvu..." autocomplete="off" />
-                <div class="list-group" id="SubjectSearchResult"></div>
-                <span asp-validation-for="Name" class="text-danger"></span>
+
+<form asp-action="Create">
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col">
+                <h4>Základní údaje</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" type="search" id="SubjectSearchInput" class="form-control" placeholder="Vyhledat společnost podle názvu..." autocomplete="off" />
+                    <div class="list-group" id="SubjectSearchResult"></div>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        <label asp-for="Ico" class="control-label"></label>
+                        <input asp-for="Ico" id="SubjectIco" type="number" class="form-control" />   
+                    </div>
+                    <div class="form-group col">
+                        <label></label>
+                        <input type="button" class="btn btn-primary form-control" onclick="getDataFromAresByIco()" value="ARES"/>
+                    </div>
+                    <span asp-validation-for="Ico" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Dic" class="control-label"></label>
+                    <input asp-for="Dic" id="SubjectDic" class="form-control" />
+                    <span asp-validation-for="Dic" class="text-danger"></span>
+                </div>
+
+                <br />
+                <h4>Sídlo</h4>
+                <div class="form-group">
+                    <label asp-for="Address.Street" class="control-label"></label>
+                    <input asp-for="Address.Street" id="SubjectStreet" class="form-control" />
+                    <span asp-validation-for="Address.Street" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address.HouseNumber" class="control-label"></label>
+                    <input asp-for="Address.HouseNumber" id="SubjectHouseNumber" class="form-control" />
+                    <span asp-validation-for="Address.HouseNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address.City" class="control-label"></label>
+                    <input asp-for="Address.City" id="SubjectCity" class="form-control" />
+                    <span asp-validation-for="Address.City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address.Zip" class="control-label"></label>
+                    <input asp-for="Address.Zip" id="SubjectZip" class="form-control" />
+                    <span asp-validation-for="Address.Zip" class="text-danger"></span>
+                </div>
+                <div class="form-group" onload="getStatesFromApi">
+                    <label asp-for="Address.State" class="control-label"></label>
+                    <select asp-for="Address.State" class="form-select" id="stateSelector">
+                        <option value="Česká Republika" selected>Česká Republika</option>
+                        <option value="Slovenská republika">Slovenská republika</option>
+                    </select>
+                    <span asp-validation-for="Address.State" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col">
+                <h4>Kontaktní údaje</h4>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" type="email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Telephone" class="control-label"></label>
+                    <input asp-for="Telephone" type="tel" class="form-control" />
+                    <span asp-validation-for="Telephone" class="text-danger"></span>
+                </div>
+
+                <br />
+                <h4>Kontaktní osoba</h4>
+                <div class="form-group">
+                    <label asp-for="ContactName" class="control-label"></label>
+                    <input asp-for="ContactName" class="form-control" />
+                    <span asp-validation-for="ContactName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ContactSurname" class="control-label"></label>
+                    <input asp-for="ContactSurname" class="form-control" />
+                    <span asp-validation-for="ContactSurname" class="text-danger"></span>
+                </div>
+
+                <br />
+                <h4>Další možnosti</h4>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="IsVatPayer" />Subjekt je plátcem DPH
+                    </label>
+                </div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="AresUpdateAllowed" />Povolit aktualizaci údaje z databáze ARES
+                    </label>
+                </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-8">
-                    <label asp-for="Ico" class="control-label"></label>
-                    <input asp-for="Ico" id="SubjectIco" type="number" class="form-control" />   
+                <div class="form-group d-flex basicElementPadding">
+                    <div class="ms-auto" style="padding-right: 10px;">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
+                    </div>
+                    <div>
+                        <input type="submit" value="Vytvořit kontakt" class="btn btn-primary" />    
+                    </div>
                 </div>
-                <div class="form-group col">
-                    <label></label>
-                    <input type="button" class="btn btn-primary form-control" onclick="getDataFromAresByIco()" value="ARES"/>
-                </div>
-                <span asp-validation-for="Ico" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Dic" class="control-label"></label>
-                <input asp-for="Dic" id="SubjectDic" class="form-control" />
-                <span asp-validation-for="Dic" class="text-danger"></span>
-            </div>
 
-            <br />
-            <h4>Sídlo</h4>
-            <div class="form-group">
-                <label asp-for="Address.Street" class="control-label"></label>
-                <input asp-for="Address.Street" id="SubjectStreet" class="form-control" />
-                <span asp-validation-for="Address.Street" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Address.HouseNumber" class="control-label"></label>
-                <input asp-for="Address.HouseNumber" id="SubjectHouseNumber" class="form-control" />
-                <span asp-validation-for="Address.HouseNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address.City" class="control-label"></label>
-                <input asp-for="Address.City" id="SubjectCity" class="form-control" />
-                <span asp-validation-for="Address.City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address.Zip" class="control-label"></label>
-                <input asp-for="Address.Zip" id="SubjectZip" class="form-control" />
-                <span asp-validation-for="Address.Zip" class="text-danger"></span>
-            </div>
-            <div class="form-group" onload="getStatesFromApi">
-                <label asp-for="Address.State" class="control-label"></label>
-                <select asp-for="Address.State" class="form-select" id="stateSelector">
-                    <option value="Česká Republika" selected>Česká Republika</option>
-                    <option value="Slovenská republika">Slovenská republika</option>
-                </select>
-                <span asp-validation-for="Address.State" class="text-danger"></span>
-            </div>
-
-            <br />
-            <h4>Kontaktní údaje</h4>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" type="email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telephone" class="control-label"></label>
-                <input asp-for="Telephone" type="tel" class="form-control" />
-                <span asp-validation-for="Telephone" class="text-danger"></span>
-            </div>
-
-            <br />
-            <h4>Kontaktní osoba</h4>
-            <div class="form-group">
-                <label asp-for="ContactName" class="control-label"></label>
-                <input asp-for="ContactName" class="form-control" />
-                <span asp-validation-for="ContactName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactSurname" class="control-label"></label>
-                <input asp-for="ContactSurname" class="form-control" />
-                <span asp-validation-for="ContactSurname" class="text-danger"></span>
-            </div>
-
-            <br />
-            <h4>Další možnosti</h4>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsVatPayer" />Subjekt je plátcem DPH
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="AresUpdateAllowed" />Povolit aktualizaci údaje z databáze ARES
-                </label>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Vytvořit kontakt" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 <script src="~/js/aresSearchFunctions.js" asp-append-version="true"></script>

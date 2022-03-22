@@ -18,16 +18,16 @@ function CalcDiscount() {
     const discountAmount = document.getElementById("discountAmount");
 
     if (parseFloat(discountInputAmount) > 0) {
-        const computedDiscount = -(sum * (discountInputAmount/100));
+        console.log(discountInputAmount);
+        //round to 2 decimal
+        const computedDiscount = Math.round(-(sum * (discountInputAmount / 100)) * 100)/100;
         discountAmount.innerHTML = parseFloat(computedDiscount) + ",- Kč";
-        const sumWithDiscount = sum + computedDiscount;
+        const sumWithDiscount = Math.round((sum + computedDiscount) * 100)/100;
         document.getElementById("totalAmount").innerHTML = sumWithDiscount + ",- Kč";
-        document.getElementById("totalAmountInput").value = sumWithDiscount;
     }
     else {
         discountAmount.innerHTML = "0.0,- Kč";
         document.getElementById("totalAmount").innerHTML = sum + ",- Kč";
-        document.getElementById("totalAmountInput").value = sum;
     }
 }
 

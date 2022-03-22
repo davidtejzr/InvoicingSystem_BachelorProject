@@ -106,6 +106,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             var itemsAmounts = itemsValues["ItemAmount"];
             var itemsUnits = itemsValues["ItemUnit"];
 
+            float sum = 0;
             List<DocumentItem> documentItems = new List<DocumentItem>();
             for(int i = 0; i < itemsNames.Count; i++)
             {
@@ -115,6 +116,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 documentItem.UnitPrice = float.Parse(commaChange);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
+                sum += documentItem.UnitPrice * documentItem.Amount;
 
                 documentItems.Add(documentItem);
             }
@@ -132,9 +134,11 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             basicInvoice.IsPaid = false;
             basicInvoice.IssueDate = DateTime.Now;
-            basicInvoice.Discount = float.Parse(itemsValues["Discount"].ToString().Replace(".", ","));
 
-            //basicInvoice.TotalAmount = 0;
+            string discountVal = itemsValues["DiscountVal"];
+            basicInvoice.Discount = float.Parse(discountVal.Replace(".", ","));
+            float calcTotalWithDiscount = (float)-(sum * (basicInvoice.Discount / 100));
+            basicInvoice.TotalAmount = (float?)Math.Round(sum - calcTotalWithDiscount, 2);
 
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
                 && basicInvoice.User != null && basicInvoice.DocumentItems != null)

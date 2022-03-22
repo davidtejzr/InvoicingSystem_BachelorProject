@@ -82,7 +82,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentItem", b =>
@@ -118,7 +118,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasIndex("TaxRateId");
 
-                    b.ToTable("DocumentItems");
+                    b.ToTable("DocumentItems", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.TaxRate", b =>
@@ -141,7 +141,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasKey("TaxRateId");
 
-                    b.ToTable("TaxRate");
+                    b.ToTable("TaxRate", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod", b =>
@@ -164,7 +164,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasKey("PaymentMethodId");
 
-                    b.ToTable("PaymentMethods");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Subject.Address", b =>
@@ -197,7 +197,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasKey("AddressId");
 
-                    b.ToTable("SubjectAddresses");
+                    b.ToTable("SubjectAddresses", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Subject.Subject", b =>
@@ -234,7 +234,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.User.User", b =>
@@ -276,7 +276,7 @@ namespace TEJ0017_FakturacniSystem.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.BasicInvoice", b =>

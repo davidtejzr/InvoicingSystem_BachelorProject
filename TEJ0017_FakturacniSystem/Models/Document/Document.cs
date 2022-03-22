@@ -48,7 +48,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
         public float? Discount { get; set; }
 
         [Display(Name = "Celková částka")]
-        public float TotalAmount { get; set; }
+        public float? TotalAmount { get; set; }
 
         [Display(Name = "Uhrazeno")]
         public bool IsPaid { get; set; }
