@@ -141,7 +141,7 @@
 
     <div class="form-group basicElementPadding">
         <label asp-for="headerDescription" class="control-label"></label>
-        <textarea asp-for="headerDescription" class="form-control" rows="3"></textarea>
+        <textarea asp-for="headerDescription" class="form-control" rows="2" placeholder="@ourCompany.HeaderDesc"></textarea>
         <span asp-validation-for="headerDescription" class="text-danger"></span>
     </div>
 
@@ -178,7 +178,7 @@
             <script type="text/javascript">
                 DocumentAddItem();
                 var dateIncrement = new Date();
-                dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + 14);
+                dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
                 document.getElementById("DocumentTaxDate").valueAsDate = new Date(dateIncrement);
                 document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
             </script>
@@ -206,13 +206,13 @@
     </div>
     <div class="d-flex form-group">
         <div class="ms-auto p-2">
-            <h4>Celková cena: </h4><h4 id="totalAmount">0.00,- Kč</h4>
+            <div class="fs-2" id="totalAmount">Celková cena: 0.00,- Kč</div>
         </div>
     </div>
 
     <div class="form-group basicElementPadding">
         <label asp-for="footerDescription" class="control-label"></label>
-        <textarea asp-for="footerDescription" class="form-control" rows="3"></textarea>
+        <textarea asp-for="footerDescription" class="form-control" rows="2" placeholder="@ourCompany.FooterDesc"></textarea>
         <span asp-validation-for="footerDescription" class="text-danger"></span>
     </div>
 

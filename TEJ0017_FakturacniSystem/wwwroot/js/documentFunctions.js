@@ -23,11 +23,11 @@ function CalcDiscount() {
         const computedDiscount = Math.round(-(sum * (discountInputAmount / 100)) * 100)/100;
         discountAmount.innerHTML = parseFloat(computedDiscount) + ",- Kč";
         const sumWithDiscount = Math.round((sum + computedDiscount) * 100)/100;
-        document.getElementById("totalAmount").innerHTML = sumWithDiscount + ",- Kč";
+        document.getElementById("totalAmount").innerHTML = "Celková cena: " + sumWithDiscount + ",- Kč";
     }
     else {
         discountAmount.innerHTML = "0.0,- Kč";
-        document.getElementById("totalAmount").innerHTML = sum + ",- Kč";
+        document.getElementById("totalAmount").innerHTML = "Celková cena: " + sum + ",- Kč";
     }
 }
 
