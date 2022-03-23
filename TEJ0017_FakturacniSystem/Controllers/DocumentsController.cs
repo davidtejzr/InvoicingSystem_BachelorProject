@@ -146,6 +146,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
                 && basicInvoice.User != null && basicInvoice.DocumentItems != null)
             {
+                if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
+                {
+                    ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
+                    return View(basicInvoice);
+                }
+
                 _context.Add(basicInvoice);
                 _context.SaveChanges();
 
@@ -153,11 +159,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 numericalSeriesGenerator.saveChanges();
                 DataInitializer.getInstance().updateOurCompanyDataInJson();
 
+                TempData["SuccessMessage"] = "Faktura úspěšně vystavena.";
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["BasicInvoice"] = basicInvoice;
-            ViewBag.ErrorMessage = "Chyba validity formuláře!";
+            ViewData["ErrorMessage"] = "Chyba validity formuláře!";
             return View(basicInvoice);
         }
 
