@@ -17,7 +17,7 @@ namespace TEJ0017_FakturacniSystem.Models.User
         [NotMapped]
         [Required(ErrorMessage = "Ověření hesla je vyžadováno!")]
         [Compare("Password", ErrorMessage = "Zadaná hesla se neshodují!")]
-        [Display(Name = "Heslo")]
+        [Display(Name = "Ověření hesla")]
         public string PasswordVerify { get; set; }
 
         [Required(ErrorMessage = "Jméno je vyžadováno!")]
@@ -28,6 +28,7 @@ namespace TEJ0017_FakturacniSystem.Models.User
         [Display(Name = "Příjmení")]
         public string Surname { get; set; }
 
+        [Required(ErrorMessage = "Email je vyžadován!")]
         [Display(Name = "E-mail")]
         public string Email { get; set; }
 

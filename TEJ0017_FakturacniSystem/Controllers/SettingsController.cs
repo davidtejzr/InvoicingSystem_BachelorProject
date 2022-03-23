@@ -40,11 +40,11 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 ourCompany.fillCompanyData(subject.Ico, subject.Dic, subject.Name, subject.IsVatPayer, subject.Email, subject.Telephone, address, values["WebPage"]);
                 DataInitializer.getInstance().updateOurCompanyDataInJson();
 
-                ViewBag.SuccessMessage = "Změný úspěšně uloženy.";
+                ViewData["SuccessMessage"] = "Změný úspěšně uloženy.";
                 return View(ourCompany);
             }
 
-            ViewBag.ErrorMessage = "Formulář obsahuje chyby, změny nelze uložit!";
+            ViewData["ErrorMessage"] = "Formulář obsahuje chyby, změny nelze uložit!";
             return View(ourCompany);
         }
 
@@ -64,7 +64,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             DataInitializer.getInstance().updateOurCompanyDataInJson();
             ViewData["OurCompany"] = ourCompany;
 
-            ViewBag.SuccessMessage = "Změny úspěšně uloženy.";
+            ViewData["SuccessMessage"] = "Změny úspěšně uloženy.";
             return View(ourCompany);
         }
 

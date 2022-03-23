@@ -42,12 +42,21 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         {
             if (ModelState.IsValid)
             {
-                _context.Add(paymentMethod);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (_context.PaymentMethods.FirstOrDefault(pm => pm.Name == paymentMethod.Name) == null)
+                {
+                    _context.Add(paymentMethod);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Platební metoda vytvořena.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Platební metoda s tímto názvem již existuje!";
+                    return View(paymentMethod);
+                }
             }
 
-            ViewBag.ErrorMessage = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(paymentMethod);
         }
 

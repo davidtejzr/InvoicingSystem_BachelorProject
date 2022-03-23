@@ -60,11 +60,19 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (_context.Customers.FirstOrDefault(c => c.Ico == customer.Ico) == null)
+                {
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Kontakt uložen.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Kontant s tímto IČO již existuje!";
+                    return View(customer);
+                }
             }
-
             ViewBag.ErrorMessage = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(customer);
             

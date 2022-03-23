@@ -57,12 +57,20 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         {
             if (ModelState.IsValid)
             {
-                _context.Add(bankDetail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (_context.BankDetails.FirstOrDefault(bd => bd.Name == bankDetail.Name) == null)
+                {
+                    _context.Add(bankDetail);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Bankovní účet vytvořen.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Bankovní účet s tímto názvem již existuje!";
+                    return View(bankDetail);
+                }
             }
-
-            ViewBag.ErrorMessage = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(bankDetail);
         }
 

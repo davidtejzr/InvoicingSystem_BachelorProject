@@ -40,29 +40,39 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Admin admin, Purser purser, IFormCollection values)
         {
-
             if (ModelState.IsValid)
             {
-                if (values["AccountType"] == "admin")
+                if (_context.Users.FirstOrDefault(u => u.Login == values["Login"].ToString()) == null)
                 {
-                    admin.RegisteredTmpstmp = DateTime.Now;
-                    admin.LastLoginTmstmp = DateTime.Now;
-                    admin.Password = Crypto.HashPassword(admin.Password);
-                    _context.Add(admin);
-                }
-                else if (values["AccountType"] == "purser")
-                {
-                    purser.RegisteredTmpstmp = DateTime.Now;
-                    purser.LastLoginTmstmp = DateTime.Now;
-                    purser.Password = Crypto.HashPassword(purser.Password);
-                    _context.Add(purser);
+                    if (values["AccountType"] == "admin")
+                    {
+                        admin.RegisteredTmpstmp = DateTime.Now;
+                        admin.LastLoginTmstmp = DateTime.Now;
+                        admin.Password = Crypto.HashPassword(admin.Password);
+                        _context.Add(admin);
+                    }
+                    else if (values["AccountType"] == "purser")
+                    {
+                        purser.RegisteredTmpstmp = DateTime.Now;
+                        purser.LastLoginTmstmp = DateTime.Now;
+                        purser.Password = Crypto.HashPassword(purser.Password);
+                        _context.Add(purser);
+                    }
+                    else
+                        return BadRequest();
+
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Uživatel úspěšně vytvořen.";
+                    return RedirectToAction(nameof(Index));
                 }
                 else
-                    return BadRequest();
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                {
+                    ViewData["ErrorMessage"] = "Uživatel s tímto názvem již existuje!";
+                    return View();
+                }
             }
+
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View();
         }
 
