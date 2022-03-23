@@ -55,7 +55,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
                     };
 
                     await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")));
-                    //HttpContext.Session.SetString("UserName", searchedUser.Name + " " + searchedUser.Surname);
+
+                    //last login timestamp update
+                    searchedUser.LastLoginTmstmp = DateTime.Now;
+                    await _context.SaveChangesAsync();
 
                     if (Url.IsLocalUrl(returnUrl))
                         return Redirect(returnUrl);

@@ -60,7 +60,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public IActionResult DocumentSettings(IFormCollection values)
         {
             OurCompany ourCompany = OurCompany.getInstance();
-            ourCompany.fillDocSetData(values["headerDescription"], values["footerDescription"], Int32.Parse(values["defaultDueInterval"]));
+            ourCompany.fillDocSetData(values["headerDescription"], values["footerDescription"], Int32.Parse(values["defaultDueInterval"]), Int32.Parse(values["documentNumberLength"]));
             DataInitializer.getInstance().updateOurCompanyDataInJson();
             ViewData["OurCompany"] = ourCompany;
 

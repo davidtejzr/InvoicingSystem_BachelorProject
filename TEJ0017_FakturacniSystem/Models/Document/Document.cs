@@ -9,8 +9,11 @@ namespace TEJ0017_FakturacniSystem.Models.Document
     {
         public int DocumentId { get; set; }
 
+        public string DocumentNo { get; set; }
+
         [ForeignKey("User")]
         public int? UserId { get; set; }
+
         [ValidateNever]
         public User.User User { get; set; }
 

@@ -84,6 +84,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
 
+            NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
+            ViewData["NextNum"] = numericalSeriesGenerator.generateDocumentNumber();
+
             return View();
         }
 
@@ -145,6 +148,11 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 _context.Add(basicInvoice);
                 _context.SaveChanges();
+
+                NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
+                numericalSeriesGenerator.saveChanges();
+                DataInitializer.getInstance().updateOurCompanyDataInJson();
+
                 return RedirectToAction(nameof(Index));
             }
 
