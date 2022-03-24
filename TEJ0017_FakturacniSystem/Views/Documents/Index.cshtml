@@ -113,7 +113,14 @@
                 <a asp-action="Edit" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentNo)</a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsPaid)
+                @if(item.IsPaid)
+                {
+                    <a asp-action="SetUnpaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Zrušit úhradu faktury"><i class="bi bi-check-circle-fill"></i></a> 
+                }
+                else
+                {
+                    <a asp-action="SetPaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Označit fakturu jako uhrazenou"><i class="bi bi-check-circle"></i></a>   
+                } 
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Customer.Name)
@@ -127,7 +134,7 @@
             <td>
                 @item.DueDate.ToShortDateString()
             </td>
-            <td>
+            <td>  
                 <a asp-action="BasicInvoiceDetail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
                 <a asp-action="Delete" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Odstranění faktury"><i class="bi bi-trash-fill"></i></a>
             </td>

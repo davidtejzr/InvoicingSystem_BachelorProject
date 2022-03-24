@@ -276,5 +276,43 @@ namespace TEJ0017_FakturacniSystem.Controllers
             else
                 return Content("false");
         }
+
+        public async Task<IActionResult> SetPaid(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var document = await _context.Documents.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            document.IsPaid = true;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> SetUnpaid(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var document = await _context.Documents.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            document.IsPaid = false;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
