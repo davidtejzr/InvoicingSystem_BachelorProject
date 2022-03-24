@@ -31,7 +31,7 @@ function CalcDiscount() {
     }
 }
 
-function DocumentAddItem() {
+function DocumentAddItem(isVatPayer) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     const itemId = "item" + rowCounter++;
 
@@ -100,7 +100,7 @@ function DocumentAddItem() {
     removeButtonCol.appendChild(removeButton);
 
     const ItemNameInputCol = document.createElement("div");
-    ItemNameInputCol.className = "col-md-5";
+    ItemNameInputCol.className = "col-md-4";
     ItemNameInputCol.appendChild(ItemNameInput);
 
     const ItemPriceInputCol = document.createElement("div");
@@ -129,6 +129,31 @@ function DocumentAddItem() {
     ItemRow.appendChild(ItemPriceInputCol);
     ItemRow.appendChild(ItemAmountInputCol);
     ItemRow.appendChild(ItemUnitInputCol);
+
+    //tax rates
+    if (isVatPayer === "True") {
+        const ItemPriceWoVat = document.createElement("input");
+        ItemPriceWoVat.name = "ItemPriceWoVat";
+        ItemPriceWoVat.value = "";
+        ItemPriceWoVat.className = "form-control";
+
+        const ItemVat = document.createElement("input");
+        ItemVat.name = "ItemVat";
+        ItemVat.value = "";
+        ItemVat.className = "form-control";
+
+        const ItemPriceWoVatCol = document.createElement("div");
+        ItemPriceWoVatCol.className = "col-md-2";
+        ItemPriceWoVatCol.appendChild(ItemPriceWoVat);
+
+        const ItemVatCol = document.createElement("div");
+        ItemVatCol.className = "col";
+        ItemVatCol.appendChild(ItemVat);
+
+        ItemRow.appendChild(ItemPriceWoVatCol);
+        ItemRow.appendChild(ItemVatCol);
+    }
+
     ItemRow.appendChild(ItemTotalAmountCol);
     ItemRow.appendChild(removeButtonCol);
     ItemRow.id = itemId;
@@ -270,7 +295,10 @@ function CustomerSelector() {
         document.getElementById("labelCustomerAddressFirstRow").innerHTML = data["customerStreet"] + data["customerHouseNumber"];
         document.getElementById("labelCustomerAddressSecondRow").innerHTML = data["customerZip"] + "&nbsp;&nbsp;" + data["customerCity"];
         document.getElementById("labelCustomerIco").innerHTML = "IČO: " + data["customerIco"];
-        document.getElementById("labelCustomerDic").innerHTML = "DIČ: " + data["customerDic"];
+        if (data["customerDic"] !== null)
+            document.getElementById("labelCustomerDic").innerHTML = "DIČ: " + data["customerDic"];
+        else
+            document.getElementById("labelCustomerDic").innerHTML = "";
     });
 }
 

@@ -136,16 +136,24 @@
         </div>
         <div class="col">
             <div class="form-group">
-                <label asp-for="DueDate" class="control-label"></label>
-                <input asp-for="DueDate" id="DocumentDueDate" type="date" class="form-control" required/>
-                <span asp-validation-for="DueDate" class="text-danger"></span>
+                <label asp-for="IssueDate" class="control-label"></label>
+                <input asp-for="IssueDate" id="DocumentIssueDate" type="date" class="form-control" disabled/>
+                <span asp-validation-for="IssueDate" class="text-danger"></span>
             </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
+            @if (ourCompany.IsVatPayer)
+            {
+                <div class="form-group">
                 <label asp-for="TaxDate" class="control-label"></label>
                 <input asp-for="TaxDate" id="DocumentTaxDate" type="date" class="form-control" required/>
                 <span asp-validation-for="TaxDate" class="text-danger"></span>
+                </div>
+            }
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" id="DocumentDueDate" type="date" class="form-control" required/>
+                <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
         </div>
     </div>
@@ -158,7 +166,7 @@
 
     <h3 class="basicElementPadding">Položky faktury</h3>
     <div class="row" id="item_0">
-        <div class="col-md-5">
+        <div class="col-md-4">
             <label class="control-label">Položka</label>
         </div>
         <div class="col">
@@ -168,8 +176,17 @@
             <label class="control-label">Množství</label>
         </div>
         <div class="col">
-            <label class="control-label">Jednotka</label>
+            <label class="control-label">MJ</label>
         </div>
+        @if(ourCompany.IsVatPayer)
+        {
+            <div class="col-md-2">
+                <label class="control-label">Cena bez DPH / MJ</label>
+            </div>
+            <div class="col">
+                <label class="control-label">DPH</label>
+            </div>
+        }
         <div class="col">
             <label class="control-label">Celkem</label>
         </div>  
@@ -187,10 +204,12 @@
         else
         {
             <script type="text/javascript">
-                DocumentAddItem();
+                DocumentAddItem('@ourCompany.IsVatPayer');
                 var dateIncrement = new Date();
                 dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
-                document.getElementById("DocumentTaxDate").valueAsDate = new Date(dateIncrement);
+                document.getElementById("DocumentIssueDate").valueAsDate = new Date();
+                if(document.getElementById("DocumentTaxDate") != null)
+                    document.getElementById("DocumentTaxDate").valueAsDate = new Date();
                 document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
             </script>
 
@@ -198,7 +217,7 @@
 
 
     <div class="col-md-0" style="padding-top: 10px;">
-        <button type="button" class="btn btn-primary" onclick="DocumentAddItem()"><i class="bi bi-plus"></i>Další položka</button>
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.IsVatPayer')"><i class="bi bi-plus"></i>Další položka</button>
     </div>
    
 
