@@ -88,6 +88,13 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
 
             if (ModelState.IsValid)
             {
+                PaymentMethod pm = _context.PaymentMethods.FirstOrDefault(pm => (pm.Name == paymentMethod.Name) && (pm.PaymentMethodId != id));
+                if ((pm != null) && (pm.PaymentMethodId != id))
+                {
+                    ViewData["ErrorMessage"] = "Platební metoda s tímto názvem již existuje!";
+                    return View(paymentMethod);
+                }
+
                 try
                 {
                     _context.Update(paymentMethod);
@@ -104,8 +111,12 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Změny uloženy.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(paymentMethod);
         }
 

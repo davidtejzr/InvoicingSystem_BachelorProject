@@ -83,7 +83,6 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
-
             NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
             ViewData["NextNum"] = numericalSeriesGenerator.generateDocumentNumber();
 
@@ -95,6 +94,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateBasicInvoice(BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
+            //inicializace nactenych dat pro zpetne generovani
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
             var bankDetails =  _context.BankDetails.ToList();
             var paymentMethods =  _context.PaymentMethods.ToList();
@@ -103,12 +103,14 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
+            ViewData["NextNum"] = basicInvoice.DocumentNo;
 
             var itemsNames = itemsValues["ItemName"];
             var itemsPrices = itemsValues["ItemPrice"];
             var itemsAmounts = itemsValues["ItemAmount"];
             var itemsUnits = itemsValues["ItemUnit"];
 
+            //vypocet celkove castky
             float sum = 0;
             List<DocumentItem> documentItems = new List<DocumentItem>();
             for(int i = 0; i < itemsNames.Count; i++)
@@ -126,9 +128,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             basicInvoice.DocumentItems = documentItems;
             basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
-
             basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-
             basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
 
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
@@ -149,12 +149,14 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
                 {
                     ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
+                    ViewData["BasicInvoice"] = basicInvoice;
                     return View(basicInvoice);
                 }
 
                 _context.Add(basicInvoice);
                 _context.SaveChanges();
 
+                //nastaveni ukazatele generovani ciselne rady na aktualni hodnotu
                 NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
                 numericalSeriesGenerator.saveChanges();
                 DataInitializer.getInstance().updateOurCompanyDataInJson();
@@ -185,8 +187,6 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         // POST: Documents/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DocumentId,VariableSymbol,ConstantSymbol,IssueDate,DueDate,TaxDate,Discount,IsPaid,headerDescription,footerDescription")] Document document)

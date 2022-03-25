@@ -31,7 +31,7 @@ function CalcDiscount() {
     }
 }
 
-function DocumentAddItem(isVatPayer) {
+function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     const itemId = "item" + rowCounter++;
 
@@ -84,7 +84,7 @@ function DocumentAddItem(isVatPayer) {
 
     const ItemUnitInput = document.createElement("input");
     ItemUnitInput.name = "ItemUnit";
-    ItemUnitInput.value = "";
+    ItemUnitInput.value = defaultMJ;
     ItemUnitInput.className = "form-control";
 
     const ItemTotalAmount = document.createElement("input");
@@ -135,11 +135,15 @@ function DocumentAddItem(isVatPayer) {
         const ItemPriceWoVat = document.createElement("input");
         ItemPriceWoVat.name = "ItemPriceWoVat";
         ItemPriceWoVat.value = "";
+        ItemPriceWoVat.min = 0;
+        ItemPriceWoVat.value = "0.00";
+        ItemPriceWoVat.type = "number";
         ItemPriceWoVat.className = "form-control";
 
         const ItemVat = document.createElement("input");
         ItemVat.name = "ItemVat";
-        ItemVat.value = "";
+        ItemVat.value = defaultVat;
+        ItemVat.type = "number";
         ItemVat.className = "form-control";
 
         const ItemPriceWoVatCol = document.createElement("div");

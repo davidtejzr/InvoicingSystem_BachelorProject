@@ -91,8 +91,6 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         }
 
         // POST: BankDetails/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BankDetail bankDetail)
@@ -104,6 +102,13 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
 
             if (ModelState.IsValid)
             {
+                BankDetail bd = _context.BankDetails.FirstOrDefault(bd => (bd.Name == bankDetail.Name) && (bd.PaymentMethodId != id));
+                if((bd != null) && (bd.PaymentMethodId != id))
+                {
+                    ViewData["ErrorMessage"] = "Bankovní účet s tímto názvem již existuje!";
+                    return View(bankDetail);
+                }
+
                 try
                 {
                     _context.Update(bankDetail);
@@ -120,8 +125,12 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Změny uloženy.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(bankDetail);
         }
 

@@ -1,12 +1,10 @@
 ﻿@model TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nový bankovní účet";
 }
 
-<h1>Create</h1>
-
-<h4>BankDetail</h4>
+<h1><i class="bi bi-credit-card"></i> Nový bankovní účet</h1>
 <hr />
 <div class="row">
     @if (ViewData["ErrorMessage"] != null)
@@ -61,14 +59,14 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group d-flex basicElementPadding">
+                <div class="ms-auto" style="padding-right: 10px;">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
+                </div>
+                <div>
+                    <input type="submit" value="Vytvořit bankovní účet" class="btn btn-primary" />
+                </div>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

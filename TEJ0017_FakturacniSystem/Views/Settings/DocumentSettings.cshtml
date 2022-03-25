@@ -49,25 +49,48 @@
 
 <div class="col-md-8">
     <form asp-action="DocumentSettings">
-        <div class="form-group">
-            <label class="control-label">Formát prvního pořadového čísla dokladu</label>
-            <div class="input-group">
-                <label class="input-group-text" for="inputGroupSelect01">2022</label>
-                <select name="documentNumberLength" class="form-select" id="inputGroupSelect01">
-                    <option id="dnl3" value="3">001</option>
-                    <option id="dnl4" value="4">0001</option>
-                    <option id="dnl5" value="5">00001</option>
-                    <option id="dnl6" value="6">000001</option>
-                </select>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label">Formát prvního pořadového čísla dokladu</label>
+                    <div class="input-group">
+                        <label class="input-group-text" for="inputGroupSelect01">2022</label>
+                        <select name="documentNumberLength" class="form-select" id="inputGroupSelect01">
+                            <option id="dnl3" value="3">001</option>
+                            <option id="dnl4" value="4">0001</option>
+                            <option id="dnl5" value="5">00001</option>
+                            <option id="dnl6" value="6">000001</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label">Výchozí množstevní jednotka</label>
+                    <input type="text" name="defaultMJ" value="@ourCompany.DefaultMJ" class="form-control" />
+                </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="control-label">Výchozí doba splatnosti ve dnech</label>
-            <div class="col-md-1">
-                <input type="number" name="defaultDueInterval" min="1" value="@ourCompany.DueInterval" class="form-control col-md-1" />
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label">Výchozí doba splatnosti ve dnech</label>
+                    <div class="col-md-2">
+                        <input type="number" name="defaultDueInterval" min="1" value="@ourCompany.DueInterval" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label">Výchozí sazba DPH v %</label>
+                    <div class="col-md-2">
+                        <input type="number" name="defaultVat" min="0" value="@ourCompany.DefaultVat" class="form-control" />
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="form-group">
             <label class="control-label">Hlavička dokladu</label>
             <textarea name="headerDescription" class="form-control" rows="3">@ourCompany.HeaderDesc</textarea>

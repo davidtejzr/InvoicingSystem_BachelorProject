@@ -1,12 +1,10 @@
 ﻿@model TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nový platební metoda";
 }
 
-<h1>Create</h1>
-
-<h4>PaymentMethod</h4>
+<h1><i class="bi bi-cash-coin"></i> Nová platební metoda</h1>
 <hr />
 <div class="row">
     @if (ViewData["ErrorMessage"] != null)
@@ -37,14 +35,14 @@
                     <input class="form-check-input" asp-for="IsBank" />Bankovní platební metoda
                 </label>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group d-flex basicElementPadding">
+                <div class="ms-auto" style="padding-right: 10px;">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
+                </div>
+                <div>
+                    <input type="submit" value="Vytvořit platební metodu" class="btn btn-primary" />
+                </div>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

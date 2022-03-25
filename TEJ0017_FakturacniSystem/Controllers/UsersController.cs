@@ -101,9 +101,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Password,Name,Surname,Email,Telephone,LastLoginTmstmp,RegisteredTmpstmp")] User user)
+        public async Task<IActionResult> Edit(int id, Admin admin, Purser purser, IFormCollection values)
         {
-            if (id != user.UserId)
+            if ((id != admin.UserId) && (id != purser.UserId))
             {
                 return NotFound();
             }
@@ -112,12 +112,26 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    //todo - zakazat aktualizaci datumu
+                    if (values["AccountType"] == "Administrátor")
+                    {
+                        //admin.RegisteredTmpstmp = DateTime.Now;
+                        //admin.LastLoginTmstmp = DateTime.Now;
+                        admin.Password = Crypto.HashPassword(admin.Password);
+                        _context.Update(admin);
+                    }
+                    else if (values["AccountType"] == "Účetní")
+                    {
+                        //purser.RegisteredTmpstmp = DateTime.Now;
+                        //purser.LastLoginTmstmp = DateTime.Now;
+                        purser.Password = Crypto.HashPassword(purser.Password);
+                        _context.Update(purser);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.UserId))
+                    if (!UserExists(admin.UserId) && !UserExists(purser.UserId))
                     {
                         return NotFound();
                     }
@@ -126,8 +140,18 @@ namespace TEJ0017_FakturacniSystem.Controllers
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Změny uloženy.";
                 return RedirectToAction(nameof(Index));
             }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user.GetType() == typeof(Admin))
+                ViewBag.UserType = "Administrátor";
+            else if (user.GetType() == typeof(Purser))
+                ViewBag.UserType = "Účetní";
+
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(user);
         }
 

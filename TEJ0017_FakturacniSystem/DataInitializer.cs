@@ -51,7 +51,7 @@ namespace TEJ0017_FakturacniSystem
 
             OurCompany.getInstance().fillAllData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
                 bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"], this.JsonDict["HeaderDesc"],
-                this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries);
+                this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries, this.JsonDict["DefaultMJ"], Int32.Parse(this.JsonDict["DefaultVat"]));
         }
 
         public void updateOurCompanyDataInJson()
@@ -75,6 +75,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("DueInterval", ourCompany.DueInterval.ToString());
             data.Add("DocumentNumberLength", ourCompany.DocumentNumberLength.ToString());
             data.Add("NumSeries", JsonConvert.SerializeObject(ourCompany.NumSeries));
+            data.Add("DefaultMJ", ourCompany.DefaultMJ);
+            data.Add("DefaultVat", ourCompany.DefaultVat.ToString());
 
             using (StreamWriter s = new StreamWriter(this.Path))
             {
@@ -102,6 +104,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("DueInterval", "14");
             data.Add("DocumentNumberLength", "3");
             data.Add("NumSeries", "");
+            data.Add("DefaultMJ", "kus");
+            data.Add("DefaultVat", "21");
 
             using (StreamWriter s = new StreamWriter(this.Path))
             {

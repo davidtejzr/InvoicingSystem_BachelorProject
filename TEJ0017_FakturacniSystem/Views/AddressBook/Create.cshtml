@@ -1,7 +1,7 @@
 ﻿@model TEJ0017_FakturacniSystem.Models.Subject.Customer
 
 @{
-    ViewData["Title"] = "Nový zákazník";
+    ViewData["Title"] = "Nový kontakt";
 }
 
 <h1><i class="bi bi-person-lines-fill"></i> Nový kontakt</h1>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="form-group col">
                         <label></label>
-                        <input type="button" class="btn btn-primary form-control" onclick="getDataFromAresByIco()" value="ARES"/>
+                        <button type="button" class="btn btn-primary form-control" onclick="getDataFromAresByIco()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Získání informací o subjektu z databáze ARES"><i class="bi bi-arrow-repeat"></i> ARES</button>
                     </div>
                     <span asp-validation-for="Ico" class="text-danger"></span>
                 </div>
@@ -145,5 +145,13 @@
     </div>
 </form>
 
-
 <script src="~/js/aresSearchFunctions.js" asp-append-version="true"></script>
+
+<!--Tooltip trigger-->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl)
+    {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

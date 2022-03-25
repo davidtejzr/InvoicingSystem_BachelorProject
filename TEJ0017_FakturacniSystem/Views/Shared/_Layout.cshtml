@@ -1,6 +1,7 @@
 ﻿@{
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
+    ViewData["UserRole"] = identity.Claims.FirstOrDefault(c => c.Type == "role").Value;
 }
 
 <!DOCTYPE html>
@@ -61,9 +62,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="AddressBook" asp-action="Index">Adresář</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Uživatelé</a>
-                        </li>
+                        @if(ViewData["UserRole"].ToString() == "TEJ0017_FakturacniSystem.Models.User.Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Uživatelé</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav d-flex">
                         <li class="nav-item dropdown">

@@ -170,7 +170,7 @@
             <label class="control-label">Položka</label>
         </div>
         <div class="col">
-            <label class="control-label">Cena</label>
+            <label class="control-label">Cena <span class="badge rounded-pill bg-secondary">Kč</span></label>
         </div>
         <div class="col">
             <label class="control-label">Množství</label>
@@ -181,10 +181,10 @@
         @if(ourCompany.IsVatPayer)
         {
             <div class="col-md-2">
-                <label class="control-label">Cena bez DPH / MJ</label>
+                <label class="control-label">Cena bez DPH / MJ <span class="badge rounded-pill bg-secondary">Kč</span></label>
             </div>
             <div class="col">
-                <label class="control-label">DPH</label>
+                <label class="control-label">DPH <span class="badge rounded-pill bg-secondary">%</span></label>
             </div>
         }
         <div class="col">
@@ -198,26 +198,25 @@
     {
         foreach(var item in basicInvoice.DocumentItems)
         {
-                <script type="text/javascript">DocumentAddItemWithValues(@item.Name, @item.UnitPrice, @item.Amount, @item.Unit)</script>
-            }
+            <script type="text/javascript">DocumentAddItemWithValues('@item.Name', '@item.UnitPrice', '@item.Amount', '@item.Unit')</script>
         }
-        else
-        {
-            <script type="text/javascript">
-                DocumentAddItem('@ourCompany.IsVatPayer');
-                var dateIncrement = new Date();
-                dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
-                document.getElementById("DocumentIssueDate").valueAsDate = new Date();
-                if(document.getElementById("DocumentTaxDate") != null)
-                    document.getElementById("DocumentTaxDate").valueAsDate = new Date();
-                document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
-            </script>
-
-        }
+    }
+    else
+    {
+        <script type="text/javascript">
+            DocumentAddItem('@ourCompany.IsVatPayer', '@ourCompany.DefaultMJ', '@ourCompany.DefaultVat');
+            var dateIncrement = new Date();
+            dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
+            document.getElementById("DocumentIssueDate").valueAsDate = new Date();
+            if(document.getElementById("DocumentTaxDate") != null)
+                document.getElementById("DocumentTaxDate").valueAsDate = new Date();
+            document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
+        </script>
+    }
 
 
     <div class="col-md-0" style="padding-top: 10px;">
-        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.IsVatPayer')"><i class="bi bi-plus"></i>Další položka</button>
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.IsVatPayer', '@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
     </div>
    
 
