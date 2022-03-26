@@ -76,10 +76,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public async Task<IActionResult> CreateBasicInvoice()
         {
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
-            var bankDetails = await _context.BankDetails.ToListAsync();
-            var paymentMethods = await _context.PaymentMethods.ToListAsync();
+            var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
+            var paymentMethods = await _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToListAsync();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
-            ViewData["Customers"] = await _context.Customers.ToListAsync();
+            ViewData["Customers"] = await _context.Customers.Where(c => c.IsVisible == true).ToListAsync();
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
@@ -96,10 +96,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             //inicializace nactenych dat pro zpetne generovani
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
-            var bankDetails =  _context.BankDetails.ToList();
-            var paymentMethods =  _context.PaymentMethods.ToList();
+            var bankDetails =  _context.BankDetails.Where(bd => bd.IsVisible == true).ToList();
+            var paymentMethods =  _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToList();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
-            ViewData["Customers"] =  _context.Customers.ToList();
+            ViewData["Customers"] =  _context.Customers.Where(c => c.IsVisible == true).ToList();
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
@@ -143,8 +143,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
             basicInvoice.TotalAmount = (float?)Math.Round(sum - calcDiscountAmount, 2);
 
-            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.BankDetail != null
-                && basicInvoice.User != null && basicInvoice.DocumentItems != null)
+            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null 
+                && basicInvoice.DocumentItems != null)
             {
                 if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
                 {
@@ -255,7 +255,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public ContentResult CustomerData(string customerName)
         {
-            Customer customer = _context.Customers.Include("Address").FirstOrDefault(m => m.Name == customerName);
+            Customer customer = _context.Customers.Include("Address").Where(c => c.IsVisible == true).FirstOrDefault(m => m.Name == customerName);
             Dictionary<string, string> customerData = new Dictionary<string, string>();
             customerData.Add("customerStreet", customer.Address.Street);
             customerData.Add("customerHouseNumber", customer.Address.HouseNumber);

@@ -26,7 +26,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            return View(await _context.Users.Where(u => u.IsVisible == true).ToListAsync());
         }
 
         // GET: Users/Create
@@ -42,7 +42,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_context.Users.FirstOrDefault(u => u.Login == values["Login"].ToString()) == null)
+                if (_context.Users.Where(u => u.IsVisible == true).FirstOrDefault(u => u.Login == values["Login"].ToString()) == null)
                 {
                     if (values["AccountType"] == "admin")
                     {
@@ -110,20 +110,23 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             if (ModelState.IsValid)
             {
+                User u = _context.Users.Where(u => u.IsVisible == true).FirstOrDefault(u => (u.Login == values["Login"].ToString()) && (u.UserId != id));
+                if ((u != null) && (u.UserId != id))
+                {
+                    var userDup = getCurrUser(id);
+                    ViewData["ErrorMessage"] = "Uživatel s tímto loginem již existuje!";
+                    return View(userDup);
+                }
+
                 try
                 {
-                    //todo - zakazat aktualizaci datumu
                     if (values["AccountType"] == "Administrátor")
                     {
-                        //admin.RegisteredTmpstmp = DateTime.Now;
-                        //admin.LastLoginTmstmp = DateTime.Now;
                         admin.Password = Crypto.HashPassword(admin.Password);
                         _context.Update(admin);
                     }
                     else if (values["AccountType"] == "Účetní")
                     {
-                        //purser.RegisteredTmpstmp = DateTime.Now;
-                        //purser.LastLoginTmstmp = DateTime.Now;
                         purser.Password = Crypto.HashPassword(purser.Password);
                         _context.Update(purser);
                     }
@@ -145,12 +148,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user.GetType() == typeof(Admin))
-                ViewBag.UserType = "Administrátor";
-            else if (user.GetType() == typeof(Purser))
-                ViewBag.UserType = "Účetní";
-
+            var user = getCurrUser(id);
             ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
             return View(user);
         }
@@ -186,6 +184,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.UserId == id);
+        }
+
+        private User getCurrUser(int id)
+        {
+            User user = _context.Users.Find(id);
+            if (user.GetType() == typeof(Admin))
+                ViewBag.UserType = "Administrátor";
+            else if (user.GetType() == typeof(Purser))
+                ViewBag.UserType = "Účetní";
+
+            return user;
         }
     }
 }

@@ -15,5 +15,7 @@ namespace TEJ0017_FakturacniSystem.Models.PaymentMethod
 
         [Display(Name = "Bankovní metoda")]
         public bool IsBank { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }

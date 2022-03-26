@@ -20,6 +20,8 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PaymentMethodId" />
+            <input type="hidden" asp-for="IsVisible" value="true" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label">Název účtu</label>
                 <input asp-for="Name" class="form-control" />
@@ -27,7 +29,6 @@
             </div>
 
             <div class="row">
-                <input type="hidden" asp-for="PaymentMethodId" />
                 <div class="form-group col">
                     <label asp-for="AccountNumber" class="control-label"></label>
                     <input asp-for="AccountNumber" class="form-control" />                 

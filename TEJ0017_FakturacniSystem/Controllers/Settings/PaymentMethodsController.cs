@@ -23,8 +23,8 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // GET: PaymentMethods
         public async Task<IActionResult> Index()
         {
-            var bankDetails = await _context.BankDetails.ToListAsync();
-            var paymentMethods = await _context.PaymentMethods.ToListAsync();
+            var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
+            var paymentMethods = await _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToListAsync();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
             return View(paymentMethodsOnly);
         }
@@ -42,7 +42,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         {
             if (ModelState.IsValid)
             {
-                if (_context.PaymentMethods.FirstOrDefault(pm => pm.Name == paymentMethod.Name) == null)
+                if (_context.PaymentMethods.Where(pm => pm.IsVisible == true).FirstOrDefault(pm => pm.Name == paymentMethod.Name) == null)
                 {
                     _context.Add(paymentMethod);
                     await _context.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
 
             if (ModelState.IsValid)
             {
-                PaymentMethod pm = _context.PaymentMethods.FirstOrDefault(pm => (pm.Name == paymentMethod.Name) && (pm.PaymentMethodId != id));
+                PaymentMethod pm = _context.PaymentMethods.Where(pm => pm.IsVisible == true).FirstOrDefault(pm => (pm.Name == paymentMethod.Name) && (pm.PaymentMethodId != id));
                 if ((pm != null) && (pm.PaymentMethodId != id))
                 {
                     ViewData["ErrorMessage"] = "Platební metoda s tímto názvem již existuje!";

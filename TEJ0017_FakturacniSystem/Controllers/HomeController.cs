@@ -44,7 +44,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             if (ModelState.IsValid)
             {
-                var searchedUser = _context.Users.Where(u => u.Login.Equals(user["Login"])).FirstOrDefault();
+                var searchedUser = _context.Users.Where(u => (u.Login.Equals(user["Login"])) && (u.IsVisible == true)).FirstOrDefault();
                 if ((searchedUser != null) && Crypto.VerifyHashedPassword(searchedUser.Password, user["Password"]))
                 {
                     var claims = new List<Claim>

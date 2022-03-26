@@ -17,12 +17,12 @@
   <div id="msgInfoText"></div>
 </div>
 
-@if (@ViewBag.ErrorMessage != null)
+@if (ViewData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger d-flex align-items-center" role="alert">
         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
         <div>
-            @ViewBag.ErrorMessage
+            @ViewData["ErrorMessage"]
         </div>
     </div>
 }
@@ -34,6 +34,7 @@
             <div class="col">
                 <h4>Subjekt</h4>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IsVisible" value="true" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" type="search" id="SubjectSearchInput" class="form-control" placeholder="Vyhledat společnost podle názvu..." autocomplete="off" />
@@ -125,7 +126,7 @@
                 <h4>Další možnosti</h4>
                 <div class="form-group form-check">
                     <label class="form-check-label">
-                        <input class="form-check-input" asp-for="AresUpdateAllowed" />Povolit aktualizaci údaje z databáze ARES
+                        <input class="form-check-input" asp-for="AresUpdateAllowed" />Povolit aktualizaci údajů z databáze ARES
                     </label>
                 </div>
             </div>

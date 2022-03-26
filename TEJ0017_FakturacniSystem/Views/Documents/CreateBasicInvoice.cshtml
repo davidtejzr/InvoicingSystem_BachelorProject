@@ -117,7 +117,7 @@
                 <label class="control-label">Bankovní účet</label>
                 <select class="form-select" asp-for="BankDetail" id="bankMethodSelector">
                     @foreach(var item in ViewData["BankDetails"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail>) {
-                    if ((@basicInvoice != null) && (@basicInvoice.BankDetail.Name == item.Name))
+                    if ((@basicInvoice != null) && (@basicInvoice.BankDetail != null) && (@basicInvoice.BankDetail.Name == item.Name))
                         {
                             <option selected>@item.Name</option>
                         }

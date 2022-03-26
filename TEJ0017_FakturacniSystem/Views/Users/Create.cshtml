@@ -19,6 +19,7 @@
 <div class="col-md-10">
     <form asp-action="Create">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="IsVisible" value="true" />
         <div class="row">
             <div class="col">
                 <h4>Uživatelské údaje</h4>

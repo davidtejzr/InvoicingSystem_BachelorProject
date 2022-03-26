@@ -23,25 +23,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         // GET: BankDetails
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BankDetails.ToListAsync());
-        }
-
-        // GET: BankDetails/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bankDetail = await _context.BankDetails
-                .FirstOrDefaultAsync(m => m.PaymentMethodId == id);
-            if (bankDetail == null)
-            {
-                return NotFound();
-            }
-
-            return View(bankDetail);
+            return View(await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync());
         }
 
         // GET: BankDetails/Create
@@ -57,7 +39,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
         {
             if (ModelState.IsValid)
             {
-                if (_context.BankDetails.FirstOrDefault(bd => bd.Name == bankDetail.Name) == null)
+                if (_context.BankDetails.Where(bd => bd.IsVisible == true).FirstOrDefault(bd => bd.Name == bankDetail.Name) == null)
                 {
                     _context.Add(bankDetail);
                     await _context.SaveChangesAsync();
@@ -102,7 +84,7 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
 
             if (ModelState.IsValid)
             {
-                BankDetail bd = _context.BankDetails.FirstOrDefault(bd => (bd.Name == bankDetail.Name) && (bd.PaymentMethodId != id));
+                BankDetail bd = _context.BankDetails.Where(bd => bd.IsVisible == true).FirstOrDefault(bd => (bd.Name == bankDetail.Name) && (bd.PaymentMethodId != id));
                 if((bd != null) && (bd.PaymentMethodId != id))
                 {
                     ViewData["ErrorMessage"] = "Bankovní účet s tímto názvem již existuje!";

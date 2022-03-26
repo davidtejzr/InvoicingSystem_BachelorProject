@@ -11,5 +11,7 @@ namespace TEJ0017_FakturacniSystem.Models.Subject
 
         [Display(Name = "Příjmení")]
         public string? ContactSurname { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }

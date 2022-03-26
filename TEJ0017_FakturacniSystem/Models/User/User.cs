@@ -40,5 +40,7 @@ namespace TEJ0017_FakturacniSystem.Models.User
 
         [Display(Name = "Registrace")]
         public DateTime RegisteredTmpstmp { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }

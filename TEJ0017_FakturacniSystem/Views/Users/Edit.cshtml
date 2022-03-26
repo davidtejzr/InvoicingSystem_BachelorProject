@@ -19,6 +19,7 @@
 <div class="col-md-10">
     <form asp-action="Edit">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="IsVisible" value="true" />
         <div class="row">
             <div class="col">
                 <h4>Uživatelské údaje</h4>
@@ -72,12 +73,12 @@
                 <h4 class="basicElementPadding">Informace o účtu</h4>
                 <div class="form-group">
                     <label asp-for="RegisteredTmpstmp" class="control-label"></label>
-                    <input asp-for="RegisteredTmpstmp" class="form-control" type="datetime-local" disabled />
+                    <input asp-for="RegisteredTmpstmp" class="form-control" type="datetime-local" readonly />
                     <span asp-validation-for="RegisteredTmpstmp" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="LastLoginTmstmp" class="control-label"></label>
-                    <input asp-for="LastLoginTmstmp" class="form-control" type="datetime¨datetime-local" disabled />
+                    <input asp-for="LastLoginTmstmp" class="form-control" type="datetime-local" readonly />
                     <span asp-validation-for="LastLoginTmstmp" class="text-danger"></span> 
                 </div>
             </div>

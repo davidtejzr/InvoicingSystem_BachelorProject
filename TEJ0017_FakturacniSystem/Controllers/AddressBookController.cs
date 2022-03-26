@@ -27,7 +27,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: AddressBook
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return View(await _context.Customers.Where(c => c.IsVisible == true).ToListAsync());
         }
 
         // GET: AddressBook/Details/5
@@ -60,7 +60,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_context.Customers.FirstOrDefault(c => c.Ico == customer.Ico) == null)
+                if (_context.Customers.Where(c => c.IsVisible == true).FirstOrDefault(c => c.Ico == customer.Ico) == null)
                 {
                     _context.Add(customer);
                     await _context.SaveChangesAsync();
@@ -73,7 +73,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                     return View(customer);
                 }
             }
-            ViewBag.ErrorMessage = "Chyba validace! Doplňte prosím chybějící údaje.";
+            ViewData["ErrorMessage"] = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(customer);
             
         }
