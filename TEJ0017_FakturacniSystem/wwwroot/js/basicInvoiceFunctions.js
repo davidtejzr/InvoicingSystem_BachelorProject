@@ -289,7 +289,7 @@ function CustomerSelector() {
 
     $.ajax({
         type: "GET",
-        url: "/Documents/CustomerData",
+        url: "/BasicInvoices/CustomerData",
         dataType: "json",
         data: {
             customerName: customerName

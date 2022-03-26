@@ -17,7 +17,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/vendor/popper.js/dist/umd/popper.min.js"></script>
 </head>
 <body>
@@ -49,7 +48,7 @@
                                 Výdejové doklady
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Faktury</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="BasicInvoices" asp-action="Index">Faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Zálohové faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Opravné daňové doklady</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Pravidelné faktury</a></li>
@@ -102,6 +101,8 @@
             @RenderBody()
         </main>
     </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     <footer class="border-top footer text-muted">
         <div class="container">

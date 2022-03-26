@@ -116,32 +116,17 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
             return View(bankDetail);
         }
 
-        // GET: BankDetails/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bankDetail = await _context.BankDetails
-                .FirstOrDefaultAsync(m => m.PaymentMethodId == id);
-            if (bankDetail == null)
-            {
-                return NotFound();
-            }
-
-            return View(bankDetail);
-        }
-
         // POST: BankDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bankDetail = await _context.BankDetails.FindAsync(id);
-            _context.BankDetails.Remove(bankDetail);
+            bankDetail.IsVisible = false;
+            _context.Update(bankDetail);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Bankovní účet smazán.";
             return RedirectToAction(nameof(Index));
         }
 

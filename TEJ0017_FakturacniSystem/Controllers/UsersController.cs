@@ -153,31 +153,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(user);
         }
 
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            _context.Users.Remove(user);
+            user.IsVisible = false;
+            _context.Update(user);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Uživatel smazán.";
             return RedirectToAction(nameof(Index));
         }
 

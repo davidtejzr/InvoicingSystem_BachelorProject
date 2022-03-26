@@ -18,11 +18,11 @@ using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
-    public class DocumentsController : Controller
+    public class BasicInvoicesController : Controller
     {
         private readonly ApplicationContext _context;
 
-        public DocumentsController(ApplicationContext context)
+        public BasicInvoicesController(ApplicationContext context)
         {
             _context = context;
         }
@@ -51,8 +51,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(documents);
         }
 
-        // GET: Documents/BasicInvoiceDetail/5
-        public async Task<FileResult> BasicInvoiceDetail(int? id)
+        // GET: Documents/Detail/5
+        public async Task<FileResult> Detail(int? id)
         {
             if (id == null)
                 return null;
@@ -65,15 +65,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
-            string outputHtml = RenderViewToString(this, "BasicInvoiceDetail", document);
+            string outputHtml = RenderViewToString(this, "Detail", document);
             MemoryStream output = htmlToPdfConvertor.getDocumentPdf(outputHtml);
             output.Position = 0;
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
 
-        // GET: Documents/CreateBasicInvoice
-        public async Task<IActionResult> CreateBasicInvoice()
+        // GET: Documents/Create
+        public async Task<IActionResult> Create()
         {
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
             var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
@@ -89,10 +89,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View();
         }
 
-        // POST: Documents/CreateBasicInvoice
+        // POST: Documents/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateBasicInvoice(BasicInvoice basicInvoice, IFormCollection itemsValues)
+        public IActionResult Create(BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
             //inicializace nactenych dat pro zpetne generovani
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
@@ -219,24 +219,6 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(document);
         }
 
-        // GET: Documents/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var document = await _context.Documents
-                .FirstOrDefaultAsync(m => m.DocumentId == id);
-            if (document == null)
-            {
-                return NotFound();
-            }
-
-            return View(document);
-        }
-
         // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -245,6 +227,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             var document = await _context.Documents.FindAsync(id);
             _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Faktura smazána.";
             return RedirectToAction(nameof(Index));
         }
 

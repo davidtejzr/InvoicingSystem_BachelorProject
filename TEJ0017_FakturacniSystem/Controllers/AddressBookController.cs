@@ -129,33 +129,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(customer);
         }
 
-        // GET: AddressBook/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.SubjectId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
-        }
-
         // POST: AddressBook/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
-            var address = await _context.SubjectAddresses.FindAsync(customer.AddressId);
-            _context.Customers.Remove(customer);
-            _context.SubjectAddresses.Remove(address);
+            customer.IsVisible = false;
+            _context.Update(customer);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Kontakt smazán.";
             return RedirectToAction(nameof(Index));
         }
 

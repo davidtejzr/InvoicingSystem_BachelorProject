@@ -8,7 +8,7 @@
     var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
 }
-<script type="text/javascript" src="~/js/documentFunctions.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/basicInvoiceFunctions.js" asp-append-version="true"></script>
 
 @if (ViewData["ErrorMessage"] != null)
 {
@@ -25,7 +25,7 @@
     <div id="DocumentWarningMessage"></div>
 </div>
 
-<form asp-action="CreateBasicInvoice">
+<form asp-action="Create">
     <div class="d-flex">
         <div>
             <h1><i class="bi bi-receipt"></i> Nová faktura</h1>

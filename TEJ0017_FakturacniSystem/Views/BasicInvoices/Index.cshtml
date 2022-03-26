@@ -35,7 +35,7 @@
 
 <div class="d-flex">
     <div>
-        <a class="btn btn-primary" asp-action="CreateBasicInvoice"><i class="bi bi-plus"></i>Nová faktura</a>
+        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová faktura</a>
     </div>
     <div class="ms-auto">
       <a class="btn btn-outline-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-filter"></i></a>
@@ -135,21 +135,29 @@
                 @item.DueDate.ToShortDateString()
             </td>
             <td>  
-                <a asp-action="BasicInvoiceDetail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                <a asp-action="Delete" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Odstranění faktury"><i class="bi bi-trash-fill"></i></a>
+                <a asp-action="Detail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění faktury" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.DocumentId"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
 
-<!--Tooltip trigger-->
-<script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl)
-    {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-
-    document.getElementById("")
-</script>
+<!-- Modal -->
+<div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeModalLabel">Odstranění faktury</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Chcete opravdu odstranit tuto fakturu?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Storno</button>
+        <form method="post" id="recordDelForm" asp-action="Delete">
+            <button type="submit" class="btn btn-danger">Odstranit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

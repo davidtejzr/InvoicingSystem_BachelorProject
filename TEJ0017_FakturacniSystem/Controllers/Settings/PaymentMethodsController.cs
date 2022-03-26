@@ -120,32 +120,17 @@ namespace TEJ0017_FakturacniSystem.Controllers.Settings
             return View(paymentMethod);
         }
 
-        // GET: PaymentMethods/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var paymentMethod = await _context.PaymentMethods
-                .FirstOrDefaultAsync(m => m.PaymentMethodId == id);
-            if (paymentMethod == null)
-            {
-                return NotFound();
-            }
-
-            return View(paymentMethod);
-        }
-
         // POST: PaymentMethods/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var paymentMethod = await _context.PaymentMethods.FindAsync(id);
-            _context.PaymentMethods.Remove(paymentMethod);
+            paymentMethod.IsVisible = false;
+            _context.Update(paymentMethod);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Platební metoda smazána.";
             return RedirectToAction(nameof(Index));
         }
 
