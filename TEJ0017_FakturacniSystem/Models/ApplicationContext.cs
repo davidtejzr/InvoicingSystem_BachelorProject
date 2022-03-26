@@ -21,6 +21,7 @@ namespace TEJ0017_FakturacniSystem.Models
         public DbSet<Document.DocumentTypes.InvoiceTemplate> InvoiceTemplates { get; set; }
         public DbSet<Document.DocumentTypes.ProformaInvoice> proformaInvoices { get; set; }
         public DbSet<Document.DocumentTypes.RegularInvoice> RegularInvoices { get; set; }
+        public object User { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

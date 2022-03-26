@@ -167,6 +167,72 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "TEJ0017_FakturacniSystem.Models.User.Admin,TEJ0017_FakturacniSystem.Models.User.Purser")]
+        public IActionResult Profil()
+        {
+            var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
+            string curUserLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
+            User user = _context.Users.FirstOrDefault(u => (u.Login == curUserLogin));
+
+            if (user.GetType() == typeof(Admin))
+                ViewBag.UserType = "Administrátor";
+            else if (user.GetType() == typeof(Purser))
+                ViewBag.UserType = "Účetní";
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profil(Admin admin, Purser purser, IFormCollection values)
+        {
+            var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
+            string curUserLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
+            User user = _context.Users.FirstOrDefault(u => (u.Login == curUserLogin));
+
+            if (user.GetType() == typeof(Admin))
+                ViewBag.UserType = "Administrátor";
+            else if (user.GetType() == typeof(Purser))
+                ViewBag.UserType = "Účetní";
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (values["AccountType"] == "Administrátor")
+                    {
+                        admin.Password = Crypto.HashPassword(admin.Password);
+                        _context.Update(admin);
+                    }
+                    else if (values["AccountType"] == "Účetní")
+                    {
+                        purser.Password = Crypto.HashPassword(purser.Password);
+                        _context.Update(purser);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(admin.UserId) && !UserExists(purser.UserId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                //var userRet = getCurrUser(user.UserId);
+                ViewData["SuccessMessage"] = "Změný úspěšně uloženy.";
+                return View(user);
+            }
+
+
+            ViewData["ErrorMessage"] = "Chyba validace! Opravte prosím chybně vyplněné údaje.";
+            return View(user);
+        }
+
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.UserId == id);
@@ -182,5 +248,6 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             return user;
         }
+
     }
 }

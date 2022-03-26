@@ -1,10 +1,10 @@
 ﻿@model TEJ0017_FakturacniSystem.Models.User.User
 
 @{
-    ViewData["Title"] = "Úprava uživatele";
+    ViewData["Title"] = "Profil";
 }
 
-<h1><i class="bi bi-people-fill"></i> Úprava uživatele</h1>
+<h1><i class="bi bi-person-fill"></i> Profil</h1>
 <hr />
 @if (ViewData["ErrorMessage"] != null)
 {
@@ -16,8 +16,19 @@
     </div>
 }
 
+@if (ViewData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+            @ViewData["SuccessMessage"]
+        </div>
+    </div>
+}
+
+
 <div class="col-md-10">
-    <form asp-action="Edit">
+    <form asp-action="Profil">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="IsVisible" value="true" />
         <div class="row">
@@ -26,15 +37,11 @@
                 <input type="hidden" asp-for="UserId" />
                 <div class="form-group">
                     <label class="control-label">Typ uživatele</label>
-                    <select class="form-select" name="AccountType">
-                        <option value=@ViewBag.UserType selected hidden>@ViewBag.UserType</option>
-                        <option value="Administrátor">Administrátor</option>
-                        <option value="Účetní">Účetní</option>
-                    </select>
+                    <input class="form-control" value=@ViewBag.UserType name="AccountType" readonly />
                 </div>
                 <div class="form-group">
                     <label asp-for="Login" class="control-label"></label>
-                    <input asp-for="Login" class="form-control" />
+                    <input asp-for="Login" class="form-control" readonly/>
                     <span asp-validation-for="Login" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -61,6 +68,10 @@
             <div class="col">
                 <h4>Zabezpečení</h4>
                 <div class="form-group">
+                    <label class="control-label">Původní heslo</label>
+                    <input name="OldPassword" class="form-control" type="password" />
+                </div>
+                <div class="form-group">
                     <label asp-for="Password" class="control-label"></label>
                     <input asp-for="Password" class="form-control" type="password" />
                     <span asp-validation-for="Password" class="text-danger"></span>
@@ -85,10 +96,7 @@
         </div>
         <div class="row">
             <div class="form-group d-flex basicElementPadding">
-                <div class="ms-auto" style="padding-right: 10px;">
-                    <a class="btn btn-secondary" asp-action="Index"><i class="bi bi-arrow-left-circle"></i> Storno</a>
-                </div>
-                <div>
+                <div class="ms-auto">
                     <input type="submit" value="Uložit změny" class="btn btn-primary" />
                 </div>
             </div>
