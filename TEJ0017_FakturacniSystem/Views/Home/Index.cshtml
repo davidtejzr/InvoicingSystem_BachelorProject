@@ -1,9 +1,51 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
+    ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
     <h1>@Model.Name</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h5><i class="bi bi-person-fill"></i> @ViewData["UserName"]</h5>
+</div>
+
+<br />
+<h3>Rychlé akce</h3>
+<div class="row">
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary">Vydané faktury</button>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary">Nová faktura</button>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary">Adresář</button>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary">Ceník</button>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-outline-primary">Nastavení</button>
+    </div>
+</div>
+
+<br />
+<h3>Přehledy <span class="badge bg-secondary">2022</span></h3>
+<div class="row gap-5 basicElementPadding">
+    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+        <h1>kč</h1>
+        <h5>Neuhrazené faktury</h5>
+    </div>
+    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+        <h1>kč</h1>
+        <h5>Uhrazené faktury</h5>
+    </div>
+    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+        <h1>×</h1>
+        <h5>Počet vydaných faktur</h5>
+    </div>
+    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+        <h1>×</h1>
+        <h5>Počet vydaných faktur</h5>
+    </div>
 </div>
