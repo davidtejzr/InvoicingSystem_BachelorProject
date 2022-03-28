@@ -4,7 +4,7 @@ namespace TEJ0017_FakturacniSystem.Models.Subject
 {
     public abstract class Subject
     {
-        public int SubjectId { get; protected set; }
+        public int SubjectId { get; set; }
         
         [Required(ErrorMessage = "Identifikátor subjektu je povinný.")]
         [Display(Name = "IČO")]

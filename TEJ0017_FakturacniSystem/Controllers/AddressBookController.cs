@@ -86,7 +86,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers.Include(a => a.Address).FirstOrDefaultAsync(s => s.SubjectId == id);
+
             if (customer == null)
             {
                 return NotFound();
@@ -95,11 +96,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         // POST: AddressBook/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AresUpdateAllowed,ContactName,ContactSurname,Ico,Dic,Name,IsVatPayer,Email,Telephone")] Customer customer)
+        public async Task<IActionResult> Edit(int id, Customer customer)
         {
             if (id != customer.SubjectId)
             {
@@ -108,6 +107,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             if (ModelState.IsValid)
             {
+                if (_context.Customers.Where(c => c.IsVisible == true).FirstOrDefault(c => (c.Ico == customer.Ico) && (c.SubjectId != id)) != null)
+                {
+                    ViewData["ErrorMessage"] = "Kontant s tímto IČO již existuje!";
+                    return View(customer);
+                }
+
+
                 try
                 {
                     _context.Update(customer);
@@ -124,8 +130,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Změny uloženy.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ErrorMessage"] = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(customer);
         }
 

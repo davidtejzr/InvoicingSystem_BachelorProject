@@ -28,12 +28,13 @@
 }
 
 
-<form asp-action="Create">
+<form asp-action="Edit">
     <div class="col-md-10">
         <div class="row">
             <div class="col">
                 <h4>Subjekt</h4>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="SubjectId" />
                 <input type="hidden" asp-for="IsVisible" value="true" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
@@ -156,76 +157,4 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h1>Edit</h1>
-
-<h4>Customer</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="AresUpdateAllowed" /> @Html.DisplayNameFor(model => model.AresUpdateAllowed)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactName" class="control-label"></label>
-                <input asp-for="ContactName" class="form-control" />
-                <span asp-validation-for="ContactName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactSurname" class="control-label"></label>
-                <input asp-for="ContactSurname" class="form-control" />
-                <span asp-validation-for="ContactSurname" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="Ico" />
-            <div class="form-group">
-                <label asp-for="Dic" class="control-label"></label>
-                <input asp-for="Dic" class="form-control" />
-                <span asp-validation-for="Dic" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsVatPayer" /> @Html.DisplayNameFor(model => model.IsVatPayer)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telephone" class="control-label"></label>
-                <input asp-for="Telephone" class="form-control" />
-                <span asp-validation-for="Telephone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 

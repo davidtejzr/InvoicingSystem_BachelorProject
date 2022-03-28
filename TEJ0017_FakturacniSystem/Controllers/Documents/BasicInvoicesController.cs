@@ -105,25 +105,32 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["OurCompany"] = ourCompany;
             ViewData["NextNum"] = basicInvoice.DocumentNo;
 
-            var itemsNames = itemsValues["ItemName"];
-            var itemsPrices = itemsValues["ItemPrice"];
-            var itemsAmounts = itemsValues["ItemAmount"];
-            var itemsUnits = itemsValues["ItemUnit"];
-
-            //vypocet celkove castky
             float sum = 0;
             List<DocumentItem> documentItems = new List<DocumentItem>();
-            for(int i = 0; i < itemsNames.Count; i++)
+            if (ourCompany.IsVatPayer)
             {
-                DocumentItem documentItem = new DocumentItem();
-                documentItem.Name = itemsNames[i];
-                string commaChange = itemsPrices[i].Replace(".", ",");
-                documentItem.UnitPrice = float.Parse(commaChange);
-                documentItem.Amount = float.Parse(itemsAmounts[i]);
-                documentItem.Unit = itemsUnits[i];
-                sum += documentItem.UnitPrice * documentItem.Amount;
+                //var
+            }
+            else
+            {
+                var itemsNames = itemsValues["ItemName"];
+                var itemsPrices = itemsValues["ItemPrice"];
+                var itemsAmounts = itemsValues["ItemAmount"];
+                var itemsUnits = itemsValues["ItemUnit"];
 
-                documentItems.Add(documentItem);
+                //vypocet celkove castky bez DPH
+                for (int i = 0; i < itemsNames.Count; i++)
+                {
+                    DocumentItem documentItem = new DocumentItem();
+                    documentItem.Name = itemsNames[i];
+                    string commaChange = itemsPrices[i].Replace(".", ",");
+                    documentItem.UnitPrice = float.Parse(commaChange);
+                    documentItem.Amount = float.Parse(itemsAmounts[i]);
+                    documentItem.Unit = itemsUnits[i];
+                    sum += documentItem.UnitPrice * documentItem.Amount;
+
+                    documentItems.Add(documentItem);
+                }
             }
 
             basicInvoice.DocumentItems = documentItems;

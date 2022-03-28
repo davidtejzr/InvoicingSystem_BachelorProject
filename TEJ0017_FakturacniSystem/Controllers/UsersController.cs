@@ -182,6 +182,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(user);
         }
 
+
+        //[Bind("AresUpdateAllowed,ContactName,ContactSurname,Ico,Dic,Name,IsVatPayer,Email,Telephone")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profil(Admin admin, Purser purser, IFormCollection values)
