@@ -30,15 +30,18 @@
             @if (ourCompany.IsVatPayer)
             {
                 <th>
-                    @Html.DisplayNameFor(model => model.PriceWoVat)
+                    Cena bez DPH
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Vat)
                 </th>
             }
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
+            else
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.DefaultUnit)
             </th>
@@ -51,18 +54,15 @@
             <td>
                 <a asp-action="Edit" asp-route-id=@item.ItemId>@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
             @if (ourCompany.IsVatPayer)
             {
-                <td>
-                    @Html.DisplayFor(modelItem => item.PriceWoVat)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Vat)
                 </td>
             }
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DefaultUnit)
             </td>

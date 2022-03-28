@@ -7,7 +7,7 @@
         public float UnitPrice { get; set; }
         public float Amount { get; set; }
         public string? Unit { get; set; }
-        public int? TaxRate { get; set; }
+        public int? Vat { get; set; }
         public Document Document { get; set; }
     }
 }

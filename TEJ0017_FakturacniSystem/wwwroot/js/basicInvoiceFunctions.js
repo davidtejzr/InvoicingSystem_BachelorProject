@@ -1,15 +1,67 @@
 ﻿//bugs: fix calc total amount when remove not last column
+//fix automatic calc amount on reload
 
 let rowCounter = 0;
 let sum = 0;
+let vatPayer = 0;
+
+function renderVatSummary(vatsDict) {
+    const vatSummaryContainer = document.getElementById("vatTable");
+    vatSummaryContainer.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.className = "table-primary";
+
+    for (const key in vatsDict) {
+        const vatKey = document.createElement("th");
+        vatKey.innerHTML = "DPH " + key + "%";
+        const vatValue = document.createElement("td");
+        vatValue.innerHTML = vatsDict[key] + ",- Kč";
+
+        const oneRow = document.createElement("tr");
+        oneRow.appendChild(vatKey);
+        oneRow.appendChild(vatValue);
+
+        table.appendChild(oneRow);
+    }
+    vatSummaryContainer.appendChild(table);
+}
+
+function setVatPayer(isVatPayer) {
+    if (isVatPayer === "True") {
+        vatPayer = 1;
+    }
+    else {
+        vatPayer = 0;
+    }
+}
 
 function calcTotalAmount() {
     sum = 0
+    var vatsDict = {};
     for (let i = 0; i < rowCounter; i++) {
         var rowItem = document.getElementById("item" + i);
-        const amount = rowItem.childNodes[4].childNodes[0].value;
-        sum += parseFloat(amount);
+        if (vatPayer === 1) {
+            //vat summary
+            let currentKey = rowItem.childNodes[4].childNodes[0].value;
+            if (vatsDict[currentKey] === undefined) {
+                vatsDict[currentKey] = Math.round(parseFloat(rowItem.childNodes[1].childNodes[0].value) * parseFloat(rowItem.childNodes[2].childNodes[0].value) * (parseFloat(rowItem.childNodes[4].childNodes[0].value) / 100)*100)/100;
+            }
+            else {
+                let computedValue = parseFloat(vatsDict[currentKey]);
+                computedValue += Math.round(parseFloat(rowItem.childNodes[1].childNodes[0].value) * parseFloat(rowItem.childNodes[2].childNodes[0].value) * (parseFloat(rowItem.childNodes[4].childNodes[0].value) / 100) * 100) / 100;
+                vatsDict[currentKey] = computedValue;
+            }
+
+            const amount = rowItem.childNodes[5].childNodes[0].value;
+            sum += parseFloat(amount);
+        }
+        else {
+            const amount = rowItem.childNodes[4].childNodes[0].value;
+            sum += parseFloat(amount);
+        }
     }
+    renderVatSummary(vatsDict);
     CalcDiscount();
 }
 
@@ -18,7 +70,6 @@ function CalcDiscount() {
     const discountAmount = document.getElementById("discountAmount");
 
     if (parseFloat(discountInputAmount) > 0) {
-        console.log(discountInputAmount);
         //round to 2 decimal
         const computedDiscount = Math.round(-(sum * (discountInputAmount / 100)) * 100)/100;
         discountAmount.innerHTML = parseFloat(computedDiscount) + ",- Kč";
@@ -29,6 +80,20 @@ function CalcDiscount() {
         discountAmount.innerHTML = "0.0,- Kč";
         document.getElementById("totalAmount").innerHTML = "Celková cena: " + sum + ",- Kč";
     }
+}
+
+function recalculateAmount(itemId) {
+    var rowItem = document.getElementById(itemId);
+    const price = rowItem.childNodes[1].childNodes[0].value;
+    const amount = rowItem.childNodes[2].childNodes[0].value;
+    if (vatPayer === 1) {
+        const vat = rowItem.childNodes[4].childNodes[0].value;
+        rowItem.childNodes[5].childNodes[0].value = Math.round((price * amount) * 100) / 100;
+    }
+    else {
+        rowItem.childNodes[4].childNodes[0].value = Math.round((price * amount) * 100) / 100;
+    }
+    calcTotalAmount();
 }
 
 function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
@@ -60,11 +125,7 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     ItemPriceInput.min = 0;
     ItemPriceInput.value = "0.00"
     ItemPriceInput.onchange = function () {
-        var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[1].childNodes[0].value;
-        const amount = rowItem.childNodes[2].childNodes[0].value;
-        rowItem.childNodes[4].childNodes[0].value = price * amount;
-        calcTotalAmount();
+        recalculateAmount(itemId);
     }
 
     const ItemAmountInput = document.createElement("input");
@@ -75,11 +136,7 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     ItemAmountInput.value = 1;
     ItemAmountInput.min = 1;
     ItemAmountInput.onchange = function () {
-        var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[1].childNodes[0].value;
-        const amount = rowItem.childNodes[2].childNodes[0].value;
-        rowItem.childNodes[4].childNodes[0].value = price * amount;
-        calcTotalAmount();
+        recalculateAmount(itemId);
     }
 
     const ItemUnitInput = document.createElement("input");
@@ -104,7 +161,7 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     ItemNameInputCol.appendChild(ItemNameInput);
 
     const ItemPriceInputCol = document.createElement("div");
-    ItemPriceInputCol.className = "col";
+    ItemPriceInputCol.className = "col-md-2";
     ItemPriceInputCol.appendChild(ItemPriceInput);
 
     const ItemAmountInputCol = document.createElement("div");
@@ -132,29 +189,19 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
 
     //tax rates
     if (isVatPayer === "True") {
-        const ItemPriceWoVat = document.createElement("input");
-        ItemPriceWoVat.name = "ItemPriceWoVat";
-        ItemPriceWoVat.value = "";
-        ItemPriceWoVat.min = 0;
-        ItemPriceWoVat.value = "0.00";
-        ItemPriceWoVat.type = "number";
-        ItemPriceWoVat.className = "form-control";
-
         const ItemVat = document.createElement("input");
         ItemVat.name = "ItemVat";
         ItemVat.value = defaultVat;
         ItemVat.type = "number";
         ItemVat.className = "form-control";
-
-        const ItemPriceWoVatCol = document.createElement("div");
-        ItemPriceWoVatCol.className = "col-md-2";
-        ItemPriceWoVatCol.appendChild(ItemPriceWoVat);
+        ItemVat.onchange = function () {
+            recalculateAmount(itemId);
+        }
 
         const ItemVatCol = document.createElement("div");
         ItemVatCol.className = "col";
         ItemVatCol.appendChild(ItemVat);
 
-        ItemRow.appendChild(ItemPriceWoVatCol);
         ItemRow.appendChild(ItemVatCol);
     }
 
@@ -168,19 +215,22 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
 }
 
 
-function DocumentAddItemWithValues(name, price, amount, unit) {
+function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, isVatPayer) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     const itemId = "item" + rowCounter++;
 
     //items
     const removeButton = document.createElement("button");
-    removeButton.innerHTML = "-";
+    const removeIcon = document.createElement("i");
+    removeIcon.className = "bi bi-trash2";
+    removeButton.appendChild(removeIcon);
     removeButton.className = "btn btn-outline-danger";
     removeButton.type = "button";
     removeButton.id = itemId;
     removeButton.onclick = function () {
         RemoveItemId(removeButton.id);
     };
+
 
     const ItemNameInput = document.createElement("input");
     ItemNameInput.name = "ItemName";
@@ -196,10 +246,7 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     ItemPriceInput.min = 0;
     ItemPriceInput.value = price;
     ItemPriceInput.onchange = function () {
-        var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[1].childNodes[0].value;
-        const amount = rowItem.childNodes[2].childNodes[0].value;
-        rowItem.childNodes[4].childNodes[0].value = price * amount;
+        recalculateAmount(itemId);
     }
 
     const ItemAmountInput = document.createElement("input");
@@ -210,10 +257,7 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     ItemAmountInput.value = amount;
     ItemAmountInput.min = 1;
     ItemAmountInput.onchange = function () {
-        var rowItem = document.getElementById(itemId);
-        const price = rowItem.childNodes[1].childNodes[0].value;
-        const amount = rowItem.childNodes[2].childNodes[0].value;
-        rowItem.childNodes[4].childNodes[0].value = price * amount;
+        recalculateAmount(itemId);
     }
 
     const ItemUnitInput = document.createElement("input");
@@ -234,11 +278,11 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     removeButtonCol.appendChild(removeButton);
 
     const ItemNameInputCol = document.createElement("div");
-    ItemNameInputCol.className = "col-md-5";
+    ItemNameInputCol.className = "col-md-4";
     ItemNameInputCol.appendChild(ItemNameInput);
 
     const ItemPriceInputCol = document.createElement("div");
-    ItemPriceInputCol.className = "col";
+    ItemPriceInputCol.className = "col-md-2";
     ItemPriceInputCol.appendChild(ItemPriceInput);
 
     const ItemAmountInputCol = document.createElement("div");
@@ -257,12 +301,34 @@ function DocumentAddItemWithValues(name, price, amount, unit) {
     //row
     const ItemRow = document.createElement("div");
     ItemRow.className = "row";
-    ItemRow.appendChild(removeButtonCol);
+    ItemRow.style = "padding-top: 5px;"
+
     ItemRow.appendChild(ItemNameInputCol);
     ItemRow.appendChild(ItemPriceInputCol);
     ItemRow.appendChild(ItemAmountInputCol);
     ItemRow.appendChild(ItemUnitInputCol);
+
+    //tax rates
+    if (isVatPayer === "True") {
+        const ItemVat = document.createElement("input");
+        ItemVat.name = "ItemVat";
+        ItemVat.value = vat;
+        ItemVat.type = "number";
+        ItemVat.className = "form-control";
+        ItemVat.onchange = function () {
+            recalculateAmount(itemId);
+        }
+
+        const ItemVatCol = document.createElement("div");
+        ItemVatCol.className = "col";
+        ItemVatCol.appendChild(ItemVat);
+
+        ItemRow.appendChild(ItemVatCol);
+    }
+
+
     ItemRow.appendChild(ItemTotalAmountCol);
+    ItemRow.appendChild(removeButtonCol);
     ItemRow.id = itemId;
 
     //parent
@@ -325,6 +391,13 @@ function PaymentMethodSelector() {
     });
 }
 
-function customAddressSwitched() {
-    console.log("switch!");
+function CustomAddressSwitched() {
+    if (document.getElementById("customCustomerAddressSwitch").checked) {
+        document.getElementById("fromList").style.display = "none";
+        document.getElementById("customCustomer").style.display = "";
+    }
+    else {
+        document.getElementById("fromList").style.display = "";
+        document.getElementById("customCustomer").style.display = "none";
+    }
 }

@@ -10,14 +10,11 @@ namespace TEJ0017_FakturacniSystem.Models.Document
         [Display(Name = "Název položky")]
         public string Name { get; set; }
 
-        [Display(Name = "Cena bez DPH")]
-        public float? PriceWoVat { get; set; }
+        [Display(Name = "Cena")]
+        public float? Price { get; set; }
 
         [Display(Name = "Sazba DPH")]
         public int? Vat { get; set; }
-
-        [Display(Name = "Cena s DPH")]
-        public float Price { get; set; }
 
         [Display(Name = "Výchozí jednotka")]
         public string? DefaultUnit { get; set; }

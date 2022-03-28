@@ -61,12 +61,12 @@
                 </div>
                 <div class="col d-flex">
                     <div class="form-check form-switch ms-auto">
-                        <input class="form-check-input" type="checkbox" role="switch" onchange="customAddressSwitched()" id="customCustomerAddressSwitch">
+                        <input class="form-check-input" type="checkbox" role="switch" onchange="CustomAddressSwitched()" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch">
                         <label class="form-check-label" for="customCustomerAddressSwitch">Ruční zadání</label>
                     </div>
                 </div>
             </div>
-            <div class="fromList">
+            <div id="fromList">
                 <select class="form-select" id="customerSelector" asp-for=Customer onchange="CustomerSelector()">
                     @foreach(var item in ViewData["Customers"] as IEnumerable<TEJ0017_FakturacniSystem.Models.Subject.Customer>) {
                         if ((@basicInvoice != null) && (@basicInvoice.Customer.Name == item.Name))
@@ -88,7 +88,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="customCustomer">
+            <div id="customCustomer">
                 <div class="col-md-8">
                     <div class="row">
                         <div class="col">
@@ -203,8 +203,15 @@
         <div class="col-md-4">
             <label class="control-label">Položka</label>
         </div>
-        <div class="col">
-            <label class="control-label">Cena <span class="badge rounded-pill bg-secondary">Kč</span></label>
+        <div class="col-md-2">
+            @if(ourCompany.IsVatPayer)
+            {
+                <label class="control-label">Cena bez DPH <span class="badge rounded-pill bg-secondary">Kč</span></label>
+            }
+            else
+            {
+                <label class="control-label">Cena <span class="badge rounded-pill bg-secondary">Kč</span></label>
+            }
         </div>
         <div class="col">
             <label class="control-label">Množství</label>
@@ -214,15 +221,12 @@
         </div>
         @if(ourCompany.IsVatPayer)
         {
-            <div class="col-md-2">
-                <label class="control-label">Cena bez DPH / MJ <span class="badge rounded-pill bg-secondary">Kč</span></label>
-            </div>
             <div class="col">
                 <label class="control-label">DPH <span class="badge rounded-pill bg-secondary">%</span></label>
             </div>
         }
         <div class="col">
-            <label class="control-label">Celkem</label>
+            <label class="control-label">Celkem <span class="badge rounded-pill bg-secondary">Kč</span></label>
         </div>  
         <div class="col-md-1"></div>
     </div>
@@ -232,7 +236,7 @@
     {
         foreach(var item in basicInvoice.DocumentItems)
         {
-            <script type="text/javascript">DocumentAddItemWithValues('@item.Name', '@item.UnitPrice', '@item.Amount', '@item.Unit')</script>
+            <script type="text/javascript">DocumentAddItemWithValues('@item.Name', '@item.UnitPrice', '@item.Amount', '@item.Vat', '@ourCompany.IsVatPayer')</script>
         }
     }
     else
@@ -248,13 +252,14 @@
         </script>
     }
 
-
     <div class="col-md-0" style="padding-top: 10px;">
         <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.IsVatPayer', '@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
     </div>
-   
 
     <div class="d-flex form-group basicElementPadding">
+        <div class="ms-auto p-2" id="vatTable"></div>
+    </div>
+    <div class="d-flex form-group">
         <div class="ms-auto p-2">
             <label name="Discount" class="control-label"></label>
             <div class="input-group">
@@ -292,6 +297,8 @@
 
 
 <script type="text/javascript">
+    setVatPayer('@ourCompany.IsVatPayer');
     CustomerSelector();
     PaymentMethodSelector();
+    CustomAddressSwitched();
 </script>
