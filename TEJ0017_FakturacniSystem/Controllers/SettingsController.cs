@@ -70,7 +70,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public IActionResult EmailTemplate()
         {
+            OurCompany ourCompany = OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EmailTemplate(IFormCollection values)
+        {
+            OurCompany ourCompany = OurCompany.getInstance();
+            ourCompany.fillEmailData(values["emailSubject"], values["emailText"]);
+            DataInitializer.getInstance().updateOurCompanyDataInJson();
+            ViewData["OurCompany"] = ourCompany;
+
+            ViewData["SuccessMessage"] = "Změny úspěšně uloženy.";
+            return View(ourCompany);
         }
     }
 }

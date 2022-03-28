@@ -20,7 +20,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
         public float Price { get; set; }
 
         [Display(Name = "Výchozí jednotka")]
-        public string? defaultUnit { get; set; }
+        public string? DefaultUnit { get; set; }
 
         [Display(Name = "Popis")]
         public string? Description { get; set; }

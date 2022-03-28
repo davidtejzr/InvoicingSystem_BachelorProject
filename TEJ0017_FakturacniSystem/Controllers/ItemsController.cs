@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,49 +30,40 @@ namespace TEJ0017_FakturacniSystem.Controllers
             return View(await _context.Items.ToListAsync());
         }
 
-        // GET: Items/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Items
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return View(item);
-        }
-
         // GET: Items/Create
         public IActionResult Create()
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             return View();
         }
 
         // POST: Items/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemId,Name,PriceWoVat,Vat,Price,defaultUnit,Description")] Item item)
+        public async Task<IActionResult> Create(Item item)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             if (ModelState.IsValid)
             {
                 _context.Add(item);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Položka uložena.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ErrorMessage"] = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(item);
         }
 
-        // GET: Items/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             if (id == null)
             {
                 return NotFound();
@@ -82,16 +74,18 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 return NotFound();
             }
+
             return View(item);
         }
 
         // POST: Items/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ItemId,Name,PriceWoVat,Vat,Price,defaultUnit,Description")] Item item)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,PriceWoVat,Vat,Price,DefaultUnit,Description")] Item item)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             if (id != item.ItemId)
             {
                 return NotFound();
@@ -115,26 +109,12 @@ namespace TEJ0017_FakturacniSystem.Controllers
                         throw;
                     }
                 }
+
+                TempData["SuccessMessage"] = "Změny uloženy.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(item);
-        }
 
-        // GET: Items/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Items
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
+            ViewData["ErrorMessage"] = "Chyba validace! Doplňte prosím chybějící údaje.";
             return View(item);
         }
 
@@ -146,6 +126,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
             var item = await _context.Items.FindAsync(id);
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Kontakt smazán.";
             return RedirectToAction(nameof(Index));
         }
 

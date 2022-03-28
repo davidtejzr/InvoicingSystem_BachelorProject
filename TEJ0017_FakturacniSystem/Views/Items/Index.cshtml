@@ -2,15 +2,25 @@
 @model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Item>
 
 @{
-    ViewData["Title"] = "Položky v ceníku";
+    ViewData["Title"] = "Ceník";
     var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
-<h1>Index</h1>
+@if(TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+            @TempData["SuccessMessage"]
+        </div>
+    </div>
+}
 
+<h1><i class="bi bi-tags-fill"></i> Ceník</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová položka</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -30,7 +40,7 @@
                 @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.defaultUnit)
+                @Html.DisplayNameFor(model => model.DefaultUnit)
             </th>
             <th></th>
         </tr>
@@ -39,7 +49,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a asp-action="Edit" asp-route-id=@item.ItemId>@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             @if (ourCompany.IsVatPayer)
             {
@@ -54,14 +64,32 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.defaultUnit)
+                @Html.DisplayFor(modelItem => item.DefaultUnit)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ItemId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ItemId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ItemId">Delete</a>
+                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění položky z ceníku" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.ItemId"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeModalLabel">Odstranění položky z ceníku</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Chcete opravdu odstranit tuto položku z ceníku?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Storno</button>
+        <form method="post" id="recordDelForm" asp-action="Delete">
+            <button type="submit" class="btn btn-danger">Odstranit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

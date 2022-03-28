@@ -1,7 +1,9 @@
-﻿@model TEJ0017_FakturacniSystem.Models.Subject.OurCompany
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
+@model TEJ0017_FakturacniSystem.Models.Subject.OurCompany
 
 @{
     ViewData["Title"] = "Šablona emailu";
+    var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
 <ul class="nav nav-tabs">
@@ -46,7 +48,20 @@
     </div>
 }
 
-
-<form asp-action="DocumentSettings">
-
-</form>
+<div class="col-md-8">
+    <form asp-action="EmailTemplate">
+        <div class="form-group">
+            <label class="control-label">Předmět</label>
+            <input type="text" name="emailSubject" class="form-control" value=@ourCompany.EmailSubject />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Text zprávy</label>
+            <textarea name="emailText" class="form-control" rows="3">@ourCompany.EmailText</textarea>
+        </div>
+        <div class="form-group d-flex">
+            <div class="ms-auto basicElementPadding">
+                <input class="btn btn-primary" type="submit" value="Uložit změny"/>
+            </div>
+        </div>
+    </form>
+</div>

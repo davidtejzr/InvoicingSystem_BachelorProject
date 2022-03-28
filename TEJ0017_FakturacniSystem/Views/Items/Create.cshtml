@@ -1,13 +1,24 @@
-﻿@model TEJ0017_FakturacniSystem.Models.Document.Item
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
+@model TEJ0017_FakturacniSystem.Models.Document.Item
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nová položka ceníku";
+    var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
-<h1>Create</h1>
-
-<h4>Item</h4>
+<h1><i class="bi bi-tags-fill"></i> Nová položka ceníku</h1>
 <hr />
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+            @ViewData["ErrorMessage"]
+        </div>
+    </div>
+}
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -19,40 +30,48 @@
             </div>
             <div class="form-group">
                 <label asp-for="PriceWoVat" class="control-label"></label>
-                <input asp-for="PriceWoVat" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="PriceWoVat" type="number" placeholder="0,00" step="0.01" min="0" class="form-control" />
+                    <div class="input-group-text">Kč</div>
+                </div>
                 <span asp-validation-for="PriceWoVat" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Vat" class="control-label"></label>
-                <input asp-for="Vat" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="Vat" class="form-control" min="0" value="@ourCompany.DefaultVat" />
+                    <div class="input-group-text">%</div>
+                </div>
                 <span asp-validation-for="Vat" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="Price" type="number" placeholder="0,00" step="0.01" min="0" class="form-control" />
+                    <div class="input-group-text">Kč</div>
+                </div>
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="defaultUnit" class="control-label"></label>
-                <input asp-for="defaultUnit" class="form-control" />
-                <span asp-validation-for="defaultUnit" class="text-danger"></span>
+                <label asp-for="DefaultUnit" class="control-label"></label>
+                <input asp-for="DefaultUnit" class="form-control" value="@ourCompany.DefaultMJ" />
+                <span asp-validation-for="DefaultUnit" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="row">
+                <div class="form-group d-flex basicElementPadding">
+                    <div class="ms-auto" style="padding-right: 10px;">
+                        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
+                    </div>
+                    <div>
+                        <input type="submit" value="Vytvořit položku" class="btn btn-primary" />    
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

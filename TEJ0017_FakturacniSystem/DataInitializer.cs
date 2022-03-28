@@ -51,7 +51,8 @@ namespace TEJ0017_FakturacniSystem
 
             OurCompany.getInstance().fillAllData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
                 bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"], this.JsonDict["HeaderDesc"],
-                this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries, this.JsonDict["DefaultMJ"], Int32.Parse(this.JsonDict["DefaultVat"]));
+                this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries, this.JsonDict["DefaultMJ"], 
+                Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["EmailSubject"], this.JsonDict["EmailText"]);
         }
 
         public void updateOurCompanyDataInJson()
@@ -77,6 +78,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", JsonConvert.SerializeObject(ourCompany.NumSeries));
             data.Add("DefaultMJ", ourCompany.DefaultMJ);
             data.Add("DefaultVat", ourCompany.DefaultVat.ToString());
+            data.Add("EmailSubject", ourCompany.EmailSubject);
+            data.Add("EmailText", ourCompany.EmailText);
 
             using (StreamWriter s = new StreamWriter(this.Path))
             {
@@ -106,6 +109,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", "");
             data.Add("DefaultMJ", "kus");
             data.Add("DefaultVat", "21");
+            data.Add("EmailSubject", "");
+            data.Add("EmailText", "");
 
             using (StreamWriter s = new StreamWriter(this.Path))
             {

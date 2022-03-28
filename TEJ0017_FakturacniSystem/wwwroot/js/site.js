@@ -5,10 +5,13 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 });
 
 //Pass asp-route-id to modal
-var removeModal = document.getElementById('removeModal');
-const url = document.getElementById("recordDelForm").action;
-removeModal.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;
-    var recordId = button.getAttribute('data-bs-whatever');
-    document.getElementById("recordDelForm").action = url + "/" + recordId;
+if (document.getElementById('removeModal') !== null) {
+    var removeModal = document.getElementById('removeModal');
+    const url = document.getElementById("recordDelForm").action;
+
+    removeModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var recordId = button.getAttribute('data-bs-whatever');
+        document.getElementById("recordDelForm").action = url + "/" + recordId;
     });
+}

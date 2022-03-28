@@ -312,7 +312,7 @@ function PaymentMethodSelector() {
 
     $.ajax({
         type: "GET",
-        url: "/Documents/IsBankMethod",
+        url: "/BasicInvoices/IsBankMethod",
         dataType: "text",
         data: {
             paymentMethodName: paymentMethodName
@@ -323,4 +323,8 @@ function PaymentMethodSelector() {
         else
             document.getElementById("bankMethodSelector").disabled = true;
     });
+}
+
+function customAddressSwitched() {
+    console.log("switch!");
 }
