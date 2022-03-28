@@ -23,6 +23,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Items
         public async Task<IActionResult> Index()
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             return View(await _context.Items.ToListAsync());
         }
 

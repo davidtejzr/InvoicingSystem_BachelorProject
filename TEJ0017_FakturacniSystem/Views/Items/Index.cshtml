@@ -1,7 +1,9 @@
-﻿@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Item>
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
+@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Item>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Položky v ceníku";
+    var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
 <h1>Index</h1>
@@ -15,20 +17,20 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PriceWoVat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vat)
-            </th>
+            @if (ourCompany.IsVatPayer)
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.PriceWoVat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vat)
+                </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.defaultUnit)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th></th>
         </tr>
@@ -39,20 +41,20 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PriceWoVat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vat)
-            </td>
+            @if (ourCompany.IsVatPayer)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.PriceWoVat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vat)
+                </td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.defaultUnit)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ItemId">Edit</a> |
