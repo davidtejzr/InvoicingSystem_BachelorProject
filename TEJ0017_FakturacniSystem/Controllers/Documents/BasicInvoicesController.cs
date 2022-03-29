@@ -1,9 +1,4 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -75,7 +70,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Documents/Create
         public async Task<IActionResult> Create()
         {
-            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            OurCompany ourCompany = OurCompany.getInstance();
             var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
             var paymentMethods = await _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToListAsync();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
@@ -96,7 +91,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public IActionResult Create(BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
             //inicializace nactenych dat pro zpetne generovani
-            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            OurCompany ourCompany = OurCompany.getInstance();
             var bankDetails =  _context.BankDetails.Where(bd => bd.IsVisible == true).ToList();
             var paymentMethods =  _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToList();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
@@ -115,9 +110,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
             var itemsUnits = itemsValues["ItemUnit"];
             var itemsVats = itemsValues["ItemVat"];
 
+            if(ourCompany.IsVatPayer)
+                basicInvoice.IsWithVat = true;
+            else
+                basicInvoice.IsWithVat = false;
+
             for (int i = 0; i < itemsNames.Count; i++)
             {
-                basicInvoice.IsWithVat = true;
                 DocumentItem documentItem = new DocumentItem();
                 documentItem.Name = itemsNames[i];
                 string commaChange = itemsPrices[i].Replace(".", ",");
@@ -160,6 +159,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                     customCustomer.Dic = itemsValues["CustomDic"];
 
                 basicInvoice.Customer = customCustomer;
+                ViewData["IsCustomAddress"] = "1";
             }
             else
             {
@@ -216,11 +216,22 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents.FindAsync(id);
+            var document = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
             if (document == null)
             {
                 return NotFound();
             }
+
+            OurCompany ourCompany = OurCompany.getInstance();
+            var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
+            var paymentMethods = await _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToListAsync();
+            var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+
+            ViewData["Customers"] = await _context.Customers.Where(c => c.IsVisible == true).ToListAsync();
+            ViewData["PaymentMethods"] = paymentMethodsOnly;
+            ViewData["BankDetails"] = bankDetails;
+            ViewData["OurCompany"] = ourCompany;
+
             return View(document);
         }
 
@@ -277,7 +288,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public ContentResult CustomerData(string customerName)
         {
-            Customer customer = _context.Customers.Include("Address").Where(c => c.IsVisible == true).FirstOrDefault(m => m.Name == customerName);
+            Customer customer = _context.Customers.Include("Address").FirstOrDefault(m => m.Name == customerName);
             Dictionary<string, string> customerData = new Dictionary<string, string>();
             customerData.Add("customerStreet", customer.Address.Street);
             customerData.Add("customerHouseNumber", customer.Address.HouseNumber);

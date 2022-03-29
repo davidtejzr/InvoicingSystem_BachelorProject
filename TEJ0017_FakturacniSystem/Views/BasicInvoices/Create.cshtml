@@ -3,7 +3,7 @@
 @model TEJ0017_FakturacniSystem.Models.Document.Document
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nová faktura";
     var ourCompany = @ViewData["OurCompany"] as OurCompany;
     var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
@@ -63,7 +63,14 @@
                 </div>
                 <div class="col d-flex">
                     <div class="form-check form-switch ms-auto">
-                        <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()">
+                        @if(ViewData["IsCustomAddress"] == "1")
+                        {
+                            <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()" checked />
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()" />
+                        }         
                         <label class="form-check-label" for="customCustomerAddressSwitch">Ruční zadání</label>
                     </div>
                 </div>

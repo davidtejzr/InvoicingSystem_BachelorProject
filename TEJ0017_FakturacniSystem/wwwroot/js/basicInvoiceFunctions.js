@@ -1,7 +1,8 @@
 ﻿//bugs: fix calc total amount when remove not last column
 //fix automatic calc amount on reload
 
-let rowCounter = 0;
+let rowIndexCounter = 0;
+let rowIndexes = [];
 let sum = 0;
 let sumWoDph = 0;
 let isWithVat = 0;
@@ -55,8 +56,9 @@ function calcTotalAmount() {
     sumWoDph = 0;
     sum = 0;
     var vatsDict = {};
-    for (let i = 0; i < rowCounter; i++) {
-        var rowItem = document.getElementById("item" + i);
+    //for (let i = 0; i < rowIndexCounter; i++) {
+    for (var item in rowIndexes) {
+        var rowItem = document.getElementById(rowIndexes[item]);
         if (isWithVat === 1) {
             //vat summary
             let currentKey = rowItem.childNodes[4].childNodes[0].value;
@@ -120,9 +122,16 @@ function recalculateAmount(itemId) {
     calcTotalAmount();
 }
 
+function recalculateAll() {
+    for (var item in rowIndexes) {
+        recalculateAmount(rowIndexes[item]);
+    }
+}
+
 function DocumentAddItem(defaultMJ, defaultVat) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
-    const itemId = "item" + rowCounter++;
+    rowIndexes.push("item" + rowIndexCounter);
+    const itemId = "item" + rowIndexCounter++;
 
     //items
     const removeButton = document.createElement("button");
@@ -180,7 +189,7 @@ function DocumentAddItem(defaultMJ, defaultVat) {
 
     const ItemTotalAmount = document.createElement("input");
     ItemTotalAmount.id = itemId + "_total";
-    ItemTotalAmount.id = rowCounter;
+    ItemTotalAmount.id = rowIndexCounter;
     ItemTotalAmount.className = "form-control";
     ItemTotalAmount.disabled = true;
     ItemTotalAmount.value = "0.00";
@@ -254,7 +263,8 @@ function DocumentAddItem(defaultMJ, defaultVat) {
 function DocumentAddItemWithValues(name, price, amount, unit, vat) {
     console.log(name);
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
-    const itemId = "item" + rowCounter++;
+    rowIndexes.push("item" + rowIndexCounter);
+    const itemId = "item" + rowIndexCounter++;
 
     //items
     const removeButton = document.createElement("button");
@@ -313,7 +323,7 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
 
     const ItemTotalAmount = document.createElement("input");
     ItemTotalAmount.id = itemId + "_total";
-    ItemTotalAmount.id = rowCounter;
+    ItemTotalAmount.id = rowIndexCounter;
     ItemTotalAmount.className = "form-control";
     ItemTotalAmount.disabled = true;
     ItemTotalAmount.value = "0.00";
@@ -386,11 +396,14 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
 
 
 function RemoveItemId(itemId) {
-    if (rowCounter > 1) {
+    if (rowIndexes.length > 1) {
         var rowItem = document.getElementById(itemId);
         rowItem.remove();
-        rowCounter--;
-        calcTotalAmount();
+        for (var item in rowIndexes) {
+            if (rowIndexes[item] === itemId)
+                rowIndexes.splice(item, 1);
+        }
+        recalculateAll();
     }
     else {
         document.getElementById("DocumentWarningMessageDiv").style = "display: relative";
@@ -453,10 +466,22 @@ function CustomAddressSwitched() {
     if (document.getElementById("customCustomerAddressSwitch").checked) {
         document.getElementById("fromList").style.display = "none";
         document.getElementById("customCustomer").style.display = "";
+
+        document.getElementById("CustomSubName").required = true;
+        document.getElementById("CustomStreet").required = true;
+        document.getElementById("CustomHouseNumber").required = true;
+        document.getElementById("CustomZip").required = true;
+        document.getElementById("CustomCity").required = true;
     }
     else {
         document.getElementById("fromList").style.display = "";
         document.getElementById("customCustomer").style.display = "none";
+
+        document.getElementById("CustomSubName").required = false;
+        document.getElementById("CustomStreet").required = false;
+        document.getElementById("CustomHouseNumber").required = false;
+        document.getElementById("CustomZip").required = false;
+        document.getElementById("CustomCity").required = false;
     }
 }
 
