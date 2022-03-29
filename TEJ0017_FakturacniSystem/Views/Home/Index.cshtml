@@ -2,50 +2,93 @@
     ViewData["Title"] = "Home Page";
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
+    Dictionary<int, float> monthAmounts = (Dictionary<int, float>)ViewData["MonthAmounts"];
 }
 
 <div class="text-center">
-    <h1>@Model.Name</h1>
+    <h1 class="display-4">@Model.Name</h1>
     <h5><i class="bi bi-person-fill"></i> @ViewData["UserName"]</h5>
 </div>
 
-<br />
 <h3>Rychlé akce</h3>
-<div class="row">
+<div class="row actionButtonsWidth">
     <div class="col">
-        <button type="button" class="btn btn-outline-primary">Vydané faktury</button>
+        <a href="/BasicInvoices" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-receipt" style="font-size: 80px;"></i><br />Vydané faktury</a>
     </div>
     <div class="col">
-        <button type="button" class="btn btn-outline-primary">Nová faktura</button>
+        <a href="/BasicInvoices/Create" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-file-earmark-plus" style="font-size: 80px;"></i><br />Nová faktura</a>
     </div>
     <div class="col">
-        <button type="button" class="btn btn-outline-primary">Adresář</button>
+        <a href="/AddressBook" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-person-lines-fill" style="font-size: 80px;"></i><br />Adresář</a>
     </div>
     <div class="col">
-        <button type="button" class="btn btn-outline-primary">Ceník</button>
+        <a href="/Items" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-tags" style="font-size: 80px;"></i><br />Ceník</a>
     </div>
     <div class="col">
-        <button type="button" class="btn btn-outline-primary">Nastavení</button>
+        <a href="/PaymentMethods" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-credit-card" style="font-size: 80px;"></i><br />Banka</a>
+    </div>
+    <div class="col">
+        <a href="/Settings/OurCompanyEdit" type="button" class="btn btn-outline-primary shadow-lg"><i class="bi bi-gear" style="font-size: 80px;"></i><br />Nastavení</a>
     </div>
 </div>
 
 <br />
-<h3>Přehledy <span class="badge bg-secondary">2022</span></h3>
+<h3>Přehledy <span class="badge bg-secondary">@ViewData["ActualYear"]</span></h3>
 <div class="row gap-5 basicElementPadding">
     <div class="col shadow-lg p-3 mb-5 rounded text-center">
-        <h1>kč</h1>
-        <h5>Neuhrazené faktury</h5>
+        <h2>@ViewData["SumPaid"],- Kč</h2>
+        <h6>Uhrazené faktury</h6>
     </div>
     <div class="col shadow-lg p-3 mb-5 rounded text-center">
-        <h1>kč</h1>
-        <h5>Uhrazené faktury</h5>
+        <h2>@ViewData["SumUnpaid"],- Kč</h2>
+        <h6>Neuhrazené faktury</h6>
     </div>
     <div class="col shadow-lg p-3 mb-5 rounded text-center">
-        <h1>×</h1>
-        <h5>Počet vydaných faktur</h5>
+        <h2>@ViewData["CountTotal"]×</h2>
+        <h6>Počet vydaných faktur</h6>
     </div>
     <div class="col shadow-lg p-3 mb-5 rounded text-center">
-        <h1>×</h1>
-        <h5>Počet vydaných faktur</h5>
+        <h2>@ViewData["CountUnpaid"]×</h2>
+        <h6>Počet neuhrazených faktur</h6>
     </div>
 </div>
+
+
+<script type="text/javascript">
+    window.onload = function () {
+        var chart = new CanvasJS.Chart("chartContainer", {
+	        theme: "light1", 
+	        animationEnabled: false,	
+	        title:{
+		        text: "Vydané faktury za rok @ViewData["ActualYear"]"
+	        },
+	        data: [
+	        {
+		        type: "column",
+		        dataPoints: [
+			        { label: "Leden",  y: @monthAmounts[1] },
+			        { label: "Únor", y: @monthAmounts[2] },
+			        { label: "Březen", y: @monthAmounts[3] },
+			        { label: "Duben",  y: @monthAmounts[4] },
+			        { label: "Květen",  y: @monthAmounts[5] },
+                    { label: "Červen",  y: @monthAmounts[6] },
+			        { label: "Červenec", y: @monthAmounts[7] },
+			        { label: "Srpen", y: @monthAmounts[8] },
+			        { label: "Září",  y: @monthAmounts[9] },
+			        { label: "Říjen",  y: @monthAmounts[10] },
+                    { label: "Listopad",  y: @monthAmounts[11] },
+			        { label: "Prosinec",  y: @monthAmounts[12] }
+		        ]
+	        }
+	        ]
+        });
+        chart.render();
+    }
+</script>
+
+<div class="row" style="margin: 40px 0 60px 0;">
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+</div>
+
+
+<script src="~/vendor/canvasjs/dist/canvasjs.js" />

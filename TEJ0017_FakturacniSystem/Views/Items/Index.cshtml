@@ -55,12 +55,12 @@
                 <a asp-action="Edit" asp-route-id=@item.ItemId>@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.Price),- Kč
             </td>
             @if (ourCompany.IsVatPayer)
             {
                 <td>
-                    @Html.DisplayFor(modelItem => item.Vat)
+                    @Html.DisplayFor(modelItem => item.Vat) %
                 </td>
             }
             <td>
