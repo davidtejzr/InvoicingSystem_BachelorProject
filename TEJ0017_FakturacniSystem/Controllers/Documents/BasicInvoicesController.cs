@@ -42,7 +42,33 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // GET: Documents
         public async Task<IActionResult> Index()
         {
-            var documents = await _context.Documents.Include(c => c.Customer).ToListAsync();
+            ViewData["FirstInvoice"] = _context.Documents.ToList().Min(d => d.IssueDate);
+            ViewData["OurCompany"] = OurCompany.getInstance();
+            var documents = await _context.Documents.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+
+            return View(documents);
+        }
+
+        // POST: Documents
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(IFormCollection filterValue)
+        {
+            ViewData["FirstInvoice"] = _context.Documents.ToList().Min(d => d.IssueDate);
+            ViewData["OurCompany"] = OurCompany.getInstance();
+            DateTime minDateTime = Convert.ToDateTime(filterValue["filterMinDatetime"].ToString());
+            DateTime maxDateTime = Convert.ToDateTime(filterValue["filterMaxDatetime"].ToString());
+
+            var documents = await _context.Documents.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
+            if(filterValue["filterRadioPaid"] == "paid")
+            {
+                documents = await _context.Documents.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
+            }
+            else if(filterValue["filterRadioPaid"] == "unpaid")
+            {
+                documents = await _context.Documents.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
+            }
+
             return View(documents);
         }
 
@@ -354,6 +380,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
             string jsonResult = JsonConvert.SerializeObject(items);
 
             return Content(jsonResult);
+        }
+
+        // POST: Documents/SendEmail/5
+        [HttpPost, ActionName("SendEmail")]
+        [ValidateAntiForgeryToken]
+        public IActionResult SendEmail(int id)
+        {
+            //todo send email
+
+            TempData["SuccessMessage"] = "Email úspěšně odeslán.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

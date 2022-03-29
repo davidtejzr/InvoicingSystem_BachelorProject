@@ -1,7 +1,10 @@
-﻿@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Document>
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
+@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Document>
 
 @{
     ViewData["Title"] = "Vydané faktury";
+    DateTime firstInvoice = (DateTime)ViewData["FirstInvoice"];
+    var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
 <ul class="nav nav-tabs">
@@ -48,11 +51,15 @@
                     <div class="col-md-2">
                         <h5>Stav úhrady</h5>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="checkBoxPaid">
+                            <input class="form-check-input" name="filterRadioPaid" type="radio" id="checkBoxAll" value="all" checked>
+                            <label class="form-check-label" for="checkBoxAll">Všechny</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" name="filterRadioPaid" type="radio" id="checkBoxPaid" value="paid">
                             <label class="form-check-label" for="checkBoxPaid">Uhrazené</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="checkBoxNotPaid">
+                            <input class="form-check-input" name="filterRadioPaid" type="radio" id="checkBoxNotPaid" value="unpaid">
                             <label class="form-check-label" for="checkBoxNotPaid">Neuhrazené</label>
                         </div>
                     </div>
@@ -60,9 +67,9 @@
                         <h5>Vystaveno</h5>
                         <div class="input-group mb-3">
                             <span class="input-group-text">Od</span>
-                            <input type="datetime-local" class="form-control">
+                            <input type="datetime-local" name="filterMinDatetime" value="@firstInvoice.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
                             <span class="input-group-text">Do</span>
-                            <input type="datetime-local" class="form-control">
+                            <input type="datetime-local" name="filterMaxDatetime" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -136,6 +143,7 @@
             </td>
             <td>  
                 <a asp-action="Detail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                <a data-bs-placement="bottom" class="class="link-primary" title="Odeslání faktury e-mailem" data-bs-toggle="modal" data-bs-target="#sendEmailModal" data-bs-whatever="@item.DocumentId" data-bs-whatever2="@item.Customer.Email"><i class="bi bi-send-fill"></i></a>
                 <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění faktury" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.DocumentId"><i class="bi bi-trash-fill"></i></a>
             </td>
         </tr>
@@ -143,7 +151,7 @@
     </tbody>
 </table>
 
-<!-- Modal -->
+<!-- Remove modal -->
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -160,4 +168,36 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Send email modal -->
+<div class="modal fade" id="sendEmailModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sendEmailModalLabel">Odeslání faktury emailem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="recordSendForm" asp-action="SendEmail">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">Příjemce</label>
+                        <input type="text" id="emailReceiver" name="emailReceiver" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Předmět</label>
+                        <input type="text" name="emailSubject" class="form-control" value=@ourCompany.EmailSubject />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Text zprávy</label>
+                        <textarea name="emailText" class="form-control" rows="3">@ourCompany.EmailText</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Storno</button>
+                    <button type="submit" class="btn btn-primary">Odeslat</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
