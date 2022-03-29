@@ -79,6 +79,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
             var paymentMethods = await _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToListAsync();
             var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+
             ViewData["Customers"] = await _context.Customers.Where(c => c.IsVisible == true).ToListAsync();
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
@@ -107,34 +108,64 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
             float sum = 0;
             List<DocumentItem> documentItems = new List<DocumentItem>();
-            if (ourCompany.IsVatPayer)
-            {
-                //var
-            }
-            else
-            {
-                var itemsNames = itemsValues["ItemName"];
-                var itemsPrices = itemsValues["ItemPrice"];
-                var itemsAmounts = itemsValues["ItemAmount"];
-                var itemsUnits = itemsValues["ItemUnit"];
 
-                //vypocet celkove castky bez DPH
-                for (int i = 0; i < itemsNames.Count; i++)
+            var itemsNames = itemsValues["ItemName"];
+            var itemsPrices = itemsValues["ItemPrice"];
+            var itemsAmounts = itemsValues["ItemAmount"];
+            var itemsUnits = itemsValues["ItemUnit"];
+            var itemsVats = itemsValues["ItemVat"];
+
+            for (int i = 0; i < itemsNames.Count; i++)
+            {
+                basicInvoice.IsWithVat = true;
+                DocumentItem documentItem = new DocumentItem();
+                documentItem.Name = itemsNames[i];
+                string commaChange = itemsPrices[i].Replace(".", ",");
+                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.Amount = float.Parse(itemsAmounts[i]);
+                documentItem.Unit = itemsUnits[i];
+                if (ourCompany.IsVatPayer)
                 {
-                    DocumentItem documentItem = new DocumentItem();
-                    documentItem.Name = itemsNames[i];
-                    string commaChange = itemsPrices[i].Replace(".", ",");
-                    documentItem.UnitPrice = float.Parse(commaChange);
-                    documentItem.Amount = float.Parse(itemsAmounts[i]);
-                    documentItem.Unit = itemsUnits[i];
-                    sum += documentItem.UnitPrice * documentItem.Amount;
-
-                    documentItems.Add(documentItem);
+                    documentItem.Vat = int.Parse(itemsVats[i]);
+                    sum += documentItem.UnitPrice * documentItem.Amount * ((float)documentItem.Vat / 100 + 1);
                 }
+                else
+                {
+                    sum += documentItem.UnitPrice * documentItem.Amount;
+                }
+
+                documentItems.Add(documentItem);
             }
 
             basicInvoice.DocumentItems = documentItems;
-            basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+
+            if(itemsValues["customCustomerAddressSwitch"] == "1")
+            {
+                Address customAddress = new Address();
+                customAddress.Street = itemsValues["CustomStreet"];
+                customAddress.HouseNumber = itemsValues["CustomHouseNumber"];
+                customAddress.City = itemsValues["CustomCity"];
+                customAddress.Zip = itemsValues["CustomZip"];
+
+                Customer customCustomer = new Customer();
+                customCustomer.Name = itemsValues["CustomSubName"];
+                customCustomer.Address = customAddress;
+
+                if (itemsValues["CustomIco"] != "")
+                    customCustomer.Ico = int.Parse(itemsValues["CustomIco"]);
+                else
+                    customCustomer.Ico = 0;
+
+                if (itemsValues["CustomDic"] != "")
+                    customCustomer.Dic = itemsValues["CustomDic"];
+
+                basicInvoice.Customer = customCustomer;
+            }
+            else
+            {
+                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+            }
+
             basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
             basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
 
@@ -304,6 +335,14 @@ namespace TEJ0017_FakturacniSystem.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public ContentResult PriceListItems(string searchString)
+        {
+            var items = _context.Items.Where(i => i.Name.Contains(searchString)).ToList();
+            string jsonResult = JsonConvert.SerializeObject(items);
+
+            return Content(jsonResult);
         }
     }
 }

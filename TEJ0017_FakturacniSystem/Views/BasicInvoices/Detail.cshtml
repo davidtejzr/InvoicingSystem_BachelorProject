@@ -18,7 +18,7 @@
   </head>
 
   <body style="width: 1024px; min-height: 1600px; margin: 0 auto">
-    <h2>Faktura – Daňový doklad @Model.DocumentId</h2>
+    <h2>Faktura – Daňový doklad @Model.DocumentNo</h2>
 
     <div class="row">
       <div class="col">
@@ -52,19 +52,22 @@
 
     <h3>Platební údaje</h3>
     <div class="row">
-      <div class="col">
-        <p class="lh-1">@Model.BankDetail.AccountNumber/@Model.BankDetail.BankCode</p>
-        <p class="lh-1">IBAN: @Model.BankDetail.Iban</p>
-        <p class="lh-1">SWIFT @Model.BankDetail.Swift</p>
-      </div>
-      <div class="col">
-        <p class="lh-1">Variabilní symbol: @Model.VariableSymbol</p>
-        <p class="lh-1">Konstatní symbol: @Model.ConstantSymbol</p>
-      </div>
-      <div class="col">
-        <p class="lh-1">K úhradě: </p>
-        <p class="lh-1">Způsob platby: @Model.PaymentMethod.Name</p>
-      </div>
+        @if(Model.PaymentMethod.IsBank)
+        {
+            <div class="col">
+                <p class="lh-1">@Model.BankDetail.AccountNumber/@Model.BankDetail.BankCode</p>
+                <p class="lh-1">IBAN: @Model.BankDetail.Iban</p>
+                <p class="lh-1">SWIFT @Model.BankDetail.Swift</p>
+            </div>
+        }
+        <div class="col">
+            <p class="lh-1">Variabilní symbol: @Model.VariableSymbol</p>
+            <p class="lh-1">Konstatní symbol: @Model.ConstantSymbol</p>
+        </div>
+        <div class="col">
+            <p class="lh-1">K úhradě: </p>
+            <p class="lh-1">Způsob platby: @Model.PaymentMethod.Name</p>
+        </div>
     </div>
 
     <p>@Model.headerDescription</p>

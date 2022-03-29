@@ -61,5 +61,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
 
         [Display(Name = "Popisek patičky dokladu")]
         public string? footerDescription { get; set; }
+
+        public bool IsWithVat { get; set; }
     }
 }

@@ -3,18 +3,29 @@
 
 let rowCounter = 0;
 let sum = 0;
-let vatPayer = 0;
+let sumWoDph = 0;
+let isWithVat = 0;
+let totalString = "Celková cena: ";
 
 function renderVatSummary(vatsDict) {
     const vatSummaryContainer = document.getElementById("vatTable");
     vatSummaryContainer.innerHTML = "";
 
     const table = document.createElement("table");
-    table.className = "table-primary";
+    table.className = "table table-striped";
+    table.style.minWidth = "300px";
 
+    const tableTbody = document.createElement("tbody");
+
+    sum = 0;
     for (const key in vatsDict) {
         const vatKey = document.createElement("th");
-        vatKey.innerHTML = "DPH " + key + "%";
+        if (key == "total") {
+            vatKey.innerHTML = "Celkem bez DPH";
+        }
+        else {
+            vatKey.innerHTML = "DPH " + key + "%";
+        }
         const vatValue = document.createElement("td");
         vatValue.innerHTML = vatsDict[key] + ",- Kč";
 
@@ -22,46 +33,59 @@ function renderVatSummary(vatsDict) {
         oneRow.appendChild(vatKey);
         oneRow.appendChild(vatValue);
 
-        table.appendChild(oneRow);
+        tableTbody.appendChild(oneRow);
+
+        sum += vatsDict[key];
     }
+
+    table.appendChild(tableTbody);
     vatSummaryContainer.appendChild(table);
 }
 
-function setVatPayer(isVatPayer) {
-    if (isVatPayer === "True") {
-        vatPayer = 1;
+function setVatDocument(isVatDocument) {
+    if (isVatDocument === "True") {
+        isWithVat = 1;
     }
     else {
-        vatPayer = 0;
+        isWithVat = 0;
     }
 }
 
 function calcTotalAmount() {
-    sum = 0
+    sumWoDph = 0;
+    sum = 0;
     var vatsDict = {};
     for (let i = 0; i < rowCounter; i++) {
         var rowItem = document.getElementById("item" + i);
-        if (vatPayer === 1) {
+        if (isWithVat === 1) {
             //vat summary
             let currentKey = rowItem.childNodes[4].childNodes[0].value;
+            let computedValue = parseFloat(vatsDict[currentKey]);
             if (vatsDict[currentKey] === undefined) {
-                vatsDict[currentKey] = Math.round(parseFloat(rowItem.childNodes[1].childNodes[0].value) * parseFloat(rowItem.childNodes[2].childNodes[0].value) * (parseFloat(rowItem.childNodes[4].childNodes[0].value) / 100)*100)/100;
+                computedValue = Math.round(parseFloat(rowItem.childNodes[1].childNodes[0].value) * parseFloat(rowItem.childNodes[2].childNodes[0].value) * (parseFloat(rowItem.childNodes[4].childNodes[0].value) / 100) * 100) / 100;
+                vatsDict[currentKey] = computedValue;
             }
             else {
-                let computedValue = parseFloat(vatsDict[currentKey]);
                 computedValue += Math.round(parseFloat(rowItem.childNodes[1].childNodes[0].value) * parseFloat(rowItem.childNodes[2].childNodes[0].value) * (parseFloat(rowItem.childNodes[4].childNodes[0].value) / 100) * 100) / 100;
                 vatsDict[currentKey] = computedValue;
             }
 
             const amount = rowItem.childNodes[5].childNodes[0].value;
-            sum += parseFloat(amount);
+            sumWoDph += parseFloat(amount);
         }
         else {
             const amount = rowItem.childNodes[4].childNodes[0].value;
+            sumWoDph += parseFloat(amount);
             sum += parseFloat(amount);
         }
     }
-    renderVatSummary(vatsDict);
+
+    if (isWithVat === 1) {
+        vatsDict["total"] = sumWoDph;
+        renderVatSummary(vatsDict);
+        totalString = "Celková cena s DPH: "
+    }
+
     CalcDiscount();
 }
 
@@ -73,12 +97,12 @@ function CalcDiscount() {
         //round to 2 decimal
         const computedDiscount = Math.round(-(sum * (discountInputAmount / 100)) * 100)/100;
         discountAmount.innerHTML = parseFloat(computedDiscount) + ",- Kč";
-        const sumWithDiscount = Math.round((sum + computedDiscount) * 100)/100;
-        document.getElementById("totalAmount").innerHTML = "Celková cena: " + sumWithDiscount + ",- Kč";
+        const sumWithDiscount = Math.round((sum + computedDiscount) * 100) / 100;
+        document.getElementById("totalAmount").innerHTML = totalString + sumWithDiscount + ",- Kč";
     }
     else {
         discountAmount.innerHTML = "0.0,- Kč";
-        document.getElementById("totalAmount").innerHTML = "Celková cena: " + sum + ",- Kč";
+        document.getElementById("totalAmount").innerHTML = totalString + sum + ",- Kč";
     }
 }
 
@@ -86,7 +110,7 @@ function recalculateAmount(itemId) {
     var rowItem = document.getElementById(itemId);
     const price = rowItem.childNodes[1].childNodes[0].value;
     const amount = rowItem.childNodes[2].childNodes[0].value;
-    if (vatPayer === 1) {
+    if (isWithVat === 1) {
         const vat = rowItem.childNodes[4].childNodes[0].value;
         rowItem.childNodes[5].childNodes[0].value = Math.round((price * amount) * 100) / 100;
     }
@@ -96,7 +120,7 @@ function recalculateAmount(itemId) {
     calcTotalAmount();
 }
 
-function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
+function DocumentAddItem(defaultMJ, defaultVat) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     const itemId = "item" + rowCounter++;
 
@@ -113,9 +137,18 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     };
 
     const ItemNameInput = document.createElement("input");
+    ItemNameInput.id = itemId + "_name";
     ItemNameInput.name = "ItemName";
     ItemNameInput.className = "form-control";
     ItemNameInput.required = true;
+    ItemNameInput.autocomplete = "off";
+    ItemNameInput.onkeyup = function () {
+        FillFromItemsList(itemId);
+    };
+
+    const ItemSearchResult = document.createElement("div");
+    ItemSearchResult.id = itemId + "_itemSearchResult";
+    ItemSearchResult.className = "list-group"
 
     const ItemPriceInput = document.createElement("input");
     ItemPriceInput.id = itemId + "_price";
@@ -140,6 +173,7 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     }
 
     const ItemUnitInput = document.createElement("input");
+    ItemUnitInput.id = itemId + "_unit";
     ItemUnitInput.name = "ItemUnit";
     ItemUnitInput.value = defaultMJ;
     ItemUnitInput.className = "form-control";
@@ -159,6 +193,7 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     const ItemNameInputCol = document.createElement("div");
     ItemNameInputCol.className = "col-md-4";
     ItemNameInputCol.appendChild(ItemNameInput);
+    ItemNameInputCol.appendChild(ItemSearchResult);
 
     const ItemPriceInputCol = document.createElement("div");
     ItemPriceInputCol.className = "col-md-2";
@@ -188,8 +223,9 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
     ItemRow.appendChild(ItemUnitInputCol);
 
     //tax rates
-    if (isVatPayer === "True") {
+    if (isWithVat === 1) {
         const ItemVat = document.createElement("input");
+        ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
         ItemVat.value = defaultVat;
         ItemVat.type = "number";
@@ -215,7 +251,8 @@ function DocumentAddItem(isVatPayer, defaultMJ, defaultVat) {
 }
 
 
-function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, isVatPayer) {
+function DocumentAddItemWithValues(name, price, amount, unit, vat) {
+    console.log(name);
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     const itemId = "item" + rowCounter++;
 
@@ -233,10 +270,18 @@ function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, i
 
 
     const ItemNameInput = document.createElement("input");
+    ItemNameInput.id = itemId + "_name";
     ItemNameInput.name = "ItemName";
     ItemNameInput.className = "form-control";
     ItemNameInput.required = true;
     ItemNameInput.value = name;
+    ItemNameInput.onkeyup = function () {
+        FillFromItemsList(itemId);
+    };
+
+    const ItemSearchResult = document.createElement("div");
+    ItemSearchResult.id = itemId + "_itemSearchResult";
+    ItemSearchResult.className = "list-group"
 
     const ItemPriceInput = document.createElement("input");
     ItemPriceInput.id = itemId + "_price";
@@ -261,6 +306,7 @@ function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, i
     }
 
     const ItemUnitInput = document.createElement("input");
+    ItemUnitInput.id = itemId + "_unit";
     ItemUnitInput.name = "ItemUnit";
     ItemUnitInput.className = "form-control";
     ItemUnitInput.value = unit;
@@ -280,6 +326,7 @@ function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, i
     const ItemNameInputCol = document.createElement("div");
     ItemNameInputCol.className = "col-md-4";
     ItemNameInputCol.appendChild(ItemNameInput);
+    ItemNameInputCol.appendChild(ItemSearchResult);
 
     const ItemPriceInputCol = document.createElement("div");
     ItemPriceInputCol.className = "col-md-2";
@@ -309,8 +356,9 @@ function DocumentAddItemWithValues(name, price, amount, unit, priceWoVat, vat, i
     ItemRow.appendChild(ItemUnitInputCol);
 
     //tax rates
-    if (isVatPayer === "True") {
+    if (isWithVat === 1) {
         const ItemVat = document.createElement("input");
+        ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
         ItemVat.value = vat;
         ItemVat.type = "number";
@@ -365,8 +413,18 @@ function CustomerSelector() {
         document.getElementById("labelCustomerAddressFirstRow").innerHTML = data["customerStreet"] + data["customerHouseNumber"];
         document.getElementById("labelCustomerAddressSecondRow").innerHTML = data["customerZip"] + "&nbsp;&nbsp;" + data["customerCity"];
         document.getElementById("labelCustomerIco").innerHTML = "IČO: " + data["customerIco"];
-        if (data["customerDic"] !== null)
+
+        document.getElementById("CustomSubName").value = customerName;
+        document.getElementById("CustomStreet").value = data["customerStreet"];
+        document.getElementById("CustomHouseNumber").value = data["customerHouseNumber"];
+        document.getElementById("CustomZip").value = data["customerZip"];
+        document.getElementById("CustomCity").value = data["customerCity"];
+        document.getElementById("CustomIco").value = data["customerIco"];
+
+        if (data["customerDic"] !== null) {
             document.getElementById("labelCustomerDic").innerHTML = "DIČ: " + data["customerDic"];
+            document.getElementById("CustomDic").value = data["customerDic"];
+        }
         else
             document.getElementById("labelCustomerDic").innerHTML = "";
     });
@@ -400,4 +458,35 @@ function CustomAddressSwitched() {
         document.getElementById("fromList").style.display = "";
         document.getElementById("customCustomer").style.display = "none";
     }
+}
+
+function FillFromItemsList(itemId) {
+    $.ajax({
+        type: "GET",
+        url: "/BasicInvoices/PriceListItems",
+        dataType: "json",
+        data: {
+            searchString: document.getElementById(itemId + "_name").value
+        }
+    }).done(function (data) {
+        document.getElementById(itemId + "_itemSearchResult").innerHTML = "";
+        Object.keys(data).forEach(function (key) {
+            let item = document.createElement("a");
+            item.className = "list-group-item list-group-item-action";
+            item.innerHTML = data[key]["Name"];
+            item.value = data[key];
+            item.onclick = function () {
+                document.getElementById(itemId + "_itemSearchResult").innerHTML = "";
+                document.getElementById(itemId + "_name").value = data[key]["Name"];
+                document.getElementById(itemId + "_price").value = data[key]["Price"];
+                document.getElementById(itemId + "_unit").value = data[key]["DefaultUnit"];
+                if (isWithVat === 1) {
+                    document.getElementById(itemId + "_vat").value = data[key]["Vat"];
+                }
+                recalculateAmount(itemId);
+            };
+            document.getElementById(itemId + "_itemSearchResult").appendChild(item);
+        });
+
+    });
 }

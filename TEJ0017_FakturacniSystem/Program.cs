@@ -14,6 +14,10 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServe
 
 //Culture info
 var cultureInfo = new CultureInfo("en-US");
+cultureInfo.DateTimeFormat.FullDateTimePattern = "dd.MM.yyyy HH:mm:ss";
+cultureInfo.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
+cultureInfo.DateTimeFormat.FullDateTimePattern = "HH:mm:ss";
+cultureInfo.DateTimeFormat.LongTimePattern = "HH:mm:ss";
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 

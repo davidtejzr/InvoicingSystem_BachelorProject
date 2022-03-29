@@ -127,7 +127,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Kontakt smazán.";
+            TempData["SuccessMessage"] = "Položka ceníku smazána.";
             return RedirectToAction(nameof(Index));
         }
 

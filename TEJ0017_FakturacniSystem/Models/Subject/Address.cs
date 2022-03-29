@@ -23,7 +23,7 @@ namespace TEJ0017_FakturacniSystem.Models.Subject
         public string Zip { get; set; }
 
         [Display(Name = "Stát")]
-        public string State { get; set; }
+        public string? State { get; set; }
 
     }
 }

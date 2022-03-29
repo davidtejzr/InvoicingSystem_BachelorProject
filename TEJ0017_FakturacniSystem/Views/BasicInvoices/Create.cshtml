@@ -9,6 +9,8 @@
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
 }
 <script type="text/javascript" src="~/js/basicInvoiceFunctions.js" asp-append-version="true"></script>
+<script type="text/javascript">setVatDocument('@ourCompany.IsVatPayer');</script>
+
 
 @if (ViewData["ErrorMessage"] != null)
 {
@@ -61,7 +63,7 @@
                 </div>
                 <div class="col d-flex">
                     <div class="form-check form-switch ms-auto">
-                        <input class="form-check-input" type="checkbox" role="switch" onchange="CustomAddressSwitched()" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch">
+                        <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()">
                         <label class="form-check-label" for="customCustomerAddressSwitch">Ruční zadání</label>
                     </div>
                 </div>
@@ -90,24 +92,25 @@
             </div>
             <div id="customCustomer">
                 <div class="col-md-8">
+                    <input type="text" name="CustomSubName" id="CustomSubName" placeholder="Zákazník" class="form-control" />
                     <div class="row">
                         <div class="col">
-                            <input type="text" name="CustomStreet" placeholder="Ulice" class="form-control" />
+                            <input type="text" name="CustomStreet" id="CustomStreet" placeholder="Ulice" class="form-control" />
                         </div>
                         <div class="col-md-4">
-                            <input type="text" name="CustomHouseNumber" placeholder="Č.P." class="form-control" />
+                            <input type="text" name="CustomHouseNumber" id="CustomHouseNumber" placeholder="Č.P." class="form-control" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
-                            <input type="text" name="CustomZip" placeholder="PSČ" class="form-control" />
+                            <input type="text" name="CustomZip" id="CustomZip" placeholder="PSČ" class="form-control" />
                         </div>
                         <div class="col">
-                            <input type="text" name="CustomCity" placeholder="Město" class="form-control" />
+                            <input type="text" name="CustomCity" id="CustomCity" placeholder="Město" class="form-control" />
                         </div>
                     </div>
-                    <input type="text" name="CustomDic" placeholder="DIČ" class="form-control" />
-                    <input type="text" name="CustomIco" placeholder="IČO" class="form-control" />
+                    <input type="text" name="CustomIco" id="CustomIco" placeholder="IČO" class="form-control" />
+                    <input type="text" name="CustomDic" id="CustomDic" placeholder="DIČ" class="form-control" />
                 </div>
             </div>
         </div>
@@ -236,13 +239,13 @@
     {
         foreach(var item in basicInvoice.DocumentItems)
         {
-            <script type="text/javascript">DocumentAddItemWithValues('@item.Name', '@item.UnitPrice', '@item.Amount', '@item.Vat', '@ourCompany.IsVatPayer')</script>
+            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Vat')</script>
         }
     }
     else
     {
         <script type="text/javascript">
-            DocumentAddItem('@ourCompany.IsVatPayer', '@ourCompany.DefaultMJ', '@ourCompany.DefaultVat');
+            DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat');
             var dateIncrement = new Date();
             dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
             document.getElementById("DocumentIssueDate").valueAsDate = new Date();
@@ -253,7 +256,7 @@
     }
 
     <div class="col-md-0" style="padding-top: 10px;">
-        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.IsVatPayer', '@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
     </div>
 
     <div class="d-flex form-group basicElementPadding">
@@ -297,7 +300,6 @@
 
 
 <script type="text/javascript">
-    setVatPayer('@ourCompany.IsVatPayer');
     CustomerSelector();
     PaymentMethodSelector();
     CustomAddressSwitched();
