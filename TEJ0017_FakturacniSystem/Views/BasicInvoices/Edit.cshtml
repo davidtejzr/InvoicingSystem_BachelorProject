@@ -259,7 +259,7 @@
     {
         foreach(var item in @Model.DocumentItems)
         {
-            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Vat')</script>
+            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Unit', '@item.Vat')</script>
         }
     }
     else

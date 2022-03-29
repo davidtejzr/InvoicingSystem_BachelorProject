@@ -1,7 +1,4 @@
-﻿//bugs: fix calc total amount when remove not last column
-//fix automatic calc amount on reload
-
-let rowIndexCounter = 0;
+﻿let rowIndexCounter = 0;
 let rowIndexes = [];
 let sum = 0;
 let sumWoDph = 0;
@@ -56,7 +53,6 @@ function calcTotalAmount() {
     sumWoDph = 0;
     sum = 0;
     var vatsDict = {};
-    //for (let i = 0; i < rowIndexCounter; i++) {
     for (var item in rowIndexes) {
         var rowItem = document.getElementById(rowIndexes[item]);
         if (isWithVat === 1) {
@@ -261,7 +257,6 @@ function DocumentAddItem(defaultMJ, defaultVat) {
 
 
 function DocumentAddItemWithValues(name, price, amount, unit, vat) {
-    console.log(name);
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     rowIndexes.push("item" + rowIndexCounter);
     const itemId = "item" + rowIndexCounter++;
