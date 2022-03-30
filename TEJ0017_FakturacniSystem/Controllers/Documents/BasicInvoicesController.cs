@@ -388,6 +388,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public IActionResult SendEmail(int id)
         {
             //todo send email
+            EmailSender emailSender = new EmailSender();
 
             TempData["SuccessMessage"] = "Email úspěšně odeslán.";
             return RedirectToAction(nameof(Index));
