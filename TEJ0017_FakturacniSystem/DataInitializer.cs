@@ -78,6 +78,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", JsonConvert.SerializeObject(ourCompany.NumSeries));
             data.Add("DefaultMJ", ourCompany.DefaultMJ);
             data.Add("DefaultVat", ourCompany.DefaultVat.ToString());
+            data.Add("EmailSenderEmail", ourCompany.EmailSenderEmail);
+            data.Add("EmailSenderPassword", ourCompany.EmailSenderPassword);
             data.Add("EmailSubject", ourCompany.EmailSubject);
             data.Add("EmailText", ourCompany.EmailText);
 

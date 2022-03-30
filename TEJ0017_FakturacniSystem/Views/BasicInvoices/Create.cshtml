@@ -274,7 +274,7 @@
             <label name="Discount" class="control-label"></label>
             <div class="input-group">
                 <span class="input-group-text" id="addon1">%</span>
-                <input name="DiscountVal" type="number" value="0.0" step="0.1" min="0" max="100" onchange="CalcDiscount()" id="discountInputAmount" class="form-control" style="max-width: 100px;" aria-describedby="addon1" />
+                <input asp-for="Discount" type="number" value="0.0" step="0.1" min="0" max="100" onchange="CalcDiscount()" id="discountInputAmount" class="form-control" style="max-width: 100px;" aria-describedby="addon1" />
             </div>
         </div>
         <div class="p-2">

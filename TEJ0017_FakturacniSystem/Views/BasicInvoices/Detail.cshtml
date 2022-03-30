@@ -5,88 +5,151 @@
     Layout = null;
     int itemCounter = 0;
     var ourCompany = ViewData["OurCompany"] as OurCompany;
+    var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
+    ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
+    double sumTotalOnResult = 0;
+
+    //vypocet sazeb DPH
+    Dictionary<string, float> vatsDict = new Dictionary<string, float>();
+    if(Model.IsWithVat)
+    {
+        foreach(var item in Model.DocumentItems)
+        {
+            if(vatsDict.ContainsKey(item.Vat.ToString()))
+            {
+                vatsDict[item.Vat.ToString()] += item.UnitPrice * item.Amount;
+            }
+            else
+            {
+                vatsDict[item.Vat.ToString()] = item.UnitPrice * item.Amount;
+            }
+        }
+    }
 }
 
-<html>
-  <head>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossorigin="anonymous"
-    />
-  </head>
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <!--Nejdou iterni linky...-->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-  <body style="width: 1024px; min-height: 1600px; margin: 0 auto">
-    <h2>Faktura – Daňový doklad @Model.DocumentNo</h2>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    </head>
+    <style>
+        .basicPadding {
+            padding: 20px;
+        }
 
-    <div class="row">
-      <div class="col">
-        <h3>Dodavatel</h3>
+    </style>
+
+    <body class="border border-dark" style="width: 1024px; min-height: 1600px; margin: 0 auto;">
+    @if(Model.IsWithVat)
+    {
+        <h2 class="basicPadding text-uppercase fw-bolder">Faktura – Daňový doklad č. @Model.DocumentNo</h2>
+    }
+    else
+    {
+        <h2 class="basicPadding text-uppercase fw-bolder">Faktura č. @Model.DocumentNo</h2>
+    }
+    
+    <div class="row border-top border-bottom border-dark">
+      <div class="col basicPadding border-end border-dark">
+        <h4 class="text-uppercase fw-bolder">Dodavatel</h4>
         <p class="lh-1">@ourCompany.Name</p>
         <p class="lh-1">@ourCompany.Address.Street @ourCompany.Address.HouseNumber</p>
         <p class="lh-1">@ourCompany.Address.Zip&nbsp;&nbsp;@ourCompany.Address.City</p>
         <p class="lh-1">IČO: @ourCompany.Ico</p>
-        <p class="lh-1">DIČ: @ourCompany.Dic</p>
+        @if(ourCompany.Dic != null)
+        {
+            <p class="lh-1">DIČ: @ourCompany.Dic</p>
+        }
       </div>
-      <div class="col">
-        <h3>Odběratel</h3>
+      <div class="col basicPadding">
+        <h4 class="text-uppercase fw-bolder">Odběratel</h4>
         <p class="lh-1">@Model.Customer.Name</p>
         <p class="lh-1">@Model.Customer.Address.Street @Model.Customer.Address.HouseNumber</p>
         <p class="lh-1">@Model.Customer.Address.Zip&nbsp;&nbsp;@Model.Customer.Address.City</p>
-        <p class="lh-1">IČO: @Model.Customer.Ico</p>
-        <p class="lh-1">DIČ: @Model.Customer.Dic</p>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="row">
-        <div class="col">
-          <p>Datum vystavení: <b>@Model.IssueDate</b></p>
-        </div>
-        <div class="col">
-          <p>Datum splatnosti: <b>@Model.DueDate</b></p>
-        </div>
-      </div>
-    </div>
-
-    <h3>Platební údaje</h3>
-    <div class="row">
-        @if(Model.PaymentMethod.IsBank)
+        @if(Model.Customer.Ico != null)
         {
-            <div class="col">
-                <p class="lh-1">@Model.BankDetail.AccountNumber/@Model.BankDetail.BankCode</p>
-                <p class="lh-1">IBAN: @Model.BankDetail.Iban</p>
-                <p class="lh-1">SWIFT @Model.BankDetail.Swift</p>
-            </div>
+            <p class="lh-1">IČO: @Model.Customer.Ico</p>   
         }
+        @if(Model.Customer.Dic != null)
+        {
+            <p class="lh-1">DIČ: @Model.Customer.Dic</p>  
+        }
+      </div>
+    </div>
+
+    <div class="row basicPadding border-bottom border-dark">
         <div class="col">
-            <p class="lh-1">Variabilní symbol: @Model.VariableSymbol</p>
-            <p class="lh-1">Konstatní symbol: @Model.ConstantSymbol</p>
+            <p class="fs-5">Datum vystavení: <b>@Model.IssueDate.ToShortDateString()</b></p>
+            @if(Model.IsWithVat)
+            {
+                <p class="fs-5">Datum zdanitelného plnění: <b>@Model.TaxDate</b></p>
+            }
         </div>
         <div class="col">
-            <p class="lh-1">K úhradě: </p>
-            <p class="lh-1">Způsob platby: @Model.PaymentMethod.Name</p>
+            <p class="fs-5">Datum splatnosti: <b>@Model.DueDate.ToShortDateString()</b></p>
         </div>
     </div>
 
-    <p>@Model.headerDescription</p>
+    <div class="basicPadding border-bottom border-dark">
+        <h4 class="text-uppercase fw-bolder">Platební údaje</h4>
+        <div class="row">
+            @if(Model.PaymentMethod.IsBank)
+            {
+                <div class="col">
+                    <p class="fs-5">@Model.BankDetail.AccountNumber/@Model.BankDetail.BankCode</p>
+                    <p class="fs-5">IBAN: @Model.BankDetail.Iban</p>
+                    <p class="fs-5">SWIFT @Model.BankDetail.Swift</p>
+                </div>
+            }
+            <div class="col">
+                <p class="fs-5">Variabilní symbol: <b>@Model.VariableSymbol</b></p>
+                <p class="fs-5">Konstatní symbol: <b>@Model.ConstantSymbol</b></p>
+            </div>
+            <div class="col">
+                <p class="fs-5">K úhradě: <b>@Model.TotalAmount,- Kč</b></p>
+                <p class="fs-5">Způsob platby: <b>@Model.PaymentMethod.Name</b></p>
+            </div>
+        </div>
+    </div>
+
+    <p class="basicPadding fs-4">@Model.headerDescription</p>
     <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Název položky</th>
-          <th scope="col">Cena za kus</th>
-          <th scope="col">Množství</th>
-          <th scope="col">Jednotka</th>
-          <th scope="col">Celkem</th>
-        </tr>
-      </thead>
-      <tbody>
-          @foreach(var item in @Model.DocumentItems)
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Položka</th>
+                @if(Model.IsWithVat)
+                {
+                    <th scope="col">Cena bez DPH / MJ</th>
+                }
+                else
+                {
+                    <th scope="col">Cena / MJ</th>
+                }
+                <th scope="col">Množství</th>
+                <th scope="col">MJ</th>
+                @if(Model.IsWithVat)
+                {
+                    <th scope="col">DPH</th>
+                    <th scope="col">Celkem bez DPH</th>
+
+                }
+                else
+                {
+                    <th scope="col">Celkem</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in @Model.DocumentItems)
             {
                 itemCounter++;
                 float sum = float.Parse(@item.UnitPrice.ToString()) * float.Parse(@item.Amount.ToString());
+                if (!Model.IsWithVat)
+                    sumTotalOnResult += sum;    
 
                 <tr>
                     <td>@itemCounter</td>
@@ -94,30 +157,107 @@
                     <td>@item.UnitPrice,- kč</td>
                     <td>@item.Amount</td>
                     <td>@item.Unit</td>
+                    @if(Model.IsWithVat)
+                    {
+                        <td>@item.Vat %</td>
+                    }
                     <td>@sum,- kč</td>
                 </tr>
             }
-      </tbody>
+        </tbody>
     </table>
+    <br />
+
+
+    <div class="d-flex basicPadding">
+        <div class="ms-auto">
+            <table class="table" style="min-width: 300px;">
+                @if (Model.IsWithVat)
+                {
+                    <thead>
+                        <tr>
+                            <th>Sazba DPH</th>
+                            <th>Základ daně</th>
+                            <th>Výše DPH</th>
+                            <th>Celkem</th>
+                        </tr>
+                    </thead>
+                }
+                <tbody>
+                    @if(Model.IsWithVat)
+                    {
+                        double sumVat = 0;
+                        double sumTotal = 0;
+                        @foreach(var item in vatsDict)
+                        {
+                            double itemVat = Math.Round((item.Value * (float.Parse(item.Key) / 100)), 2);
+                            double itemTotalVat = Math.Round((item.Value * (float.Parse(item.Key) / 100) + item.Value), 2);
+                            sumVat += itemVat;
+                            sumTotal += item.Value;
+                            sumTotalOnResult += itemTotalVat;
+
+                            <tr>
+                                <td>@item.Key %</td>
+                                <td>@item.Value,- Kč</td>
+                                <td>@itemVat,- Kč</td>
+                                <th>@itemTotalVat,- Kč</th>
+                            </tr>
+                        }
+                        <tr>
+                            <th>Celkem</th>
+                            <td>@sumTotal,- Kč</td>
+                            <td>@sumVat,- Kč</td>
+                            <th>@sumTotalOnResult,- Kč</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <table class="table" style="min-width: 300px;">
+                <tbody>
+                    @if(@Model.Discount > 0)
+                    {
+                        float discountAmount = (float)-(sumTotalOnResult * ((Model.Discount / 100)));
+                        float roundedDiscountAmount = (float)Math.Round(discountAmount, 2);
+                        <tr>
+                            <th>Sleva</th>
+                            <td>@roundedDiscountAmount,- Kč (@Model.Discount%)</td>
+                        </tr>
+                    }
+
+                    @if(Model.IsWithVat)
+                    {
+                        <tr style="font-size: 30px;">
+                            <th>Celkem k úhradě</th>
+                            <td>@Model.TotalAmount,- Kč včetně DPH</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr style="font-size: 30px;">
+                            <th>Celkem k úhradě</th>
+                            <td>@Model.TotalAmount,- Kč</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 
     <br />
-    @if(@Model.Discount > 0)
-    {
-        float discountAmount = (float)-(Model.TotalAmount * (Model.Discount / 100));
-        float roundedDiscountAmount = (float)Math.Round(discountAmount, 2);
-
-        <h4>- Sleva @Model.Discount% (@roundedDiscountAmount,- Kč)</h4>
-    }
-
-    <h3>Celková částka: @Model.TotalAmount,- Kč</h3>
-
-    <br />
-    <p>@Model.footerDescription</p>
+    <p class="basicPadding fs-4">@Model.footerDescription</p>
 
     <div class="position-absolute bottom-0" style="width: 1024px">
       <div
         class="d-flex align-items-end flex-column" style="min-height: max-content">
-        <p>Vystaveno @DateTime.Now uživatelem </p>
+        <p style="padding-right: 10px;">Vystaveno @DateTime.Now uživatelem @ViewData["UserName"]</p>
       </div>
     </div>
   </body>

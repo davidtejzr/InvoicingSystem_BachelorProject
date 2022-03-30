@@ -127,19 +127,20 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["OurCompany"] = ourCompany;
             ViewData["NextNum"] = basicInvoice.DocumentNo;
 
+            //nastaveni platce/neplatce DPH k dokumentu pro pozdejsi otevreni
+            if (ourCompany.IsVatPayer)
+                basicInvoice.IsWithVat = true;
+            else
+                basicInvoice.IsWithVat = false;
+
+            //zpracovani polozek dokumentu
             float sum = 0;
             List<DocumentItem> documentItems = new List<DocumentItem>();
-
             var itemsNames = itemsValues["ItemName"];
             var itemsPrices = itemsValues["ItemPrice"];
             var itemsAmounts = itemsValues["ItemAmount"];
             var itemsUnits = itemsValues["ItemUnit"];
             var itemsVats = itemsValues["ItemVat"];
-
-            if(ourCompany.IsVatPayer)
-                basicInvoice.IsWithVat = true;
-            else
-                basicInvoice.IsWithVat = false;
 
             for (int i = 0; i < itemsNames.Count; i++)
             {
@@ -158,12 +159,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 {
                     sum += documentItem.UnitPrice * documentItem.Amount;
                 }
-
                 documentItems.Add(documentItem);
             }
 
+            //prirazeni listu zpracovanych polozek ke tride document
             basicInvoice.DocumentItems = documentItems;
 
+            //zpracovani rucne zadaneho zakaznika
             if(itemsValues["customCustomerAddressSwitch"] == "1")
             {
                 Address customAddress = new Address();
@@ -192,24 +194,32 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
             }
 
-            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
-
+            //prirazeni prihlaseneho uzivatele k dokumentu
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
             basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
 
+            //prirazeni dalsich udaju
+            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
             basicInvoice.IsPaid = false;
             basicInvoice.IssueDate = DateTime.Now;
 
-            string discountVal = itemsValues["DiscountVal"];
-            basicInvoice.Discount = float.Parse(discountVal.Replace(".", ","));
-            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum - calcDiscountAmount, 2);
+            //prirazeni vychozi hlavicky, paticky pokud nebyla vyplnena
+            if (basicInvoice.headerDescription == null)
+                basicInvoice.headerDescription = ourCompany.HeaderDesc;
+            if(basicInvoice.footerDescription == null)
+                basicInvoice.footerDescription = ourCompany.FooterDesc;
 
+            //vypocet celkove castky (vcetne pripradne slevy)
+            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
+            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+
+            //kontrola validity a zapis dokumentu
             if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null 
                 && basicInvoice.DocumentItems != null)
             {
+                //kontrola duplicity dokumentu
                 if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
                 {
                     ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";

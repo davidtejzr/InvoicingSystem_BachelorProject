@@ -363,4 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # App data file with private informations
-appData.json
+/TEJ0017_FakturacniSystem/appData.json
+/TEJ0017_FakturacniSystem/appsettings.json
