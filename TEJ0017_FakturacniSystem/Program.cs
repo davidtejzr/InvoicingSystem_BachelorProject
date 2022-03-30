@@ -12,7 +12,7 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServe
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
-//Culture info
+//Culture info - sync nastaveni s HTML formularem
 var cultureInfo = new CultureInfo("en-US");
 cultureInfo.DateTimeFormat.FullDateTimePattern = "dd.MM.yyyy HH:mm:ss";
 cultureInfo.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
@@ -21,7 +21,7 @@ cultureInfo.DateTimeFormat.LongTimePattern = "HH:mm:ss";
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-//Session
+//Session (zatim nikde nepouzito)
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
@@ -66,6 +66,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
+//pokud nebude nacten vstupni soubor "appData.json", spusti se pruvodce nastavenim
 if (DataInitializer.getInstance().initConfigFile())
 {
     app.MapControllerRoute(

@@ -1,4 +1,4 @@
-﻿//delaying input typing
+﻿//zpozdeni vstupu klavesnice
 function delay(callback, ms) {
     var timer = 0;
     return function () {
@@ -70,8 +70,6 @@ $('#SubjectSearchInput').keyup(delay(function (e) {
             }
 
         }).done(function (data) {
-            //console.log(data);
-
             document.getElementById("SubjectSearchResult").innerHTML = "";
             Object.keys(data).forEach(function (key) {
                 let item = document.createElement("a");

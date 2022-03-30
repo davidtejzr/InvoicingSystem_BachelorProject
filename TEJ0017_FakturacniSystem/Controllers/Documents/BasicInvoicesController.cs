@@ -146,8 +146,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 DocumentItem documentItem = new DocumentItem();
                 documentItem.Name = itemsNames[i];
-                string commaChange = itemsPrices[i].Replace(".", ",");
-                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.UnitPrice = float.Parse(itemsPrices[i]);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
                 if (ourCompany.IsVatPayer)
@@ -252,8 +251,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
-            if (document == null)
+            var basicInvoice = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
+            if (basicInvoice == null)
             {
                 return NotFound();
             }
@@ -268,40 +267,129 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
 
-            return View(document);
+            return View(basicInvoice);
         }
 
         // POST: Documents/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DocumentId,VariableSymbol,ConstantSymbol,IssueDate,DueDate,TaxDate,Discount,IsPaid,headerDescription,footerDescription")] Document document)
+        public async Task<IActionResult> Edit(int id, BasicInvoice basicInvoice, IFormCollection itemsValues)
         {
-            if (id != document.DocumentId)
+            if (id != basicInvoice.DocumentId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            //inicializace nactenych dat pro zpetne generovani
+            OurCompany ourCompany = OurCompany.getInstance();
+            var bankDetails = _context.BankDetails.Where(bd => bd.IsVisible == true).ToList();
+            var paymentMethods = _context.PaymentMethods.Where(pm => pm.IsVisible == true).ToList();
+            var paymentMethodsOnly = paymentMethods.Except(bankDetails);
+            ViewData["Customers"] = _context.Customers.Where(c => c.IsVisible == true).ToList();
+            ViewData["PaymentMethods"] = paymentMethodsOnly;
+            ViewData["BankDetails"] = bankDetails;
+            ViewData["OurCompany"] = ourCompany;
+
+            //zpracovani polozek dokumentu
+            float sum = 0;
+            List<DocumentItem> documentItems = new List<DocumentItem>();
+            var itemsNames = itemsValues["ItemName"];
+            var itemsPrices = itemsValues["ItemPrice"];
+            var itemsAmounts = itemsValues["ItemAmount"];
+            var itemsUnits = itemsValues["ItemUnit"];
+            var itemsVats = itemsValues["ItemVat"];
+
+            for (int i = 0; i < itemsNames.Count; i++)
             {
-                try
+                DocumentItem documentItem = new DocumentItem();
+                documentItem.Name = itemsNames[i];
+                string commaChange = itemsPrices[i].Replace(".", ",");
+                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.Amount = float.Parse(itemsAmounts[i]);
+                documentItem.Unit = itemsUnits[i];
+                if (basicInvoice.IsWithVat)
                 {
-                    _context.Update(document);
-                    await _context.SaveChangesAsync();
+                    documentItem.Vat = int.Parse(itemsVats[i]);
+                    sum += documentItem.UnitPrice * documentItem.Amount * ((float)documentItem.Vat / 100 + 1);
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!DocumentExists(document.DocumentId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    sum += documentItem.UnitPrice * documentItem.Amount;
                 }
+                documentItems.Add(documentItem);
+            }
+
+            //prirazeni listu zpracovanych polozek ke tride document
+            basicInvoice.DocumentItems = documentItems;
+
+            //zpracovani rucne zadaneho zakaznika
+            if (itemsValues["customCustomerAddressSwitch"] == "1")
+            {
+                Address customAddress = new Address();
+                customAddress.Street = itemsValues["CustomStreet"];
+                customAddress.HouseNumber = itemsValues["CustomHouseNumber"];
+                customAddress.City = itemsValues["CustomCity"];
+                customAddress.Zip = itemsValues["CustomZip"];
+
+                Customer customCustomer = new Customer();
+                customCustomer.Name = itemsValues["CustomSubName"];
+                customCustomer.Address = customAddress;
+
+                if (itemsValues["CustomIco"] != "")
+                    customCustomer.Ico = int.Parse(itemsValues["CustomIco"]);
+                else
+                    customCustomer.Ico = 0;
+
+                if (itemsValues["CustomDic"] != "")
+                    customCustomer.Dic = itemsValues["CustomDic"];
+
+                basicInvoice.Customer = customCustomer;
+                ViewData["IsCustomAddress"] = "1";
+            }
+            else
+            {
+                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+            }
+
+            //prirazeni prihlaseneho uzivatele k dokumentu
+            var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
+            string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
+            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+
+            //prirazeni dalsich udaju
+            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+
+            //vypocet celkove castky (vcetne pripradne slevy)
+            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
+            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+
+            //kontrola validity a zapis dokumentu
+            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null
+                && basicInvoice.DocumentItems != null)
+            {
+                //kontrola duplicity dokumentu (mimo aktualne upravovany)
+                if (_context.Documents.FirstOrDefault(d => (d.DocumentNo == basicInvoice.DocumentNo) && (d.DocumentId != basicInvoice.DocumentId)) != null)
+                {
+                    ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
+                    ViewData["BasicInvoice"] = basicInvoice;
+                    return View(basicInvoice);
+                }
+
+               //odstraneni puvodnich polozek faktury
+               var oldItems = _context.DocumentItems.Where(di => di.Document.DocumentId == basicInvoice.DocumentId);
+                _context.DocumentItems.RemoveRange(oldItems);
+
+                _context.Update(basicInvoice);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Změny na faktuře " + basicInvoice.DocumentNo + " uloženy.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(document);
+
+            ViewData["BasicInvoice"] = basicInvoice;
+            ViewData["ErrorMessage"] = "Chyba validity formuláře!";
+            return View(basicInvoice);
         }
 
         // POST: Documents/Delete/5

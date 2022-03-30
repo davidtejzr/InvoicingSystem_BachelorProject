@@ -17,7 +17,7 @@ namespace TEJ0017_FakturacniSystem
 
         public EmailSender(string receiver, string subject, string body, Stream attachment, string fileName)
         {
-            //email 
+            //email konfigurace
             this.EmailSenderr = "david.tejzr@gmail.com";
             this.EmailReceiver = receiver;
             this.EmailSubject = subject;
@@ -25,7 +25,7 @@ namespace TEJ0017_FakturacniSystem
             this.EmailAttachment = attachment;
             this.FileName = fileName;
 
-            //smtp
+            //smtp konfigurace
             this.SmtpPort = 587;
             this.SmtpHost = "smtp.gmail.com";
         }
@@ -49,6 +49,8 @@ namespace TEJ0017_FakturacniSystem
                 smtpClient.Host = this.SmtpHost;
                 smtpClient.EnableSsl = true;
                 smtpClient.UseDefaultCredentials = false;
+
+                //prihlasovaci udaje ulozeny v appData.json
                 smtpClient.Credentials = new NetworkCredential(ourCompany.EmailSenderEmail, ourCompany.EmailSenderPassword);
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtpClient.Send(mailMessage);

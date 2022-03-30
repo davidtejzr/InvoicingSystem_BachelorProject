@@ -14,6 +14,7 @@ namespace TEJ0017_FakturacniSystem
             this.JsonDict = new Dictionary<string,string>();
         }
 
+        //vzor Singleton - za behu programu muze byt pouze 1 instance teto tridy (eliminace kolize dat pri nekolika uzivatelich zaroven)
         public static DataInitializer getInstance()
         {
             if(_instance == null)
@@ -37,6 +38,7 @@ namespace TEJ0017_FakturacniSystem
             return true;
         }
 
+        //nacteni dat ze souboru JSON do tridy OurCompany
         public void initOurCompany()
         {
             Address address = new Address();
@@ -55,6 +57,7 @@ namespace TEJ0017_FakturacniSystem
                 Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["EmailSubject"], this.JsonDict["EmailText"], this.JsonDict["EmailSenderEmail"], this.JsonDict["EmailSenderPassword"]);
         }
 
+        //po zmene udaju kdekoliv v aplikaci je nutne zavolat tuto metodu pro ulozeni do JSON souboru (ihned! aby nevznikla kolize dat)
         public void updateOurCompanyDataInJson()
         {
             OurCompany ourCompany = OurCompany.getInstance();
@@ -90,6 +93,7 @@ namespace TEJ0017_FakturacniSystem
             }
         }
 
+        //simulace vstupniho pruvodce, spusti se pokud nebyl nalezen soubor "appData.json" (bude nahrazeno naplnenim pomoci vstupniho pruvodce)
         public void runEntryGuide()
         {
             Dictionary<string, string> data = new Dictionary<string, string>();

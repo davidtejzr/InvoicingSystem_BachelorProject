@@ -23,6 +23,7 @@ namespace TEJ0017_FakturacniSystem
             xmlDocumentDph = new XmlDocument();
         }
 
+        //parser ARES dat podle ICO - pro lepsi praci s daty bylo XML prevedno na JSON se kterym dale pracuji
         private void parseDataByIco(string jsonText, string jsonTextDph)
         {
             dynamic jsonDataRaw = JObject.Parse(jsonText);
@@ -63,6 +64,7 @@ namespace TEJ0017_FakturacniSystem
             }
         }
 
+        //XML parser dat nazvu subjektu z ARESu
         private void parseDataBySubjectName()
         {
             XDocument data = XDocument.Parse(xmlResult);
@@ -88,6 +90,8 @@ namespace TEJ0017_FakturacniSystem
                 dictionaryXmlData.Add(keyName, element.Value);
             }
 
+            //pri zadani obecneho zaznamu je vracena hodnota '-1', ARES vyhrozuje pri opakovanem vraceni tohoto vysledku zablokovanim adresy IP - nutno osetrit
+            //zatim osetreno vyhledavanim od 3+ zadanych znaku + pridana odezva na stisk klavesy 500 ms (logika v 'aresSearchFunctions.js')
             if (int.Parse(dictionaryXmlData["Ares_odpovedi.Odpoved.Pocet_zaznamu"]) == -1)
             {
                 Console.Error.WriteLine("result -1 !!!");
@@ -133,9 +137,12 @@ namespace TEJ0017_FakturacniSystem
 
         }
 
+        //nacteni vsech dat z ARESU odpovidajici zadanemu udaji ICO
         public Dictionary<string, string> getInfoByIco(string ico)
         {
+            //dotaz na sluzbu 'Standard'
             var result = httpClient.GetStringAsync(aresUrl + "ico=" + ico);
+            //dotaz na sluzbu 'Basic' - obsahuje DIC udaj
             var resultDph = httpClient.GetStringAsync(aresUrlDph + "ico=" + ico);
 
             xmlDocument.LoadXml(result.Result);
@@ -145,6 +152,7 @@ namespace TEJ0017_FakturacniSystem
             return parsedData;
         }
 
+        //nacteni vsech vyhledanych subjektu z ARESu (budou pouzity pouze nazvy subjektu, dalsi data se nactou pomoci ICO - jednodussi varianta nez prochazet jejich slozite XML) 
         public Dictionary<string, string> getInfoBySubjectName(string subjectName)
         {
             subjectName = subjectName.Replace(" ", "%20");

@@ -38,34 +38,37 @@
     <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová platební metoda</a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsBank)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">@Html.DisplayFor(modelItem => item.Name)</a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsBank)
-            </td>
-            <td>
-                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění platební metody" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.PaymentMethodId"><i class="bi bi-trash-fill"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsBank)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PaymentMethodId">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsBank)
+                </td>
+                <td>
+                    <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění platební metody" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.PaymentMethodId"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">

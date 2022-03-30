@@ -21,58 +21,61 @@
     <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová položka</a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            @if (ourCompany.IsVatPayer)
-            {
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
                 <th>
-                    Cena bez DPH
+                    @Html.DisplayNameFor(model => model.Name)
                 </th>
+                @if (ourCompany.IsVatPayer)
+                {
+                    <th>
+                        Cena bez DPH
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Vat)
+                    </th>
+                }
+                else
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                }
                 <th>
-                    @Html.DisplayNameFor(model => model.Vat)
+                    @Html.DisplayNameFor(model => model.DefaultUnit)
                 </th>
-            }
-            else
-            {
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-            }
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultUnit)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Edit" asp-route-id=@item.ItemId>@Html.DisplayFor(modelItem => item.Name)</a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price),- Kč
-            </td>
-            @if (ourCompany.IsVatPayer)
-            {
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model)
+    {
+            <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Vat) %
+                    <a asp-action="Edit" asp-route-id=@item.ItemId>@Html.DisplayFor(modelItem => item.Name)</a>
                 </td>
-            }
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultUnit)
-            </td>
-            <td>
-                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění položky z ceníku" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.ItemId"><i class="bi bi-trash-fill"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price),- Kč
+                </td>
+                @if (ourCompany.IsVatPayer)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vat) %
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.DefaultUnit)
+                </td>
+                <td>
+                    <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění položky z ceníku" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.ItemId"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">

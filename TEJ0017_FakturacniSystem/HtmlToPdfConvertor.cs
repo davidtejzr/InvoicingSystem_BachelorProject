@@ -11,12 +11,14 @@ namespace TEJ0017_FakturacniSystem
         {
             HtmlToPdf converter = new HtmlToPdf();
 
+            //staticky nastaveno na rozmer A4
             converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1240;
             converter.Options.MarginTop = 25;
             converter.Options.MarginBottom = 25;
 
+            //prevod pohledu Detail (prevedeneho na HTML string)
             PdfDocument pdfDocument = converter.ConvertHtmlString(outputHtml);
             MemoryStream output = new MemoryStream();
             pdfDocument.Save(output);

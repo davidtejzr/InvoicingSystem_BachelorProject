@@ -94,72 +94,74 @@
     <br />
 </div>
 
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPaid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IssueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DueDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentNo)</a>
-            </td>
-            <td>
-                @if(item.IsPaid)
-                {
-                    <a asp-action="SetUnpaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Zrušit úhradu faktury"><i class="bi bi-check-circle-fill"></i></a> 
-                }
-                else
-                {
-                    <a asp-action="SetPaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Označit fakturu jako uhrazenou"><i class="bi bi-check-circle"></i></a>   
-                } 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Name)
-            </td>
-            <td>
-                @if(item.IsWithVat)
-                {
-                    <span class="badge rounded-pill bg-success">DPH</span>
-                }
-                @Html.DisplayFor(modelItem => item.TotalAmount),- Kč
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IssueDate)
-            </td>
-            <td>
-                @item.DueDate.ToShortDateString()
-            </td>
-            <td>  
-                <a asp-action="Detail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                <a data-bs-placement="bottom" class="class="link-primary" title="Odeslání faktury e-mailem" data-bs-toggle="modal" data-bs-target="#sendEmailModal" data-bs-whatever="@item.DocumentId" data-bs-whatever2="@item.Customer.Email"><i class="bi bi-send-fill"></i></a>
-                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění faktury" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.DocumentId"><i class="bi bi-trash-fill"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsPaid)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Customer.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IssueDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentNo)</a>
+                </td>
+                <td>
+                    @if(item.IsPaid)
+                    {
+                        <a asp-action="SetUnpaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Zrušit úhradu faktury"><i class="bi bi-check-circle-fill"></i></a> 
+                    }
+                    else
+                    {
+                        <a asp-action="SetPaid" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Označit fakturu jako uhrazenou"><i class="bi bi-check-circle"></i></a>   
+                    } 
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.Name)
+                </td>
+                <td>
+                    @if(item.IsWithVat)
+                    {
+                        <span class="badge rounded-pill bg-success">DPH</span>
+                    }
+                    @Html.DisplayFor(modelItem => item.TotalAmount),- Kč
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueDate)
+                </td>
+                <td>
+                    @item.DueDate.ToShortDateString()
+                </td>
+                <td>  
+                    <a asp-action="Detail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                    <a data-bs-placement="bottom" class="class="link-primary" title="Odeslání faktury e-mailem" data-bs-toggle="modal" data-bs-target="#sendEmailModal" data-bs-whatever="@item.DocumentId" data-bs-whatever2="@item.Customer.Email"><i class="bi bi-send-fill"></i></a>
+                    <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění faktury" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.DocumentId"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
 
 <!-- Remove modal -->
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">

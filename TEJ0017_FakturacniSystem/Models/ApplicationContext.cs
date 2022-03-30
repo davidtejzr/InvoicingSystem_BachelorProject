@@ -20,7 +20,6 @@ namespace TEJ0017_FakturacniSystem.Models
         public DbSet<Document.DocumentTypes.CorrectiveTaxDocument> CorrectiveTaxDocuments { get; set; }
         public DbSet<Document.DocumentTypes.InvoiceTemplate> InvoiceTemplates { get; set; }
         public DbSet<Document.DocumentTypes.ProformaInvoice> proformaInvoices { get; set; }
-        public DbSet<Document.DocumentTypes.RegularInvoice> RegularInvoices { get; set; }
         public DbSet<Document.Item> Items { get; set; }
         public object User { get; internal set; }
 
@@ -37,7 +36,6 @@ namespace TEJ0017_FakturacniSystem.Models
             builder.Entity<Document.DocumentTypes.CorrectiveTaxDocument>().ToTable("CorrectiveTaxDocuments");
             builder.Entity<Document.DocumentTypes.InvoiceTemplate>().ToTable("InvoiceTemplates");
             builder.Entity<Document.DocumentTypes.ProformaInvoice>().ToTable("proformaInvoices");
-            builder.Entity<Document.DocumentTypes.RegularInvoice>().ToTable("RegularInvoices");
         }
     }
 }

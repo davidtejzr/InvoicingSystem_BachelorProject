@@ -100,7 +100,8 @@ function CalcDiscount() {
     }
     else {
         discountAmount.innerHTML = "0.0,- Kč";
-        document.getElementById("totalAmount").innerHTML = totalString + sum + ",- Kč";
+        const sumRound = Math.round(sum * 100) / 100;
+        document.getElementById("totalAmount").innerHTML = totalString + sumRound + ",- Kč";
     }
 }
 
@@ -161,6 +162,7 @@ function DocumentAddItem(defaultMJ, defaultVat) {
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
     ItemPriceInput.min = 0;
+    ItemPriceInput.step = "0.01";
     ItemPriceInput.value = "0.00"
     ItemPriceInput.onchange = function () {
         recalculateAmount(itemId);
@@ -294,6 +296,7 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
     ItemPriceInput.min = 0;
+    ItemPriceInput.step = "0.01";
     ItemPriceInput.value = price;
     ItemPriceInput.onchange = function () {
         recalculateAmount(itemId);

@@ -39,6 +39,8 @@
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="DocumentId" />
+    <input type="hidden" asp-for="IsPaid" />
+    <input type="hidden" asp-for="IsWithVat" />
 
     <div class="row">
         <div class="col">
@@ -193,7 +195,7 @@
         <div class="col">
             <div class="form-group">
                 <label asp-for="IssueDate" class="control-label"></label>
-                <input asp-for="IssueDate" id="DocumentIssueDate" type="date" class="form-control" disabled/>
+                <input asp-for="IssueDate" id="DocumentIssueDate" type="datetime-local" class="form-control"/>
                 <span asp-validation-for="IssueDate" class="text-danger"></span>
             </div>
             @if (Model.IsWithVat)

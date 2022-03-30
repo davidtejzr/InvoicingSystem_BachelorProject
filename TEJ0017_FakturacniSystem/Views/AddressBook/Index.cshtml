@@ -19,46 +19,50 @@
 <p>
     <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nový kontakt</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Subjekt
-            </th>
-            <th>
-                Kontaktní osoba
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telephone)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SubjectId">@Html.DisplayFor(modelItem => item.Name)</a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactName) @Html.DisplayFor(modelItem => item.ContactSurname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telephone)
-            </td>
-            <td>
-                <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění kontaktu" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.SubjectId"><i class="bi bi-trash-fill"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Subjekt
+                </th>
+                <th>
+                    Kontaktní osoba
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Telephone)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SubjectId">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContactName) @Html.DisplayFor(modelItem => item.ContactSurname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telephone)
+                </td>
+                <td>
+                    <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění kontaktu" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.SubjectId"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
