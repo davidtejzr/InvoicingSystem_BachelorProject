@@ -25,7 +25,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public static string RenderViewToString(Controller controller, string viewName, object model = null)
         {
             controller.ViewData.Model = model;
-            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            OurCompany ourCompany = OurCompany.getInstance();
             controller.ViewData["OurCompany"] = ourCompany;
 
             using (var sw = new StringWriter())
@@ -79,7 +79,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return null;
 
             var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
-                Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(m => m.DocumentId == id);
+                Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(d => d.DocumentId == id);
             if (document == null)
             {
                 return null;
@@ -385,12 +385,33 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: Documents/SendEmail/5
         [HttpPost, ActionName("SendEmail")]
         [ValidateAntiForgeryToken]
-        public IActionResult SendEmail(int id)
+        public async Task<IActionResult> SendEmail(int id, IFormCollection values)
         {
-            //todo send email
-            EmailSender emailSender = new EmailSender();
+            if (id == null)
+                return null;
 
-            TempData["SuccessMessage"] = "Email úspěšně odeslán.";
+            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
+                Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(d => d.DocumentId == id);
+            if (document == null)
+            {
+                return null;
+            }
+
+            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
+            string outputHtml = RenderViewToString(this, "Detail", document);
+            MemoryStream output = htmlToPdfConvertor.getDocumentPdf(outputHtml);
+            output.Position = 0;
+
+            string subjectText = values["emailSubject"] + " " + document.DocumentNo;
+            string fileName = "faktura_" + document.DocumentNo;
+            EmailSender emailSender = new EmailSender(values["emailReceiver"], subjectText, values["emailText"], output, fileName);
+            bool returnState = emailSender.SendEmail();
+
+            if(returnState)
+                TempData["SuccessMessage"] = "Email úspěšně odeslán.";
+            else
+                TempData["ErrorMessage"] = "Došlo k chybě při odesílání emailu.";
+
             return RedirectToAction(nameof(Index));
         }
     }

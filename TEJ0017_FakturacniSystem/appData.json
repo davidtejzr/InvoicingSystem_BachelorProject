@@ -1,1 +1,24 @@
-{"Ico":"12345678","Dic":"CZ12345678","Name":"Firma s.r.o.","IsVatPayer":"True","Email":"firma@firma.cz","Telephone":"+420 773 758 269","WebPage":"www.firma.cz","AddressStreet":"Hořínůška","AddressHouseNumber":"252","AddressCity":"Dolní Lhota","AddressZip":"747 66","HeaderDesc":"Fakturujeme Vám následující zboží a služby:","FooterDesc":"Děkujeme!","DueInterval":"14","DocumentNumberLength":"5","NumSeries":"{\"2022\":\"35\"}","DefaultMJ":"kus","DefaultVat":"21","EmailSubject":"Faktura","EmailText":"Fakturujeme Vám následující služby."}
+{
+    "Ico": "12345678",
+    "Dic": "CZ12345678",
+    "Name": "Firma s.r.o.",
+    "IsVatPayer": "True",
+    "Email": "firma@firma.cz",
+    "Telephone": "+420 773 758 269",
+    "WebPage": "www.firma.cz",
+    "AddressStreet": "Hořínůška",
+    "AddressHouseNumber": "252",
+    "AddressCity": "Dolní Lhota",
+    "AddressZip": "747 66",
+    "HeaderDesc": "Fakturujeme Vám následující zboží a služby:",
+    "FooterDesc": "Děkujeme!",
+    "DueInterval": "14",
+    "DocumentNumberLength": "5",
+    "NumSeries": "{\"2022\":\"35\"}",
+    "DefaultMJ": "kus",
+    "DefaultVat": "21",
+    "EmailSubject": "Faktura",
+    "EmailText": "Fakturujeme Vám následující služby.\r\n\r\n\r\n\r\nDěkujeme za včasnou úhradu,\r\nFirma s.r.o.",
+    "EmailSenderEmail": "david.tejzr@gmail.com",
+    "EmailSenderPassword": "nlromcuqixgbwnoz"
+}

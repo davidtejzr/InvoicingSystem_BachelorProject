@@ -52,7 +52,7 @@ namespace TEJ0017_FakturacniSystem
             OurCompany.getInstance().fillAllData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
                 bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"], this.JsonDict["HeaderDesc"],
                 this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries, this.JsonDict["DefaultMJ"], 
-                Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["EmailSubject"], this.JsonDict["EmailText"]);
+                Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["EmailSubject"], this.JsonDict["EmailText"], this.JsonDict["EmailSenderEmail"], this.JsonDict["EmailSenderPassword"]);
         }
 
         public void updateOurCompanyDataInJson()
@@ -109,6 +109,8 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", "");
             data.Add("DefaultMJ", "kus");
             data.Add("DefaultVat", "21");
+            data.Add("EmailSenderEmail", "");
+            data.Add("EmailSenderPassword", "");
             data.Add("EmailSubject", "");
             data.Add("EmailText", "");
 

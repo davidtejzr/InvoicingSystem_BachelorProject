@@ -10,6 +10,8 @@
         public string? DefaultMJ { get; set; }
         public int? DefaultVat { get; set; }
         public Dictionary<string, string> NumSeries { get; set; }
+        public string? EmailSenderEmail { get; set; }
+        public string? EmailSenderPassword { get; set; }
         public string? EmailSubject { get; set; }
         public string? EmailText { get; set; }
 
@@ -20,7 +22,7 @@
         }
 
         public void fillAllData(int ico, string dic, string name, bool isVatPayer, string email, string telephone, Address address, string webPage, string headerDesc, 
-            string footerDesc, int dueInterval, int documentNumberLength, Dictionary<string, string> numSeries, string defaultMJ, int defaultVat, string emailSubject, string emailText)
+            string footerDesc, int dueInterval, int documentNumberLength, Dictionary<string, string> numSeries, string defaultMJ, int defaultVat, string emailSubject, string emailText, string emailSenderEmail, string emailSenderPassword)
         {
             this.Ico = ico;
             this.Dic = dic;
@@ -39,6 +41,8 @@
             this.DefaultVat = defaultVat;
             this.EmailSubject = emailSubject;
             this.EmailText = emailText;
+            this.EmailSenderEmail = emailSenderEmail;
+            this.EmailSenderPassword = emailSenderPassword;
         }
 
         public void fillCompanyData(int ico, string dic, string name, bool isVatPayer, string email, string telephone, Address address, string webPage)
