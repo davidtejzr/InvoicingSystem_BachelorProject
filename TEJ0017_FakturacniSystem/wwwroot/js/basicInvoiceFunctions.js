@@ -421,7 +421,7 @@ function CustomerSelector() {
         }
 
     }).done(function (data) {
-        document.getElementById("labelCustomerAddressFirstRow").innerHTML = data["customerStreet"] + data["customerHouseNumber"];
+        document.getElementById("labelCustomerAddressFirstRow").innerHTML = data["customerStreet"] + "&nbsp;" + data["customerHouseNumber"];
         document.getElementById("labelCustomerAddressSecondRow").innerHTML = data["customerZip"] + "&nbsp;&nbsp;" + data["customerCity"];
         document.getElementById("labelCustomerIco").innerHTML = "IČO: " + data["customerIco"];
 

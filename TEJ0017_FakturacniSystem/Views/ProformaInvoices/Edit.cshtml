@@ -1,0 +1,329 @@
+﻿@using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes
+@using TEJ0017_FakturacniSystem.Models.Subject
+@model TEJ0017_FakturacniSystem.Models.Document.Document
+
+@{
+    ViewData["Title"] = "Editace zálohové faktury";
+    var ourCompany = @ViewData["OurCompany"] as OurCompany;
+    var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
+    int patternLen = (int)ourCompany.DocumentNumberLength + 4;
+}
+<script type="text/javascript" src="~/js/basicInvoiceFunctions.js" asp-append-version="true"></script>
+<script type="text/javascript">setVatDocument('@Model.IsWithVat');</script>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+            @ViewData["ErrorMessage"]
+        </div>
+    </div>
+}
+
+<div class="alert alert-warning d-flex align-items-center" id="DocumentWarningMessageDiv" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div id="DocumentWarningMessage"></div>
+</div>
+
+<form asp-action="Edit">
+    <div class="d-flex">
+        <div>
+            <h1><i class="bi bi-receipt"></i> Editace zálohové faktury</h1>
+        </div>
+        <div class="ms-auto">
+            <input asp-for="DocumentNo" class="form-control form-control-lg" type="text" value="@Model.DocumentNo" pattern="[Z]{1}[0-9]{@patternLen}" oninvalid="alert('Neplatný formát čísla faktury!')">
+        </div>
+    </div>
+    <hr />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="DocumentId" />
+    <input type="hidden" asp-for="IsPaid" />
+    <input type="hidden" asp-for="IsWithVat" />
+
+    <div class="row">
+        <div class="col">
+            <h3>Dodavatel</h3>
+            <div class="col-md-7">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">@ourCompany.Name</li>
+                    <li class="list-group-item">@ourCompany.Address.Street @ourCompany.Address.HouseNumber</li>
+                    <li class="list-group-item">@ourCompany.Address.Zip&nbsp;&nbsp;@ourCompany.Address.City</li>
+                    <li class="list-group-item">IČO: @ourCompany.Ico</li>
+                    @if (ourCompany.Dic != null)
+                    {
+                        <li class="list-group-item">DIČ: @ourCompany.Dic</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <h3>Odběratel</h3>
+                </div>
+                <div class="col d-flex">
+                    <div class="form-check form-switch ms-auto">
+                        @if(ViewData["IsCustomAddress"] == "1")
+                        {
+                            <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()" checked />
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" name="customCustomerAddressSwitch" id="customCustomerAddressSwitch" role="switch" value="1" onchange="CustomAddressSwitched()" />
+                        }         
+                        <label class="form-check-label" for="customCustomerAddressSwitch">Ruční zadání</label>
+                    </div>
+                </div>
+            </div>
+            <div id="fromList">
+                <select class="form-select" id="customerSelector" asp-for=Customer onchange="CustomerSelector()">
+                    @if(Model.Customer != null)
+                    {
+                        <option selected hidden>@Model.Customer.Name</option>
+                    }
+                    @foreach(var item in ViewData["Customers"] as IEnumerable<TEJ0017_FakturacniSystem.Models.Subject.Customer>) {
+                        if ((@basicInvoice != null) && (@basicInvoice.Customer.Name == item.Name))
+                        {
+                            <option selected>@item.Name</option>
+                        }
+                        else
+                        {
+                            <option>@item.Name</option> 
+                        }          
+                    }
+                </select>
+                <div class="col-md-7">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" id="labelCustomerAddressFirstRow"></li>
+                        <li class="list-group-item" id="labelCustomerAddressSecondRow"></li>
+                        <li class="list-group-item" id="labelCustomerIco"></li>
+                        <li class="list-group-item" id="labelCustomerDic"></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="customCustomer">
+                <div class="col-md-8">
+                    <input type="text" name="CustomSubName" id="CustomSubName" placeholder="Zákazník" class="form-control" />
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="CustomStreet" id="CustomStreet" placeholder="Ulice" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="CustomHouseNumber" id="CustomHouseNumber" placeholder="Č.P." class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" name="CustomZip" id="CustomZip" placeholder="PSČ" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <input type="text" name="CustomCity" id="CustomCity" placeholder="Město" class="form-control" />
+                        </div>
+                    </div>
+                    <input type="text" name="CustomIco" id="CustomIco" placeholder="IČO" class="form-control" />
+                    <input type="text" name="CustomDic" id="CustomDic" placeholder="DIČ" class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row basicElementPadding">
+        <div class="col">
+            <h3>Platební údaje</h3>
+        </div>
+        <div class="col">
+            <h3>Splatnost</h3>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label class="control-label">Způsob platby</label>
+                <select class="form-select" asp-for=PaymentMethod onchange="PaymentMethodSelector()" id="paymentMethodSelector">
+                    @if(Model.PaymentMethod != null)
+                    {
+                        <option selected hidden>@Model.PaymentMethod.Name</option>
+                    }
+                    @foreach(var item in ViewData["PaymentMethods"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod>) {
+                        if ((@basicInvoice != null) && (@basicInvoice.PaymentMethod.Name == item.Name))
+                        {
+                            <option selected>@item.Name</option>
+                        }
+                        else
+                        {
+                            <option>@item.Name</option> 
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="VariableSymbol" class="control-label"></label>
+                <input asp-for="VariableSymbol" class="form-control" />
+                <span asp-validation-for="VariableSymbol" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label class="control-label">Bankovní účet</label>
+                <select class="form-select" asp-for="BankDetail" id="bankMethodSelector">
+                    @if(Model.BankDetail != null)
+                    {
+                        <option selected hidden>@Model.BankDetail.Name</option>
+                    }
+                    @foreach(var item in ViewData["BankDetails"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail>) {
+                    if ((@basicInvoice != null) && (@basicInvoice.BankDetail != null) && (@basicInvoice.BankDetail.Name == item.Name))
+                        {
+                            <option>@item.Name</option>
+                        }
+                        else
+                        {
+                            <option>@item.Name</option> 
+                        }              
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConstantSymbol" class="control-label"></label>
+                <input asp-for="ConstantSymbol" class="form-control" />
+                <span asp-validation-for="ConstantSymbol" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label asp-for="IssueDate" class="control-label"></label>
+                <input asp-for="IssueDate" id="DocumentIssueDate" type="datetime-local" class="form-control"/>
+                <span asp-validation-for="IssueDate" class="text-danger"></span>
+            </div>
+            @if (Model.IsWithVat)
+            {
+                <div class="form-group">
+                <label asp-for="TaxDate" class="control-label"></label>
+                <input asp-for="TaxDate" id="DocumentTaxDate" type="date" class="form-control" required/>
+                <span asp-validation-for="TaxDate" class="text-danger"></span>
+                </div>
+            }
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" id="DocumentDueDate" type="date" class="form-control" required/>
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group basicElementPadding">
+        <label asp-for="headerDescription" class="control-label"></label>
+        <textarea asp-for="headerDescription" class="form-control" rows="2" placeholder="@ourCompany.HeaderDesc"></textarea>
+        <span asp-validation-for="headerDescription" class="text-danger"></span>
+    </div>
+
+    <h3 class="basicElementPadding">Položky faktury</h3>
+    <div class="row" id="item_0">
+        <div class="col-md-4">
+            <label class="control-label">Položka</label>
+        </div>
+        <div class="col-md-2">
+            @if(Model.IsWithVat)
+            {
+                <label class="control-label">Cena bez DPH <span class="badge rounded-pill bg-secondary">Kč</span></label>
+            }
+            else
+            {
+                <label class="control-label">Cena <span class="badge rounded-pill bg-secondary">Kč</span></label>
+            }
+        </div>
+        <div class="col">
+            <label class="control-label">Množství</label>
+        </div>
+        <div class="col">
+            <label class="control-label">MJ</label>
+        </div>
+        @if(Model.IsWithVat)
+        {
+            <div class="col">
+                <label class="control-label">DPH <span class="badge rounded-pill bg-secondary">%</span></label>
+            </div>
+        }
+        <div class="col">
+            <label class="control-label">Celkem <span class="badge rounded-pill bg-secondary">Kč</span></label>
+        </div>  
+        <div class="col-md-1"></div>
+    </div>
+
+    <div id="DocumentItemsBox"></div>
+    @if(@Model.DocumentItems != null)
+    {
+        foreach(var item in @Model.DocumentItems)
+        {
+            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Unit', '@item.Vat')</script>
+        }
+    }
+    else
+    {
+        <script type="text/javascript">
+            DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat');
+            var dateIncrement = new Date();
+            dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
+            document.getElementById("DocumentIssueDate").valueAsDate = new Date();
+            if(document.getElementById("DocumentTaxDate") != null)
+                document.getElementById("DocumentTaxDate").valueAsDate = new Date();
+            document.getElementById("DocumentDueDate").valueAsDate = new Date(dateIncrement);
+        </script>
+    }
+
+    <div class="col-md-0" style="padding-top: 10px;">
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
+    </div>
+
+    <div class="d-flex form-group basicElementPadding">
+        <div class="ms-auto p-2" id="vatTable"></div>
+    </div>
+    <div class="d-flex form-group">
+        <div class="ms-auto p-2">
+            <label name="Discount" class="control-label"></label>
+            <div class="input-group">
+                <span class="input-group-text" id="addon1">%</span>
+                <input asp-for="Discount" type="number" step="0.1" min="0" max="100" onchange="CalcDiscount()" id="discountInputAmount" class="form-control" style="max-width: 100px;" aria-describedby="addon1" />
+            </div>
+        </div>
+        <div class="p-2">
+            <br />
+            <h5 id="discountAmount">0.00,- Kč</h5>
+        </div>
+    </div>
+    <div class="d-flex form-group">
+        <div class="ms-auto p-2">
+            <div class="fs-2" id="totalAmount">Celková cena: 0.00,- Kč</div>
+        </div>
+    </div>
+
+    <div class="form-group basicElementPadding">
+        <label asp-for="footerDescription" class="control-label"></label>
+        <textarea asp-for="footerDescription" class="form-control" rows="2" placeholder="@ourCompany.FooterDesc"></textarea>
+        <span asp-validation-for="footerDescription" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group d-flex basicElementPadding">
+        <div class="ms-auto" style="padding-right: 10px;">
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Uložit změny</button>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+    CustomerSelector();
+    PaymentMethodSelector();
+    CustomAddressSwitched();
+    recalculateAll();
+</script>
+

@@ -19,7 +19,7 @@ namespace TEJ0017_FakturacniSystem.Models
         public DbSet<Document.DocumentTypes.BasicInvoice> BasicInvoices { get; set; }
         public DbSet<Document.DocumentTypes.CorrectiveTaxDocument> CorrectiveTaxDocuments { get; set; }
         public DbSet<Document.DocumentTypes.InvoiceTemplate> InvoiceTemplates { get; set; }
-        public DbSet<Document.DocumentTypes.ProformaInvoice> proformaInvoices { get; set; }
+        public DbSet<Document.DocumentTypes.ProformaInvoice> ProformaInvoices { get; set; }
         public DbSet<Document.Item> Items { get; set; }
         public object User { get; internal set; }
 

@@ -25,15 +25,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
             ViewData["ActualYear"] = DateTime.Now.Year;
-            ViewData["SumPaid"] = _context.Documents.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && d.IsPaid).Sum(d => d.TotalAmount);
-            ViewData["SumUnpaid"] = _context.Documents.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Sum(d => d.TotalAmount);
-            ViewData["CountTotal"] = _context.Documents.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year)).Count();
-            ViewData["CountUnpaid"] = _context.Documents.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Count();
+            ViewData["SumPaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && d.IsPaid).Sum(d => d.TotalAmount);
+            ViewData["SumUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Sum(d => d.TotalAmount);
+            ViewData["CountTotal"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year)).Count();
+            ViewData["CountUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Count();
 
             Dictionary<int, float> monthAmounts = new Dictionary<int, float>();
             for(int i = 1; i <= 12; i++)
             {
-                monthAmounts[i] = (float)_context.Documents.ToList().Where(d => d.IssueDate.Month == i).Sum(d => d.TotalAmount);
+                monthAmounts[i] = (float)_context.BasicInvoices.ToList().Where(d => d.IssueDate.Month == i).Sum(d => d.TotalAmount);
             }
             ViewData["MonthAmounts"] = monthAmounts;
 

@@ -13,11 +13,11 @@ using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
-    public class BasicInvoicesController : Controller
+    public class ProformaInvoicesController : Controller
     {
         private readonly ApplicationContext _context;
 
-        public BasicInvoicesController(ApplicationContext context)
+        public ProformaInvoicesController(ApplicationContext context)
         {
             _context = context;
         }
@@ -43,10 +43,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["OurCompany"] = OurCompany.getInstance();
-            var documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+            var documents = await _context.ProformaInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
 
             if (documents.Count > 0)
-                ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
+                ViewData["FirstInvoice"] = _context.ProformaInvoices.ToList().Min(d => d.IssueDate);
 
             return View(documents);
         }
@@ -56,19 +56,19 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(IFormCollection filterValue)
         {
-            ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
+            ViewData["FirstInvoice"] = _context.ProformaInvoices.ToList().Min(d => d.IssueDate);
             ViewData["OurCompany"] = OurCompany.getInstance();
             DateTime minDateTime = Convert.ToDateTime(filterValue["filterMinDatetime"].ToString());
             DateTime maxDateTime = Convert.ToDateTime(filterValue["filterMaxDatetime"].ToString());
 
-            var documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
+            var documents = await _context.ProformaInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
             if(filterValue["filterRadioPaid"] == "paid")
             {
-                documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
+                documents = await _context.ProformaInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
             }
             else if(filterValue["filterRadioPaid"] == "unpaid")
             {
-                documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
+                documents = await _context.ProformaInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
             }
 
             return View(documents);
@@ -80,7 +80,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             if (id == null)
                 return null;
 
-            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
+            var document = await _context.ProformaInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
                 Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(d => d.DocumentId == id);
             if (document == null)
             {
@@ -108,7 +108,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
             NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
-            ViewData["NextNum"] = numericalSeriesGenerator.generateDocumentNumber();
+            ViewData["NextNum"] = "Z" + numericalSeriesGenerator.generateDocumentNumber();
 
             return View();
         }
@@ -116,7 +116,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: Documents/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(BasicInvoice basicInvoice, IFormCollection itemsValues)
+        public IActionResult Create(ProformaInvoice proformaInvoice, IFormCollection itemsValues)
         {
             //inicializace nactenych dat pro zpetne generovani
             OurCompany ourCompany = OurCompany.getInstance();
@@ -127,13 +127,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
-            ViewData["NextNum"] = basicInvoice.DocumentNo;
+            ViewData["NextNum"] = proformaInvoice.DocumentNo;
 
             //nastaveni platce/neplatce DPH k dokumentu pro pozdejsi otevreni
             if (ourCompany.IsVatPayer)
-                basicInvoice.IsWithVat = true;
+                proformaInvoice.IsWithVat = true;
             else
-                basicInvoice.IsWithVat = false;
+                proformaInvoice.IsWithVat = false;
 
             //zpracovani polozek dokumentu
             float sum = 0;
@@ -164,7 +164,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             //prirazeni listu zpracovanych polozek ke tride document
-            basicInvoice.DocumentItems = documentItems;
+            proformaInvoice.DocumentItems = documentItems;
 
             //zpracovani rucne zadaneho zakaznika
             if(itemsValues["customCustomerAddressSwitch"] == "1")
@@ -187,48 +187,48 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 if (itemsValues["CustomDic"] != "")
                     customCustomer.Dic = itemsValues["CustomDic"];
 
-                basicInvoice.Customer = customCustomer;
+                proformaInvoice.Customer = customCustomer;
                 ViewData["IsCustomAddress"] = "1";
             }
             else
             {
-                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+                proformaInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
             }
 
             //prirazeni prihlaseneho uzivatele k dokumentu
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
-            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+            proformaInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
 
             //prirazeni dalsich udaju
-            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
-            basicInvoice.IsPaid = false;
-            basicInvoice.IssueDate = DateTime.Now;
+            proformaInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            proformaInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+            proformaInvoice.IsPaid = false;
+            proformaInvoice.IssueDate = DateTime.Now;
 
             //prirazeni vychozi hlavicky, paticky pokud nebyla vyplnena
-            if (basicInvoice.headerDescription == null)
-                basicInvoice.headerDescription = ourCompany.HeaderDesc;
-            if(basicInvoice.footerDescription == null)
-                basicInvoice.footerDescription = ourCompany.FooterDesc;
+            if (proformaInvoice.headerDescription == null)
+                proformaInvoice.headerDescription = ourCompany.HeaderDesc;
+            if(proformaInvoice.footerDescription == null)
+                proformaInvoice.footerDescription = ourCompany.FooterDesc;
 
             //vypocet celkove castky (vcetne pripradne slevy)
-            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+            float calcDiscountAmount = (float)-(sum * (proformaInvoice.Discount / 100));
+            proformaInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
 
             //kontrola validity a zapis dokumentu
-            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null 
-                && basicInvoice.DocumentItems != null)
+            if (ModelState.IsValid && proformaInvoice.Customer != null && proformaInvoice.PaymentMethod != null && proformaInvoice.User != null 
+                && proformaInvoice.DocumentItems != null)
             {
                 //kontrola duplicity dokumentu
-                if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
+                if (_context.Documents.FirstOrDefault(d => d.DocumentNo == proformaInvoice.DocumentNo) != null)
                 {
                     ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
-                    ViewData["BasicInvoice"] = basicInvoice;
-                    return View(basicInvoice);
+                    ViewData["BasicInvoice"] = proformaInvoice;
+                    return View(proformaInvoice);
                 }
 
-                _context.Add(basicInvoice);
+                _context.Add(proformaInvoice);
                 _context.SaveChanges();
 
                 //nastaveni ukazatele generovani ciselne rady na aktualni hodnotu
@@ -236,13 +236,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 numericalSeriesGenerator.saveChanges();
                 DataInitializer.getInstance().updateOurCompanyDataInJson();
 
-                TempData["SuccessMessage"] = "Faktura úspěšně vystavena.";
+                TempData["SuccessMessage"] = "Zálohová faktura úspěšně vystavena.";
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["BasicInvoice"] = basicInvoice;
+            ViewData["BasicInvoice"] = proformaInvoice;
             ViewData["ErrorMessage"] = "Chyba validity formuláře!";
-            return View(basicInvoice);
+            return View(proformaInvoice);
         }
 
         // GET: Documents/Edit/5
@@ -253,8 +253,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var basicInvoice = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
-            if (basicInvoice == null)
+            var proformaInvoice = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
+            if (proformaInvoice == null)
             {
                 return NotFound();
             }
@@ -269,15 +269,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
 
-            return View(basicInvoice);
+            return View(proformaInvoice);
         }
 
         // POST: Documents/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, BasicInvoice basicInvoice, IFormCollection itemsValues)
+        public async Task<IActionResult> Edit(int id, ProformaInvoice proformaInvoice, IFormCollection itemsValues)
         {
-            if (id != basicInvoice.DocumentId)
+            if (id != proformaInvoice.DocumentId)
             {
                 return NotFound();
             }
@@ -309,7 +309,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 documentItem.UnitPrice = float.Parse(commaChange);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
-                if (basicInvoice.IsWithVat)
+                if (proformaInvoice.IsWithVat)
                 {
                     documentItem.Vat = int.Parse(itemsVats[i]);
                     sum += documentItem.UnitPrice * documentItem.Amount * ((float)documentItem.Vat / 100 + 1);
@@ -322,7 +322,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             //prirazeni listu zpracovanych polozek ke tride document
-            basicInvoice.DocumentItems = documentItems;
+            proformaInvoice.DocumentItems = documentItems;
 
             //zpracovani rucne zadaneho zakaznika
             if (itemsValues["customCustomerAddressSwitch"] == "1")
@@ -345,53 +345,53 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 if (itemsValues["CustomDic"] != "")
                     customCustomer.Dic = itemsValues["CustomDic"];
 
-                basicInvoice.Customer = customCustomer;
+                proformaInvoice.Customer = customCustomer;
                 ViewData["IsCustomAddress"] = "1";
             }
             else
             {
-                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+                proformaInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
             }
 
             //prirazeni prihlaseneho uzivatele k dokumentu
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
-            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+            proformaInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
 
             //prirazeni dalsich udaju
-            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+            proformaInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            proformaInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
 
             //vypocet celkove castky (vcetne pripradne slevy)
-            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+            float calcDiscountAmount = (float)-(sum * (proformaInvoice.Discount / 100));
+            proformaInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
 
             //kontrola validity a zapis dokumentu
-            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null
-                && basicInvoice.DocumentItems != null)
+            if (ModelState.IsValid && proformaInvoice.Customer != null && proformaInvoice.PaymentMethod != null && proformaInvoice.User != null
+                && proformaInvoice.DocumentItems != null)
             {
                 //kontrola duplicity dokumentu (mimo aktualne upravovany)
-                if (_context.Documents.FirstOrDefault(d => (d.DocumentNo == basicInvoice.DocumentNo) && (d.DocumentId != basicInvoice.DocumentId)) != null)
+                if (_context.Documents.FirstOrDefault(d => (d.DocumentNo == proformaInvoice.DocumentNo) && (d.DocumentId != proformaInvoice.DocumentId)) != null)
                 {
-                    ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
-                    ViewData["BasicInvoice"] = basicInvoice;
-                    return View(basicInvoice);
+                    ViewData["ErrorMessage"] = "Zálohová faktura s tímto číslem již existuje!";
+                    ViewData["BasicInvoice"] = proformaInvoice;
+                    return View(proformaInvoice);
                 }
 
                //odstraneni puvodnich polozek faktury
-               var oldItems = _context.DocumentItems.Where(di => di.Document.DocumentId == basicInvoice.DocumentId);
+               var oldItems = _context.DocumentItems.Where(di => di.Document.DocumentId == proformaInvoice.DocumentId);
                 _context.DocumentItems.RemoveRange(oldItems);
 
-                _context.Update(basicInvoice);
+                _context.Update(proformaInvoice);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Změny na faktuře " + basicInvoice.DocumentNo + " uloženy.";
+                TempData["SuccessMessage"] = "Změny na zálohové faktuře " + proformaInvoice.DocumentNo + " uloženy.";
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["BasicInvoice"] = basicInvoice;
+            ViewData["BasicInvoice"] = proformaInvoice;
             ViewData["ErrorMessage"] = "Chyba validity formuláře!";
-            return View(basicInvoice);
+            return View(proformaInvoice);
         }
 
         // POST: Documents/Delete/5

@@ -2,7 +2,7 @@
 @model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Document>
 
 @{
-    ViewData["Title"] = "Vydané faktury";
+    ViewData["Title"] = "Zálohové faktury";
     DateTime firstInvoice = DateTime.Now;
     if(ViewData["FirstInvoice"] != null)
     {
@@ -13,10 +13,10 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="/BasicInvoices">Faktury</a>
+        <a class="nav-link" href="/BasicInvoices">Faktury</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/ProformaInvoices">Zálohové faktury</a>
+        <a class="nav-link active" aria-current="page" href="/ProformaInvoices">Zálohové faktury</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/CorrectiveTaxDocuments">Opravné daňové doklady</a>
@@ -44,11 +44,11 @@
     </div>
 }
 
-<h1><i class="bi bi-receipt"></i> Vydané faktury</h1>
+<h1><i class="bi bi-receipt"></i> Zálohové faktury</h1>
 
 <div class="d-flex">
     <div>
-        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová faktura</a>
+        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nová zálohová faktura</a>
     </div>
     <div class="ms-auto">
       <a class="btn btn-outline-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-filter"></i></a>

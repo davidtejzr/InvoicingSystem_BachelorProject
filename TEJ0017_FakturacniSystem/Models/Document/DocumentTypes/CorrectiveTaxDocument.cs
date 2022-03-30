@@ -2,5 +2,6 @@
 {
     public class CorrectiveTaxDocument : Document
     {
+        public string CorrectionReason { get; set; }
     }
 }

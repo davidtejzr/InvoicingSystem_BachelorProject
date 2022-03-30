@@ -9,6 +9,7 @@ namespace TEJ0017_FakturacniSystem.Models.Document
     {
         public int DocumentId { get; set; }
 
+        [Display(Name = "Číslo dokladu")]
         public string DocumentNo { get; set; }
 
         [ForeignKey("User")]

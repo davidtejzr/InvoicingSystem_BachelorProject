@@ -13,11 +13,11 @@ using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
-    public class BasicInvoicesController : Controller
+    public class CorrectiveTaxDocumentsController : Controller
     {
         private readonly ApplicationContext _context;
 
-        public BasicInvoicesController(ApplicationContext context)
+        public CorrectiveTaxDocumentsController(ApplicationContext context)
         {
             _context = context;
         }
@@ -43,10 +43,10 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["OurCompany"] = OurCompany.getInstance();
-            var documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+            var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
 
-            if (documents.Count > 0)
-                ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
+            if(documents.Count > 0)
+                ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
 
             return View(documents);
         }
@@ -56,19 +56,19 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(IFormCollection filterValue)
         {
-            ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
+            ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
             ViewData["OurCompany"] = OurCompany.getInstance();
             DateTime minDateTime = Convert.ToDateTime(filterValue["filterMinDatetime"].ToString());
             DateTime maxDateTime = Convert.ToDateTime(filterValue["filterMaxDatetime"].ToString());
 
-            var documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
+            var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
             if(filterValue["filterRadioPaid"] == "paid")
             {
-                documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
+                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
             }
             else if(filterValue["filterRadioPaid"] == "unpaid")
             {
-                documents = await _context.BasicInvoices.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
+                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
             }
 
             return View(documents);
@@ -80,7 +80,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             if (id == null)
                 return null;
 
-            var document = await _context.BasicInvoices.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
+            var document = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).Include(u => u.User).Include(ca => ca.Customer.Address).
                 Include(b => b.BankDetail).Include(pm => pm.PaymentMethod).Include(di => di.DocumentItems).FirstOrDefaultAsync(d => d.DocumentId == id);
             if (document == null)
             {
@@ -116,7 +116,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         // POST: Documents/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(BasicInvoice basicInvoice, IFormCollection itemsValues)
+        public IActionResult Create(CorrectiveTaxDocument correctiveTaxDocument, IFormCollection itemsValues)
         {
             //inicializace nactenych dat pro zpetne generovani
             OurCompany ourCompany = OurCompany.getInstance();
@@ -127,13 +127,13 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["PaymentMethods"] = paymentMethodsOnly;
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
-            ViewData["NextNum"] = basicInvoice.DocumentNo;
+            ViewData["NextNum"] = correctiveTaxDocument.DocumentNo;
 
             //nastaveni platce/neplatce DPH k dokumentu pro pozdejsi otevreni
             if (ourCompany.IsVatPayer)
-                basicInvoice.IsWithVat = true;
+                correctiveTaxDocument.IsWithVat = true;
             else
-                basicInvoice.IsWithVat = false;
+                correctiveTaxDocument.IsWithVat = false;
 
             //zpracovani polozek dokumentu
             float sum = 0;
@@ -164,7 +164,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             //prirazeni listu zpracovanych polozek ke tride document
-            basicInvoice.DocumentItems = documentItems;
+            correctiveTaxDocument.DocumentItems = documentItems;
 
             //zpracovani rucne zadaneho zakaznika
             if(itemsValues["customCustomerAddressSwitch"] == "1")
@@ -187,48 +187,48 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 if (itemsValues["CustomDic"] != "")
                     customCustomer.Dic = itemsValues["CustomDic"];
 
-                basicInvoice.Customer = customCustomer;
+                correctiveTaxDocument.Customer = customCustomer;
                 ViewData["IsCustomAddress"] = "1";
             }
             else
             {
-                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+                correctiveTaxDocument.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
             }
 
             //prirazeni prihlaseneho uzivatele k dokumentu
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
-            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+            correctiveTaxDocument.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
 
             //prirazeni dalsich udaju
-            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
-            basicInvoice.IsPaid = false;
-            basicInvoice.IssueDate = DateTime.Now;
+            correctiveTaxDocument.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            correctiveTaxDocument.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+            correctiveTaxDocument.IsPaid = false;
+            correctiveTaxDocument.IssueDate = DateTime.Now;
 
             //prirazeni vychozi hlavicky, paticky pokud nebyla vyplnena
-            if (basicInvoice.headerDescription == null)
-                basicInvoice.headerDescription = ourCompany.HeaderDesc;
-            if(basicInvoice.footerDescription == null)
-                basicInvoice.footerDescription = ourCompany.FooterDesc;
+            if (correctiveTaxDocument.headerDescription == null)
+                correctiveTaxDocument.headerDescription = ourCompany.HeaderDesc;
+            if(correctiveTaxDocument.footerDescription == null)
+                correctiveTaxDocument.footerDescription = ourCompany.FooterDesc;
 
             //vypocet celkove castky (vcetne pripradne slevy)
-            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+            float calcDiscountAmount = (float)-(sum * (correctiveTaxDocument.Discount / 100));
+            correctiveTaxDocument.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
 
             //kontrola validity a zapis dokumentu
-            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null 
-                && basicInvoice.DocumentItems != null)
+            if (ModelState.IsValid && correctiveTaxDocument.Customer != null && correctiveTaxDocument.PaymentMethod != null && correctiveTaxDocument.User != null 
+                && correctiveTaxDocument.DocumentItems != null)
             {
                 //kontrola duplicity dokumentu
-                if (_context.Documents.FirstOrDefault(d => d.DocumentNo == basicInvoice.DocumentNo) != null)
+                if (_context.Documents.FirstOrDefault(d => d.DocumentNo == correctiveTaxDocument.DocumentNo) != null)
                 {
                     ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
-                    ViewData["BasicInvoice"] = basicInvoice;
-                    return View(basicInvoice);
+                    ViewData["BasicInvoice"] = correctiveTaxDocument;
+                    return View(correctiveTaxDocument);
                 }
 
-                _context.Add(basicInvoice);
+                _context.Add(correctiveTaxDocument);
                 _context.SaveChanges();
 
                 //nastaveni ukazatele generovani ciselne rady na aktualni hodnotu
@@ -240,9 +240,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["BasicInvoice"] = basicInvoice;
+            ViewData["BasicInvoice"] = correctiveTaxDocument;
             ViewData["ErrorMessage"] = "Chyba validity formuláře!";
-            return View(basicInvoice);
+            return View(correctiveTaxDocument);
         }
 
         // GET: Documents/Edit/5
@@ -253,8 +253,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return NotFound();
             }
 
-            var basicInvoice = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
-            if (basicInvoice == null)
+            var correctiveTaxDocument = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
+            if (correctiveTaxDocument == null)
             {
                 return NotFound();
             }
@@ -269,15 +269,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["BankDetails"] = bankDetails;
             ViewData["OurCompany"] = ourCompany;
 
-            return View(basicInvoice);
+            return View(correctiveTaxDocument);
         }
 
         // POST: Documents/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, BasicInvoice basicInvoice, IFormCollection itemsValues)
+        public async Task<IActionResult> Edit(int id, CorrectiveTaxDocument correctiveTaxDocument, IFormCollection itemsValues)
         {
-            if (id != basicInvoice.DocumentId)
+            if (id != correctiveTaxDocument.DocumentId)
             {
                 return NotFound();
             }
@@ -309,7 +309,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 documentItem.UnitPrice = float.Parse(commaChange);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
-                if (basicInvoice.IsWithVat)
+                if (correctiveTaxDocument.IsWithVat)
                 {
                     documentItem.Vat = int.Parse(itemsVats[i]);
                     sum += documentItem.UnitPrice * documentItem.Amount * ((float)documentItem.Vat / 100 + 1);
@@ -322,7 +322,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
 
             //prirazeni listu zpracovanych polozek ke tride document
-            basicInvoice.DocumentItems = documentItems;
+            correctiveTaxDocument.DocumentItems = documentItems;
 
             //zpracovani rucne zadaneho zakaznika
             if (itemsValues["customCustomerAddressSwitch"] == "1")
@@ -345,53 +345,53 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 if (itemsValues["CustomDic"] != "")
                     customCustomer.Dic = itemsValues["CustomDic"];
 
-                basicInvoice.Customer = customCustomer;
+                correctiveTaxDocument.Customer = customCustomer;
                 ViewData["IsCustomAddress"] = "1";
             }
             else
             {
-                basicInvoice.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
+                correctiveTaxDocument.Customer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
             }
 
             //prirazeni prihlaseneho uzivatele k dokumentu
             var identity = (System.Security.Claims.ClaimsIdentity)HttpContext.User.Identity;
             string userLogin = identity.Claims.FirstOrDefault(c => c.Type == "user").Value.ToString();
-            basicInvoice.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
+            correctiveTaxDocument.User = _context.Users.FirstOrDefault(m => m.Login == userLogin);
 
             //prirazeni dalsich udaju
-            basicInvoice.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
-            basicInvoice.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
+            correctiveTaxDocument.PaymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == itemsValues["PaymentMethod"].ToString());
+            correctiveTaxDocument.BankDetail = _context.BankDetails.FirstOrDefault(m => m.Name == itemsValues["BankDetail"].ToString());
 
             //vypocet celkove castky (vcetne pripradne slevy)
-            float calcDiscountAmount = (float)-(sum * (basicInvoice.Discount / 100));
-            basicInvoice.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
+            float calcDiscountAmount = (float)-(sum * (correctiveTaxDocument.Discount / 100));
+            correctiveTaxDocument.TotalAmount = (float?)Math.Round(sum + calcDiscountAmount, 2);
 
             //kontrola validity a zapis dokumentu
-            if (ModelState.IsValid && basicInvoice.Customer != null && basicInvoice.PaymentMethod != null && basicInvoice.User != null
-                && basicInvoice.DocumentItems != null)
+            if (ModelState.IsValid && correctiveTaxDocument.Customer != null && correctiveTaxDocument.PaymentMethod != null && correctiveTaxDocument.User != null
+                && correctiveTaxDocument.DocumentItems != null)
             {
                 //kontrola duplicity dokumentu (mimo aktualne upravovany)
-                if (_context.Documents.FirstOrDefault(d => (d.DocumentNo == basicInvoice.DocumentNo) && (d.DocumentId != basicInvoice.DocumentId)) != null)
+                if (_context.Documents.FirstOrDefault(d => (d.DocumentNo == correctiveTaxDocument.DocumentNo) && (d.DocumentId != correctiveTaxDocument.DocumentId)) != null)
                 {
                     ViewData["ErrorMessage"] = "Faktura s tímto číslem již existuje!";
-                    ViewData["BasicInvoice"] = basicInvoice;
-                    return View(basicInvoice);
+                    ViewData["BasicInvoice"] = correctiveTaxDocument;
+                    return View(correctiveTaxDocument);
                 }
 
                //odstraneni puvodnich polozek faktury
-               var oldItems = _context.DocumentItems.Where(di => di.Document.DocumentId == basicInvoice.DocumentId);
+               var oldItems = _context.DocumentItems.Where(di => di.Document.DocumentId == correctiveTaxDocument.DocumentId);
                 _context.DocumentItems.RemoveRange(oldItems);
 
-                _context.Update(basicInvoice);
+                _context.Update(correctiveTaxDocument);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Změny na faktuře " + basicInvoice.DocumentNo + " uloženy.";
+                TempData["SuccessMessage"] = "Změny na faktuře " + correctiveTaxDocument.DocumentNo + " uloženy.";
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["BasicInvoice"] = basicInvoice;
+            ViewData["BasicInvoice"] = correctiveTaxDocument;
             ViewData["ErrorMessage"] = "Chyba validity formuláře!";
-            return View(basicInvoice);
+            return View(correctiveTaxDocument);
         }
 
         // POST: Documents/Delete/5
