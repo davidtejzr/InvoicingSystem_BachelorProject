@@ -11,3 +11,8 @@
   - bootstrap-icons@1.8.1
   - canvasjs@1.8.3
   - popper.js@1.16.1
+
+## Known bugs
+- loading default filter values after filter aplication (filter is working)
+- bad document items responsivity
+- updating address on document edit page rewrite this address globally
