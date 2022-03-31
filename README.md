@@ -20,6 +20,7 @@
 - loading default filter values after filter aplication (filter is working)
 - bad document items responsivity
 - updating address on document edit page rewrite this address globally
+- couldn´t save changes on exist item in price list
 
 ## Missing features
 - data entry wizard for the first run
