@@ -2,7 +2,7 @@
 
 ## Before run
 - ! Add files ```appsettings.json``` and ```appData.json``` to the project folder !
-- ! Be sure, that you are logged into school VPN network !
+- ! Be sure, that you are logged into school VPN !
 
 ## Platform
 - ***App:*** Microsoft .NET Core v. 6.0
@@ -11,6 +11,11 @@
   - bootstrap-icons@1.8.1
   - canvasjs@1.8.3
   - popper.js@1.16.1
+- ***Main NuGet packages:***
+  - Bootstrap
+  - Select.HtmlToPdf
+  - Microsoft.EntityFramework
+  - Microsoft.AspNetCore.Authentication
 
 ## Default login
 - ***user:*** david.tejzr
