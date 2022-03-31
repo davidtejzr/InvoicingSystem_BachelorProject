@@ -161,7 +161,7 @@ function DocumentAddItem(defaultMJ, defaultVat) {
     ItemPriceInput.name = "ItemPrice";
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
-    ItemPriceInput.min = 0;
+    //ItemPriceInput.min = 0;
     ItemPriceInput.step = "0.01";
     ItemPriceInput.value = "0.00"
     ItemPriceInput.onchange = function () {
@@ -235,6 +235,8 @@ function DocumentAddItem(defaultMJ, defaultVat) {
         ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
         ItemVat.value = defaultVat;
+        ItemVat.min = 0;
+        ItemVat.max = 100;
         ItemVat.type = "number";
         ItemVat.className = "form-control";
         ItemVat.onchange = function () {
@@ -295,7 +297,7 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
     ItemPriceInput.name = "ItemPrice";
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
-    ItemPriceInput.min = 0;
+    //ItemPriceInput.min = 0;
     ItemPriceInput.step = "0.01";
     ItemPriceInput.value = price;
     ItemPriceInput.onchange = function () {
@@ -369,6 +371,8 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
         ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
         ItemVat.value = vat;
+        ItemVat.min = 0;
+        ItemVat.max = 100;
         ItemVat.type = "number";
         ItemVat.className = "form-control";
         ItemVat.onchange = function () {
