@@ -175,7 +175,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 customAddress.City = itemsValues["CustomCity"];
                 customAddress.Zip = itemsValues["CustomZip"];
 
-                Customer customCustomer = new Customer();
+                Customer customCustomer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
                 customCustomer.Name = itemsValues["CustomSubName"];
                 customCustomer.Address = customAddress;
 
@@ -305,8 +305,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 DocumentItem documentItem = new DocumentItem();
                 documentItem.Name = itemsNames[i];
-                string commaChange = itemsPrices[i].Replace(".", ",");
-                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.UnitPrice = float.Parse(itemsPrices[i]);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
                 if (proformaInvoice.IsWithVat)

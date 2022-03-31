@@ -1,7 +1,9 @@
-﻿@{
+﻿@using TEJ0017_FakturacniSystem.Models.Subject
+@{
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
     ViewData["UserRole"] = identity.Claims.FirstOrDefault(c => c.Type == "role").Value;
+    OurCompany ourCompany = OurCompany.getInstance();
 }
 
 <!DOCTYPE html>
@@ -50,8 +52,14 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="BasicInvoices" asp-action="Index">Faktury</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="ProformaInvoices" asp-action="Index">Zálohové faktury</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="CorrectiveTaxDocuments" asp-action="Index">Opravné daňové doklady</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Documents" asp-action="Index">Šablony</a></li>
+                                @if(ourCompany.IsVatPayer)
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="CorrectiveTaxDocuments" asp-action="Index">Opravné daňové doklady</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="CorrectiveTaxDocuments" asp-action="Index">Dobropisy</a></li>
+                                }
                             </ul>
                         </li>
                         <li class="nav-item">

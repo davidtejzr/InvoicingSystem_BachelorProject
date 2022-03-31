@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
-    Dictionary<int, float> monthAmounts = (Dictionary<int, float>)ViewData["MonthAmounts"];
+    Dictionary<int, double> monthAmounts = (Dictionary<int, double>)ViewData["MonthAmounts"];
 }
 
 <div class="text-center">

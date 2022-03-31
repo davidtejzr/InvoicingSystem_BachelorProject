@@ -25,15 +25,15 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
             ViewData["ActualYear"] = DateTime.Now.Year;
-            ViewData["SumPaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && d.IsPaid).Sum(d => d.TotalAmount);
-            ViewData["SumUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Sum(d => d.TotalAmount);
+            ViewData["SumPaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && d.IsPaid).Sum(d => d.TotalAmount), 2);
+            ViewData["SumUnpaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Sum(d => d.TotalAmount), 2);
             ViewData["CountTotal"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year)).Count();
             ViewData["CountUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Count();
 
-            Dictionary<int, float> monthAmounts = new Dictionary<int, float>();
+            Dictionary<int, double> monthAmounts = new Dictionary<int, double>();
             for(int i = 1; i <= 12; i++)
             {
-                monthAmounts[i] = (float)_context.BasicInvoices.ToList().Where(d => d.IssueDate.Month == i).Sum(d => d.TotalAmount);
+                monthAmounts[i] = Math.Round((double)_context.BasicInvoices.ToList().Where(d => d.IssueDate.Month == i).Sum(d => d.TotalAmount), 2);
             }
             ViewData["MonthAmounts"] = monthAmounts;
 

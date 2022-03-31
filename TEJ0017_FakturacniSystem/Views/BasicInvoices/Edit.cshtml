@@ -8,7 +8,7 @@
     var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
 }
-<script type="text/javascript" src="~/js/basicInvoiceFunctions.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/documentFunctions.js" asp-append-version="true"></script>
 <script type="text/javascript">setVatDocument('@Model.IsWithVat');</script>
 
 @if (ViewData["ErrorMessage"] != null)
@@ -313,7 +313,7 @@
         <div class="ms-auto" style="padding-right: 10px;">
             <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
         </div>
-        <div "style="padding-right: 10px;">
+        <div style="padding-right: 10px;">
             @if(Model.IsWithVat)
             {
                 <a asp-controller="CorrectiveTaxDocuments" asp-action="Create" class="btn btn-secondary">Vytvořit opravný daňový doklad</a>

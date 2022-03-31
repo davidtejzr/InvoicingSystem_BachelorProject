@@ -96,7 +96,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         // GET: Documents/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? id)
         {
             OurCompany ourCompany = OurCompany.getInstance();
             var bankDetails = await _context.BankDetails.Where(bd => bd.IsVisible == true).ToListAsync();
@@ -109,6 +109,16 @@ namespace TEJ0017_FakturacniSystem.Controllers
             ViewData["OurCompany"] = ourCompany;
             NumericalSeriesGenerator numericalSeriesGenerator = new NumericalSeriesGenerator();
             ViewData["NextNum"] = numericalSeriesGenerator.generateDocumentNumber();
+
+            if (id != null)
+            {
+                var basicInvoice = await _context.Documents.Include(pm => pm.PaymentMethod).Include(bd => bd.BankDetail).Include(di => di.DocumentItems).Include(c => c.Customer).FirstOrDefaultAsync(d => d.DocumentId == id);
+                if (basicInvoice == null)
+                {
+                    return NotFound();
+                }
+                return View(basicInvoice);
+            }
 
             return View();
         }
@@ -305,8 +315,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
             {
                 DocumentItem documentItem = new DocumentItem();
                 documentItem.Name = itemsNames[i];
-                string commaChange = itemsPrices[i].Replace(".", ",");
-                documentItem.UnitPrice = float.Parse(commaChange);
+                documentItem.UnitPrice = float.Parse(itemsPrices[i]);
                 documentItem.Amount = float.Parse(itemsAmounts[i]);
                 documentItem.Unit = itemsUnits[i];
                 if (basicInvoice.IsWithVat)
@@ -333,7 +342,6 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 customAddress.City = itemsValues["CustomCity"];
                 customAddress.Zip = itemsValues["CustomZip"];
 
-                //Customer customCustomer = new Customer();
                 Customer customCustomer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
                 customCustomer.Name = itemsValues["CustomSubName"];
                 customCustomer.Address = customAddress;

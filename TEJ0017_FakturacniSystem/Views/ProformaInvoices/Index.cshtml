@@ -164,6 +164,7 @@
                     @item.DueDate.ToShortDateString()
                 </td>
                 <td>  
+                    <a asp-action="Create" class="link-primary" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-toggle="modal" data-bs-placement="bottom" title="Vytvoření kopie faktury"><i class="bi bi-files"></i></a>
                     <a asp-action="Detail" asp-route-id="@item.DocumentId" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Export faktury"><i class="bi bi-file-earmark-arrow-down"></i></a>
                     <a data-bs-placement="bottom" class="class="link-primary" title="Odeslání faktury e-mailem" data-bs-toggle="modal" data-bs-target="#sendEmailModal" data-bs-whatever="@item.DocumentId" data-bs-whatever2="@item.Customer.Email"><i class="bi bi-send-fill"></i></a>
                     <a data-bs-placement="bottom" class="class="link-primary" title="Odstranění faktury" data-bs-toggle="modal" data-bs-target="#removeModal" data-bs-whatever="@item.DocumentId"><i class="bi bi-trash-fill"></i></a>
