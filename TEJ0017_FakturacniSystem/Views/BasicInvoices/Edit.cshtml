@@ -313,16 +313,6 @@
         <div class="ms-auto" style="padding-right: 10px;">
             <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
         </div>
-        <div "style="padding-right: 10px;">
-            @if(Model.IsWithVat)
-            {
-                <a asp-controller="CorrectiveTaxDocuments" asp-action="Create" class="btn btn-secondary">Vytvořit opravný daňový doklad</a>
-            }
-            else
-            {
-                <a asp-controller="CorrectiveTaxDocuments" asp-action="Create" class="btn btn-secondary">Vytvořit dobropis</a>
-            }
-        </div>
         <div>
             <button type="submit" class="btn btn-primary">Uložit změny</button>
         </div>

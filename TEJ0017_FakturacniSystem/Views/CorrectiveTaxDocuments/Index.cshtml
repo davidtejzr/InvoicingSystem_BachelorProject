@@ -19,14 +19,7 @@
         <a class="nav-link" href="/ProformaInvoices">Zálohové faktury</a>
     </li>
     <li class="nav-item">
-        @if(ourCompany.IsVatPayer)
-        {
-            <a class="nav-link active" aria-current="page" href="/CorrectiveTaxDocuments">Opravné daňové doklady</a>
-        }
-        else
-        {
-            <a class="nav-link active" aria-current="page" href="/CorrectiveTaxDocuments">Dobropisy</a>
-        }
+        <a class="nav-link active" aria-current="page" href="/CorrectiveTaxDocuments">Opravné daňové doklady</a>
     </li>
 </ul>
 <br />
@@ -51,18 +44,11 @@
     </div>
 }
 
-@if(ourCompany.IsVatPayer)
-{
-    <h1><i class="bi bi-receipt"></i> Opravné daňové doklady</h1>
-}
-else
-{
-    <h1><i class="bi bi-receipt"></i> Dobropisy</h1>   
-}
+<h1><i class="bi bi-receipt"></i> Opravné daňové doklady</h1>
 
 <div class="d-flex">
     <div>
-        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nový doklad</a>
+        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus"></i>Nový opravný daňový doklad</a>
     </div>
     <div class="ms-auto">
       <a class="btn btn-outline-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-filter"></i></a>

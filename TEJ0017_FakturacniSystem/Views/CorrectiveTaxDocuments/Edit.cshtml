@@ -1,9 +1,9 @@
 ﻿@using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes
 @using TEJ0017_FakturacniSystem.Models.Subject
-@model TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.CorrectiveTaxDocument
+@model TEJ0017_FakturacniSystem.Models.Document.Document
 
 @{
-    ViewData["Title"] = "Editace dobropisu";
+    ViewData["Title"] = "Editace faktury";
     var ourCompany = @ViewData["OurCompany"] as OurCompany;
     var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
@@ -29,14 +29,7 @@
 <form asp-action="Edit">
     <div class="d-flex">
         <div>
-            @if(Model.IsWithVat)
-            {
-                <h1><i class="bi bi-receipt"></i> Editace opravného daňového dokladu</h1>
-            }
-            else
-            {
-                <h1><i class="bi bi-receipt"></i> Editace dobropisu</h1>
-            }
+            <h1><i class="bi bi-receipt"></i> Editace faktury</h1>
         </div>
         <div class="ms-auto">
             <input asp-for="DocumentNo" class="form-control form-control-lg" type="text" value="@Model.DocumentNo" pattern="[0-9]{@patternLen}" oninvalid="alert('Neplatný formát čísla faktury!')">
@@ -221,12 +214,6 @@
                 <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
         </div>
-    </div>
-
-    <div class="form-group basicElementPadding">
-        <label asp-for="CorrectionReason" class="control-label"></label>
-        <textarea asp-for="CorrectionReason" class="form-control" rows="2" required></textarea>
-        <span asp-validation-for="CorrectionReason" class="text-danger"></span>
     </div>
 
     <div class="form-group basicElementPadding">

@@ -1,9 +1,9 @@
 ﻿@using TEJ0017_FakturacniSystem.Models.Subject
 @using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes
-@model TEJ0017_FakturacniSystem.Models.Document.DocumentTypes.CorrectiveTaxDocument
+@model TEJ0017_FakturacniSystem.Models.Document.Document
 
 @{
-    ViewData["Title"] = "Nový dobropis";
+    ViewData["Title"] = "Nový opravný daňový doklad";
     var ourCompany = @ViewData["OurCompany"] as OurCompany;
     var basicInvoice = @ViewData["BasicInvoice"] as BasicInvoice;
     int patternLen = (int)ourCompany.DocumentNumberLength + 4;
@@ -30,14 +30,7 @@
 <form asp-action="Create">
     <div class="d-flex">
         <div>
-            @if(ourCompany.IsVatPayer)
-            {
-                <h1><i class="bi bi-receipt"></i> Nový opravný daňový doklad</h1>
-            }
-            else
-            {
-                <h1><i class="bi bi-receipt"></i> Nový dobropis</h1>
-            }
+            <h1><i class="bi bi-receipt"></i> Nový opravný daňový doklad</h1>
         </div>
         <div class="ms-auto">
             <input asp-for="DocumentNo" class="form-control form-control-lg" type="text" value="@ViewData["NextNum"]" pattern="[0-9]{@patternLen}" oninvalid="alert('Neplatný formát čísla faktury!')">
@@ -210,12 +203,6 @@
     </div>
 
     <div class="form-group basicElementPadding">
-        <label asp-for="CorrectionReason" class="control-label"></label>
-        <textarea asp-for="CorrectionReason" class="form-control" rows="2" required></textarea>
-        <span asp-validation-for="CorrectionReason" class="text-danger"></span>
-    </div>
-
-    <div class="form-group basicElementPadding">
         <label asp-for="headerDescription" class="control-label"></label>
         <textarea asp-for="headerDescription" class="form-control" rows="2" placeholder="@ourCompany.HeaderDesc"></textarea>
         <span asp-validation-for="headerDescription" class="text-danger"></span>
@@ -313,7 +300,7 @@
             <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Storno</a>
         </div>
         <div>
-            <button type="submit" class="btn btn-primary">Vytvořit doklad</button>
+            <button type="submit" class="btn btn-primary">Vytvořit opravný daňový doklad</button>
         </div>
     </div>
 </form>

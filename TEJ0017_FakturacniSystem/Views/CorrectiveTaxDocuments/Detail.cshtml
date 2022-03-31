@@ -43,14 +43,7 @@
     </style>
 
     <body class="border border-dark" style="width: 1024px; min-height: 1600px; margin: 0 auto;">
-        @if(Model.IsWithVat)
-        {
-            <h2 class="basicPadding text-uppercase fw-bolder">Opravný daňový doklad č. @Model.DocumentNo</h2>
-        }
-        else
-        {
-            <h2 class="basicPadding text-uppercase fw-bolder">Dobropis č. @Model.DocumentNo</h2>
-        }
+        <h2 class="basicPadding text-uppercase fw-bolder">Opravný daňový doklad č. @Model.DocumentNo</h2>
     
         <div class="row border-top border-bottom border-dark">
           <div class="col basicPadding border-end border-dark">
