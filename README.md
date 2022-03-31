@@ -18,6 +18,7 @@
 - updating address on document edit page rewrite this address globally
 
 ## Missing features
+- data entry wizard for the first run
 - creating new corrective tax document from basic invoice edit page
 - copying values from existing document to new document (by button on index page)
 - adding company logo upload option, stamp on invoice etc.
