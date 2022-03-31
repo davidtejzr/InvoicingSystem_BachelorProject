@@ -333,7 +333,8 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 customAddress.City = itemsValues["CustomCity"];
                 customAddress.Zip = itemsValues["CustomZip"];
 
-                Customer customCustomer = new Customer();
+                //Customer customCustomer = new Customer();
+                Customer customCustomer = _context.Customers.FirstOrDefault(m => m.Name == itemsValues["Customer"].ToString());
                 customCustomer.Name = itemsValues["CustomSubName"];
                 customCustomer.Address = customAddress;
 
