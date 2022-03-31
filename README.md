@@ -12,6 +12,10 @@
   - canvasjs@1.8.3
   - popper.js@1.16.1
 
+## Default login
+- ***user:*** david.tejzr
+- ***password:*** 1234
+
 ## Known bugs
 - loading default filter values after filter aplication (filter is working)
 - bad document items responsivity
