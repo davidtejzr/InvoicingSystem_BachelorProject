@@ -7,3 +7,7 @@
 ## Platform
 - ***App:*** Microsoft .NET Core v. 6.0
 - ***Db:*** Microsoft SQL Server
+- ***NPM packages:***
+  - bootstrap-icons@1.8.1
+  - canvasjs@1.8.3
+  - popper.js@1.16.1
