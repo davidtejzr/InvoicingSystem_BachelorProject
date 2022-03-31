@@ -16,3 +16,9 @@
 - loading default filter values after filter aplication (filter is working)
 - bad document items responsivity
 - updating address on document edit page rewrite this address globally
+
+## Missing features
+- creating new corrective tax document from basic invoice edit page
+- copying values from existing document to new document (by button on index page)
+- adding company logo upload option, stamp on invoice etc.
+- improve password resetting function on user edit and profile page
