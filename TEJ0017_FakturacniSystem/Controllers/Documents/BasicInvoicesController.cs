@@ -87,9 +87,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return null;
             }
 
-            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
             string outputHtml = RenderViewToString(this, "Detail", document);
-            MemoryStream output = htmlToPdfConvertor.getDocumentPdf(outputHtml);
+            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor(outputHtml);
+            MemoryStream output = htmlToPdfConvertor.getDocumentPdf();
             output.Position = 0;
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
@@ -506,9 +506,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 return null;
             }
 
-            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor();
             string outputHtml = RenderViewToString(this, "Detail", document);
-            MemoryStream output = htmlToPdfConvertor.getDocumentPdf(outputHtml);
+            HtmlToPdfConvertor htmlToPdfConvertor = new HtmlToPdfConvertor(outputHtml);
+            MemoryStream output = htmlToPdfConvertor.getDocumentPdf();
             output.Position = 0;
 
             string subjectText = values["emailSubject"] + " " + document.DocumentNo;

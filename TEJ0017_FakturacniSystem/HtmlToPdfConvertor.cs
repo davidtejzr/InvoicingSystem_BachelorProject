@@ -5,9 +5,13 @@ namespace TEJ0017_FakturacniSystem
 {
     public class HtmlToPdfConvertor
     {
-        public HtmlToPdfConvertor() { }
+        private string OutputHtml { get; set; }
+        public HtmlToPdfConvertor(string outputHtml)
+        {
+            this.OutputHtml = outputHtml;
+        }
 
-        public MemoryStream getDocumentPdf(string outputHtml)
+        public MemoryStream getDocumentPdf()
         {
             HtmlToPdf converter = new HtmlToPdf();
 
@@ -19,7 +23,7 @@ namespace TEJ0017_FakturacniSystem
             converter.Options.MarginBottom = 25;
 
             //prevod pohledu Detail (prevedeneho na HTML string)
-            PdfDocument pdfDocument = converter.ConvertHtmlString(outputHtml);
+            PdfDocument pdfDocument = converter.ConvertHtmlString(this.OutputHtml);
             MemoryStream output = new MemoryStream();
             pdfDocument.Save(output);
             pdfDocument.Close();
