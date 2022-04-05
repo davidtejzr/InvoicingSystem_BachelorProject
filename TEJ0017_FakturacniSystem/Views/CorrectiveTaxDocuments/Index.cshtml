@@ -158,11 +158,11 @@ else
                     @Html.DisplayFor(modelItem => item.Customer.Name)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.TotalAmount),- Kč
                     @if(item.IsWithVat)
                     {
-                        <span class="badge rounded-pill bg-success">DPH</span>
+                        <span class="badge rounded-pill bg-success" style="float: right">DPH</span>
                     }
-                    @Html.DisplayFor(modelItem => item.TotalAmount),- Kč
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.IssueDate)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using TEJ0017_FakturacniSystem.Models.Document;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
+    [Authorize]
     public class ItemsController : Controller
     {
         private readonly ApplicationContext _context;

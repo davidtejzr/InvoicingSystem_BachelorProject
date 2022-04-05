@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using TEJ0017_FakturacniSystem.Models.PaymentMethod;
 
 namespace TEJ0017_FakturacniSystem.Controllers.Settings
 {
+    [Authorize]
     public class BankDetailsController : Controller
     {
         private readonly ApplicationContext _context;

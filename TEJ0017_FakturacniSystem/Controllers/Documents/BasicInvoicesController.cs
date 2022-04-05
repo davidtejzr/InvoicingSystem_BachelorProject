@@ -1,4 +1,5 @@
 ﻿#nullable disable
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -13,6 +14,7 @@ using TEJ0017_FakturacniSystem.Models.Subject;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {
+    [Authorize]
     public class BasicInvoicesController : Controller
     {
         private readonly ApplicationContext _context;
