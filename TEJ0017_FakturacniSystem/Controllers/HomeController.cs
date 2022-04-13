@@ -81,8 +81,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 {
                     ViewBag.message = "Špatné uživatelské jméno nebo heslo!";
                 }
-            }
-            
+            }          
             return View();
         }
 
