@@ -84,7 +84,7 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="OurCompanyEdit">Fakturační údaje</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="PaymentMethods" asp-action="Index">Platební metody</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="BankDetails" asp-action="Index">Bankovní účty</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="DocumentSettings">Nastavení dokladu</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="DocumentSettings">Náležitosti dokladu</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Settings" asp-action="EmailTemplate">Šablona E-mailu</a></li>
                             </ul>
                         </li>
@@ -109,13 +109,14 @@
         </main>
     </div>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted"> 
         <div class="container">
             &copy; 2022 <a asp-area="" asp-controller="Home" asp-action="Index" class="link-secondary">Faktura.cz</a>
         </div>
     </footer>
+
+    <script src="~/vendor/canvasjs/dist/canvasjs.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

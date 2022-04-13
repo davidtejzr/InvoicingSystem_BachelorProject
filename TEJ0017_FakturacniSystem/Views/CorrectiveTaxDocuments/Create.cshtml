@@ -48,7 +48,7 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row">
-        <div class="col">
+        <div class="col-md-6">
             <h3>Dodavatel</h3>
             <div class="col-md-7">
                 <ul class="list-group list-group-flush">
@@ -65,7 +65,7 @@
         </div>
         <div class="col">
             <div class="row">
-                <div class="col">
+                <div class="col-md-6">
                     <h3>Odběratel</h3>
                 </div>
                 <div class="col d-flex">
@@ -130,81 +130,82 @@
         </div>
     </div>
 
-    <div class="row basicElementPadding">
-        <div class="col">
-            <h3>Platební údaje</h3>
-        </div>
-        <div class="col">
-            <h3>Splatnost</h3>
-        </div>
-    </div>
-
-
     <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label class="control-label">Způsob platby</label>
-                <select class="form-select" asp-for=PaymentMethod onchange="PaymentMethodSelector()" id="paymentMethodSelector">
-                    @foreach(var item in ViewData["PaymentMethods"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod>) {
-                        if ((@basicInvoice != null) && (@basicInvoice.PaymentMethod.Name == item.Name))
-                        {
-                            <option selected>@item.Name</option>
-                        }
-                        else
-                        {
-                            <option>@item.Name</option> 
-                        }
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="VariableSymbol" class="control-label"></label>
-                <input asp-for="VariableSymbol" class="form-control" />
-                <span asp-validation-for="VariableSymbol" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label class="control-label">Bankovní účet</label>
-                <select class="form-select" asp-for="BankDetail" id="bankMethodSelector">
-                    @foreach(var item in ViewData["BankDetails"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail>) {
-                    if ((@basicInvoice != null) && (@basicInvoice.BankDetail != null) && (@basicInvoice.BankDetail.Name == item.Name))
-                        {
-                            <option selected>@item.Name</option>
-                        }
-                        else
-                        {
-                            <option>@item.Name</option> 
-                        }              
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConstantSymbol" class="control-label"></label>
-                <input asp-for="ConstantSymbol" class="form-control" />
-                <span asp-validation-for="ConstantSymbol" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label asp-for="IssueDate" class="control-label"></label>
-                <input asp-for="IssueDate" id="DocumentIssueDate" type="date" class="form-control" disabled/>
-                <span asp-validation-for="IssueDate" class="text-danger"></span>
-            </div>
-            @if (ourCompany.IsVatPayer)
-            {
-                <div class="form-group">
-                <label asp-for="TaxDate" class="control-label"></label>
-                <input asp-for="TaxDate" id="DocumentTaxDate" type="date" class="form-control" required/>
-                <span asp-validation-for="TaxDate" class="text-danger"></span>
+        <div class="col-md-6">
+            <div class="row">
+                <h3>Platební údaje</h3>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Způsob platby</label>
+                        <select class="form-select" asp-for=PaymentMethod onchange="PaymentMethodSelector()" id="paymentMethodSelector">
+                            @foreach(var item in ViewData["PaymentMethods"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.PaymentMethod>) {
+                                if ((@basicInvoice != null) && (@basicInvoice.PaymentMethod.Name == item.Name))
+                                {
+                                    <option selected>@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option>@item.Name</option> 
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Bankovní účet</label>
+                        <select class="form-select" asp-for="BankDetail" id="bankMethodSelector">
+                            @foreach(var item in ViewData["BankDetails"] as IEnumerable<TEJ0017_FakturacniSystem.Models.PaymentMethod.BankDetail>) {
+                            if ((@basicInvoice != null) && (@basicInvoice.BankDetail != null) && (@basicInvoice.BankDetail.Name == item.Name))
+                                {
+                                    <option selected>@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option>@item.Name</option> 
+                                }              
+                            }
+                        </select>
+                    </div>
                 </div>
-            }
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="VariableSymbol" class="control-label"></label>
+                        <input asp-for="VariableSymbol" class="form-control" value="@ViewData["NextNum"]" />
+                        <span asp-validation-for="VariableSymbol" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConstantSymbol" class="control-label"></label>
+                        <input asp-for="ConstantSymbol" class="form-control" />
+                        <span asp-validation-for="ConstantSymbol" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col">
-            <div class="form-group">
-                <label asp-for="DueDate" class="control-label"></label>
-                <input asp-for="DueDate" id="DocumentDueDate" type="date" class="form-control" required/>
-                <span asp-validation-for="DueDate" class="text-danger"></span>
+
+        <div class="col-md-6">
+            <h3>Splatnost</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="IssueDate" class="control-label"></label>
+                        <input asp-for="IssueDate" id="DocumentIssueDate" type="date" class="form-control" disabled/>
+                        <span asp-validation-for="IssueDate" class="text-danger"></span>
+                    </div>
+                    @if (ourCompany.IsVatPayer)
+                    {
+                        <div class="form-group">
+                        <label asp-for="TaxDate" class="control-label"></label>
+                        <input asp-for="TaxDate" id="DocumentTaxDate" type="date" class="form-control" required/>
+                        <span asp-validation-for="TaxDate" class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="DueDate" class="control-label"></label>
+                        <input asp-for="DueDate" id="DocumentDueDate" type="date" class="form-control" required/>
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -259,13 +260,13 @@
     {
         foreach(var item in basicInvoice.DocumentItems)
         {
-            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Unit', '@item.Vat')</script>
+            <script type="text/javascript">DocumentAddItemWithValues('@Html.Raw(@item.Name)', '@item.UnitPrice', '@item.Amount', '@item.Unit', '@item.Vat', '@ourCompany.SupportedVats')</script>
         }
     }
     else
     {
         <script type="text/javascript">
-            DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat');
+            DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat', '@ourCompany.SupportedVats');
             var dateIncrement = new Date();
             dateIncrement = dateIncrement.setDate(dateIncrement.getDate() + @ourCompany.DueInterval);
             document.getElementById("DocumentIssueDate").valueAsDate = new Date();
@@ -276,7 +277,7 @@
     }
 
     <div class="col-md-0" style="padding-top: 10px;">
-        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat')"><i class="bi bi-plus"></i>Další položka</button>
+        <button type="button" class="btn btn-primary" onclick="DocumentAddItem('@ourCompany.DefaultMJ', '@ourCompany.DefaultVat', '@ourCompany.SupportedVats')"><i class="bi bi-plus"></i>Další položka</button>
     </div>
 
     <div class="d-flex form-group basicElementPadding">

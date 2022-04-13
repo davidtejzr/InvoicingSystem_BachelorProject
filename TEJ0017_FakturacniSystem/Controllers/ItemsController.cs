@@ -63,6 +63,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             if (id == null)
             {
                 return NotFound();
@@ -82,6 +85,9 @@ namespace TEJ0017_FakturacniSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Item item)
         {
+            Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
+            ViewData["OurCompany"] = ourCompany;
+
             if (id != item.ItemId)
             {
                 return NotFound();

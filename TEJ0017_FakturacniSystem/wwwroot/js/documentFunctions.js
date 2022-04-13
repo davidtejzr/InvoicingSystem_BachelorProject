@@ -125,7 +125,7 @@ function recalculateAll() {
     }
 }
 
-function DocumentAddItem(defaultMJ, defaultVat) {
+function DocumentAddItem(defaultMJ, defaultVat, supportedVats) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     rowIndexes.push("item" + rowIndexCounter);
     const itemId = "item" + rowIndexCounter++;
@@ -161,7 +161,6 @@ function DocumentAddItem(defaultMJ, defaultVat) {
     ItemPriceInput.name = "ItemPrice";
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
-    //ItemPriceInput.min = 0;
     ItemPriceInput.step = "0.01";
     ItemPriceInput.value = "0.00"
     ItemPriceInput.onchange = function () {
@@ -231,16 +230,25 @@ function DocumentAddItem(defaultMJ, defaultVat) {
 
     //tax rates
     if (isWithVat === 1) {
-        const ItemVat = document.createElement("input");
+        const ItemVat = document.createElement("select");
         ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
-        ItemVat.value = defaultVat;
-        ItemVat.min = 0;
-        ItemVat.max = 100;
-        ItemVat.type = "number";
-        ItemVat.className = "form-control";
+        ItemVat.className = "form-select";
         ItemVat.onchange = function () {
             recalculateAmount(itemId);
+        }
+
+        const supportedVatsArr = supportedVats.split(";");
+        for (let i = 0; i < supportedVatsArr.length; i++) {
+            if (supportedVatsArr[i] != "") {
+                const ItemVatOption = document.createElement("option");
+                if (supportedVatsArr[i] === defaultVat) {
+                    ItemVatOption.selected = true;
+                }
+                ItemVatOption.value = supportedVatsArr[i];
+                ItemVatOption.innerHTML = supportedVatsArr[i] + ' %';
+                ItemVat.appendChild(ItemVatOption);
+            }
         }
 
         const ItemVatCol = document.createElement("div");
@@ -260,7 +268,7 @@ function DocumentAddItem(defaultMJ, defaultVat) {
 }
 
 
-function DocumentAddItemWithValues(name, price, amount, unit, vat) {
+function DocumentAddItemWithValues(name, price, amount, unit, vat, supportedVats) {
     document.getElementById("DocumentWarningMessageDiv").style = "display: none !important;";
     rowIndexes.push("item" + rowIndexCounter);
     const itemId = "item" + rowIndexCounter++;
@@ -297,7 +305,6 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
     ItemPriceInput.name = "ItemPrice";
     ItemPriceInput.className = "form-control";
     ItemPriceInput.type = "number";
-    //ItemPriceInput.min = 0;
     ItemPriceInput.step = "0.01";
     ItemPriceInput.value = price;
     ItemPriceInput.onchange = function () {
@@ -367,16 +374,25 @@ function DocumentAddItemWithValues(name, price, amount, unit, vat) {
 
     //tax rates
     if (isWithVat === 1) {
-        const ItemVat = document.createElement("input");
+        const ItemVat = document.createElement("select");
         ItemVat.id = itemId + "_vat";
         ItemVat.name = "ItemVat";
-        ItemVat.value = vat;
-        ItemVat.min = 0;
-        ItemVat.max = 100;
-        ItemVat.type = "number";
-        ItemVat.className = "form-control";
+        ItemVat.className = "form-select";
         ItemVat.onchange = function () {
             recalculateAmount(itemId);
+        }
+
+        const supportedVatsArr = supportedVats.split(";");
+        for (let i = 0; i < supportedVatsArr.length; i++) {
+            if (supportedVatsArr[i] != "") {
+                const ItemVatOption = document.createElement("option");
+                if (supportedVatsArr[i] === vat) {
+                    ItemVatOption.selected = true;
+                }
+                ItemVatOption.value = supportedVatsArr[i];
+                ItemVatOption.innerHTML = supportedVatsArr[i] + ' %';
+                ItemVat.appendChild(ItemVatOption);
+            }
         }
 
         const ItemVatCol = document.createElement("div");

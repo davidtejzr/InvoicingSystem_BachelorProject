@@ -34,3 +34,24 @@ body {
     color: darkblue;
     margin: 5px;
 }
+
+
+@media only screen and (max-width: 600px)
+{
+    .nav-tabs li
+    {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .nav-tabs li a.nav-link.active {
+        background-color: lightgray;
+        border: 0px;
+    }
+
+    .form-group
+    {
+
+    }
+}

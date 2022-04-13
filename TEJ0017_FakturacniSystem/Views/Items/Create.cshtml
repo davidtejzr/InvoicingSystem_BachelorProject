@@ -31,7 +31,7 @@
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
                 <div class="input-group">
-                    <input asp-for="Price" type="number" placeholder="0,00" step="0.01" min="0" class="form-control" />
+                    <input asp-for="Price" type="number" placeholder="0,00" step="0.01" min="0" class="form-control" required />
                     <div class="input-group-text">Kč</div>
                 </div>
                 <span asp-validation-for="Price" class="text-danger"></span>
@@ -39,7 +39,19 @@
             <div class="form-group">
                 <label asp-for="Vat" class="control-label"></label>
                 <div class="input-group">
-                    <input asp-for="Vat" class="form-control" min="0" value="@ourCompany.DefaultVat" />
+                    <select asp-for="Vat" class="form-select">
+                        <option value="@ourCompany.DefaultVat" hidden>@ourCompany.DefaultVat</option>
+                        @{
+                            var supportedVatsArr = ourCompany.SupportedVats.Split(";");
+                            foreach(var vat in supportedVatsArr)
+                            {
+                                if(vat != "")
+                                {
+                                    <option value="@vat">@vat</option>
+                                }
+                            }
+                        }
+                    </select>
                     <div class="input-group-text">%</div>
                 </div>
                 <span asp-validation-for="Vat" class="text-danger"></span>

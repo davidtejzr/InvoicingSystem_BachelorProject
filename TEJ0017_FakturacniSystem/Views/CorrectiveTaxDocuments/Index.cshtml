@@ -11,6 +11,7 @@
     var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
+<h1><i class="bi bi-receipt"></i> Výdejové doklady</h1>
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link" href="/BasicInvoices">Faktury</a>
@@ -53,12 +54,13 @@
 
 @if(ourCompany.IsVatPayer)
 {
-    <h1><i class="bi bi-receipt"></i> Opravné daňové doklady</h1>
+    <h2>Opravné daňové doklady</h2>
 }
 else
 {
-    <h1><i class="bi bi-receipt"></i> Dobropisy</h1>   
+    <h2>Dobropisy</h2>   
 }
+<hr />
 
 <div class="d-flex">
     <div>

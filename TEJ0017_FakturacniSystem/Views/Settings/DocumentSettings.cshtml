@@ -1,9 +1,10 @@
 ﻿@using TEJ0017_FakturacniSystem.Models.Subject
 @{
-    ViewData["Title"] = "Nastavení dokladu";
+    ViewData["Title"] = "Náležitosti dokladu";
     var ourCompany = ViewData["OurCompany"] as OurCompany;
 }
 
+<h1><i class="bi bi-gear"></i> Nastavení</h1>
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link" href="/Settings/OurCompanyEdit">Fakturační údaje</a>
@@ -15,7 +16,7 @@
         <a class="nav-link" href="/BankDetails">Bankovní účty</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="/Settings/DocumentSettings">Nastavení dokladu</a>
+        <a class="nav-link active" aria-current="page" href="/Settings/DocumentSettings">Náležitosti dokladu</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/Settings/EmailTemplate">Šablona E-mailu</a>
@@ -23,7 +24,7 @@
 </ul>
 
 <br />
-<h1><i class="bi bi-file-earmark-text"></i> Nastavení dokladu</h1>
+<h2><i class="bi bi-file-earmark-text"></i> Náležitosti dokladu</h2>
 <hr />
 
 @if (ViewData["ErrorMessage"] != null)
@@ -50,7 +51,7 @@
 <div class="col-md-8">
     <form asp-action="DocumentSettings">
         <div class="row">
-            <div class="col">
+            <div class="col-md-6 col-xs-6">
                 <div class="form-group">
                     <label class="control-label">Formát prvního pořadového čísla dokladu</label>
                     <div class="input-group">
@@ -64,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col-md-6 col-xs-6">
                 <div class="form-group">
                     <label class="control-label">Výchozí množstevní jednotka</label>
                     <input type="text" name="defaultMJ" value="@ourCompany.DefaultMJ" class="form-control" />
@@ -73,24 +74,38 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label">Podporované sazby DPH <i data-bs-placement="bottom" title="Zadávejte ..." class="bi bi-question-circle-fill"></i></label>
-            <input class="form-control" type="text" name="supportedVats" />
+            <label class="control-label">Podporované sazby DPH v %  </label>
+            <a data-bs-placement="bottom" class="link-primary" title="Zadávejte ve tvaru: sazba1;sazba2;sazba3;..." data-bs-toggle="tooltip"><i class="bi bi-question-circle-fill"></i></a>
+            <input class="form-control" type="text" name="supportedVats" value="@ourCompany.SupportedVats" pattern="(([0-9]{1}|[0-9]{2})[;])*" autocomplete="off" />
         </div>
 
         <div class="row">
             <div class="col">
                 <div class="form-group">
                     <label class="control-label">Výchozí doba splatnosti ve dnech</label>
-                    <div class="col-md-2">
-                        <input type="number" name="defaultDueInterval" min="1" value="@ourCompany.DueInterval" class="form-control" />
+                    <div class="col-md-5">
+                        <input type="number" name="defaultDueInterval" min="1" value="@ourCompany.DueInterval" class="form-control" required />
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label class="control-label">Výchozí sazba DPH v %</label>
-                    <div class="col-md-2">
-                        <input type="number" name="defaultVat" min="0" value="@ourCompany.DefaultVat" class="form-control" />
+                    <div class="col-md-5">
+                        <select name="defaultVat" class="form-select">
+                            <option value="@ourCompany.DefaultVat" hidden>@ourCompany.DefaultVat %</option>
+                            @{
+                                var supportedVatsArr = ourCompany.SupportedVats.Split(";");
+                                foreach(var vat in supportedVatsArr)
+                                {
+                                    if(vat != "")
+                                    {
+                                        <option value="@vat">@vat %</option>
+                                    }
+                                }
+                            }
+
+                        </select>
                     </div>
                 </div>
             </div>

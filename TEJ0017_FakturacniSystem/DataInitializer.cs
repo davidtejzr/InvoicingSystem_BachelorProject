@@ -54,7 +54,7 @@ namespace TEJ0017_FakturacniSystem
             OurCompany.getInstance().fillAllData(Int32.Parse(this.JsonDict["Ico"]), this.JsonDict["Dic"], this.JsonDict["Name"],
                 bool.Parse(this.JsonDict["IsVatPayer"]), this.JsonDict["Email"], this.JsonDict["Telephone"], address, this.JsonDict["WebPage"], this.JsonDict["HeaderDesc"],
                 this.JsonDict["FooterDesc"], Int32.Parse(this.JsonDict["DueInterval"]), Int32.Parse(this.JsonDict["DocumentNumberLength"]), numSeries, this.JsonDict["DefaultMJ"], 
-                Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["EmailSubject"], this.JsonDict["EmailText"], this.JsonDict["EmailSenderEmail"], this.JsonDict["EmailSenderPassword"]);
+                Int32.Parse(this.JsonDict["DefaultVat"]), this.JsonDict["SupportedVats"], this.JsonDict["EmailSubject"], this.JsonDict["EmailText"], this.JsonDict["EmailSenderEmail"], this.JsonDict["EmailSenderPassword"]);
         }
 
         //po zmene udaju kdekoliv v aplikaci je nutne zavolat tuto metodu pro ulozeni do JSON souboru (ihned! aby nevznikla kolize dat)
@@ -81,6 +81,7 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", JsonConvert.SerializeObject(ourCompany.NumSeries));
             data.Add("DefaultMJ", ourCompany.DefaultMJ);
             data.Add("DefaultVat", ourCompany.DefaultVat.ToString());
+            data.Add("SupportedVats", ourCompany.SupportedVats);
             data.Add("EmailSenderEmail", ourCompany.EmailSenderEmail);
             data.Add("EmailSenderPassword", ourCompany.EmailSenderPassword);
             data.Add("EmailSubject", ourCompany.EmailSubject);
@@ -115,6 +116,7 @@ namespace TEJ0017_FakturacniSystem
             data.Add("NumSeries", "");
             data.Add("DefaultMJ", "kus");
             data.Add("DefaultVat", "21");
+            data.Add("SupportedVats", "");
             data.Add("EmailSenderEmail", "");
             data.Add("EmailSenderPassword", "");
             data.Add("EmailSubject", "");

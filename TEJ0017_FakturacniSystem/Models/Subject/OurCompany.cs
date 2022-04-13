@@ -8,6 +8,7 @@
         public int? DueInterval { get; set; }
         public  int? DocumentNumberLength { get; set; }
         public string? DefaultMJ { get; set; }
+        public string? SupportedVats { get; set; }
         public int? DefaultVat { get; set; }
         public Dictionary<string, string> NumSeries { get; set; }
         public string? EmailSenderEmail { get; set; }
@@ -22,7 +23,7 @@
         }
 
         public void fillAllData(int ico, string dic, string name, bool isVatPayer, string email, string telephone, Address address, string webPage, string headerDesc, 
-            string footerDesc, int dueInterval, int documentNumberLength, Dictionary<string, string> numSeries, string defaultMJ, int defaultVat, string emailSubject, string emailText, string emailSenderEmail, string emailSenderPassword)
+            string footerDesc, int dueInterval, int documentNumberLength, Dictionary<string, string> numSeries, string defaultMJ, int defaultVat, string supportedVats, string emailSubject, string emailText, string emailSenderEmail, string emailSenderPassword)
         {
             this.Ico = ico;
             this.Dic = dic;
@@ -39,6 +40,7 @@
             this.NumSeries = numSeries;
             this.DefaultMJ = defaultMJ;
             this.DefaultVat = defaultVat;
+            this.SupportedVats = supportedVats;
             this.EmailSubject = emailSubject;
             this.EmailText = emailText;
             this.EmailSenderEmail = emailSenderEmail;
@@ -57,7 +59,7 @@
             this.WebPage = webPage;
         }
 
-        public void fillDocSetData(string headerDesc, string footerDesc, int dueInterval, int documentNumberLength, string defaultMJ, int defaultVat)
+        public void fillDocSetData(string headerDesc, string footerDesc, int dueInterval, int documentNumberLength, string defaultMJ, int defaultVat, string supportedVats)
         {
             this.HeaderDesc = headerDesc;
             this.FooterDesc = footerDesc;
@@ -65,6 +67,7 @@
             this.DocumentNumberLength = documentNumberLength;
             this.DefaultMJ = defaultMJ;
             this.DefaultVat = defaultVat;
+            this.SupportedVats = supportedVats;
         }
 
         public void fillEmailData(string emailSubject, string emailText)
