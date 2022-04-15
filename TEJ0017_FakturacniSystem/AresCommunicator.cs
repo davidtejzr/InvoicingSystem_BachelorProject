@@ -140,9 +140,11 @@ namespace TEJ0017_FakturacniSystem
         //nacteni vsech dat z ARESU odpovidajici zadanemu udaji ICO
         public Dictionary<string, string> getInfoByIco(string ico)
         {
-            //dotaz na sluzbu 'Standard'
+            //dotaz na sluzbu 'Standard' - ICO udaje
+            //https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico=27074358
             var result = httpClient.GetStringAsync(aresUrl + "ico=" + ico);
             //dotaz na sluzbu 'Basic' - obsahuje DIC udaj
+            //http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_bas.cgi?ico=27074358
             var resultDph = httpClient.GetStringAsync(aresUrlDph + "ico=" + ico);
 
             xmlDocument.LoadXml(result.Result);

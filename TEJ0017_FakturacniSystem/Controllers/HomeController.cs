@@ -21,21 +21,29 @@ namespace TEJ0017_FakturacniSystem.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? year)
         {
+            int selectedYear = DateTime.Now.Year;
+            if(year != null)
+                selectedYear = year.Value;
+
             Models.Subject.OurCompany ourCompany = Models.Subject.OurCompany.getInstance();
-            ViewData["ActualYear"] = DateTime.Now.Year;
-            ViewData["SumPaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && d.IsPaid).Sum(d => d.TotalAmount), 2);
-            ViewData["SumUnpaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Sum(d => d.TotalAmount), 2);
-            ViewData["CountTotal"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year)).Count();
-            ViewData["CountUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == DateTime.Now.Year) && !d.IsPaid).Count();
+            ViewData["SumPaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == selectedYear) && d.IsPaid).Sum(d => d.TotalAmount), 2);
+            ViewData["SumUnpaid"] = Math.Round((decimal)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == selectedYear) && !d.IsPaid).Sum(d => d.TotalAmount), 2);
+            ViewData["CountTotal"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == selectedYear)).Count();
+            ViewData["CountUnpaid"] = _context.BasicInvoices.ToList().Where(d => (d.IssueDate.Year == selectedYear) && !d.IsPaid).Count();
+            List<string> usedYears = _context.BasicInvoices.Select(d => d.IssueDate.Year.ToString()).Distinct().ToList();
+            usedYears.Sort();
+            usedYears.Reverse();
 
             Dictionary<int, double> monthAmounts = new Dictionary<int, double>();
             for(int i = 1; i <= 12; i++)
             {
-                monthAmounts[i] = Math.Round((double)_context.BasicInvoices.ToList().Where(d => d.IssueDate.Month == i).Sum(d => d.TotalAmount), 2);
+                monthAmounts[i] = Math.Round((double)_context.BasicInvoices.ToList().Where(d => (d.IssueDate.Month == i) && (d.IssueDate.Year == selectedYear)).Sum(d => d.TotalAmount), 2);
             }
             ViewData["MonthAmounts"] = monthAmounts;
+            ViewData["SelectedYear"] = selectedYear;
+            ViewData["UsedYears"] = usedYears;
 
             return View(ourCompany);
         }

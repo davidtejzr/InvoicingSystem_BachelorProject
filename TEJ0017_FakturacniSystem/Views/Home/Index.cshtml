@@ -3,6 +3,7 @@
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
     Dictionary<int, double> monthAmounts = (Dictionary<int, double>)ViewData["MonthAmounts"];
+    List<string> usedYears = (List<string>)ViewData["UsedYears"];
 }
 
 <div class="text-center">
@@ -33,21 +34,37 @@
 </div>
 
 <br />
-<h3>Přehledy <span class="badge bg-secondary">@ViewData["ActualYear"]</span></h3>
-<div class="row gap-5 basicElementPadding">
-    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+
+<h3>Přehledy
+@{
+    foreach(string year in usedYears)
+    {
+        if(year == @ViewData["SelectedYear"].ToString())
+        {
+            <span class="badge bg-primary">@year</span>
+        }
+        else
+        {
+            <a class="link-secondary" style="font-size: 20px" asp-action="Index" asp-route-year="@year">@year</a>
+        }
+    }
+}
+</h3>
+
+<div class="row gap-5 basicElementPadding" style="width: fit-content; margin: auto;">
+    <div class="col-md-auto shadow-lg p-3 mb-md-5 rounded text-center" style="min-width: 200px;">
         <h2>@ViewData["SumPaid"],- Kč</h2>
         <h6>Uhrazené faktury</h6>
     </div>
-    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+    <div class="col-md-auto shadow-lg p-3 mb-md-5 rounded text-center" style="min-width: 200px;">
         <h2>@ViewData["SumUnpaid"],- Kč</h2>
         <h6>Neuhrazené faktury</h6>
     </div>
-    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+    <div class="col-md-auto shadow-lg p-3 mb-md-5 rounded text-center" style="min-width: 200px;">
         <h2>@ViewData["CountTotal"]×</h2>
         <h6>Počet vydaných faktur</h6>
     </div>
-    <div class="col shadow-lg p-3 mb-5 rounded text-center">
+    <div class="col-md-auto shadow-lg p-3 mb-md-5 rounded text-center" style="min-width: 200px;">
         <h2>@ViewData["CountUnpaid"]×</h2>
         <h6>Počet neuhrazených faktur</h6>
     </div>
@@ -60,11 +77,12 @@
 	        theme: "light1", 
 	        animationEnabled: false,	
 	        title:{
-		        text: "Vydané faktury za rok @ViewData["ActualYear"]"
+		        text: "Vydané faktury za rok @ViewData["SelectedYear"]"
 	        },
 	        data: [
 	        {
 		        type: "column",
+                color: "DodgerBlue",
 		        dataPoints: [
 			        { label: "Leden",  y: @monthAmounts[1] },
 			        { label: "Únor", y: @monthAmounts[2] },

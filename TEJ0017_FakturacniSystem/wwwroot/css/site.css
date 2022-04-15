@@ -1,19 +1,24 @@
-html {
+html
+{
   font-size: 14px;
 }
 
-@media (min-width: 768px) {
-  html {
+@media (min-width: 768px)
+{
+  html
+  {
     font-size: 16px;
   }
 }
 
-html {
+html
+{
   position: relative;
   min-height: 100%;
 }
 
-body {
+body
+{
   margin-bottom: 60px;
 }
 
@@ -35,6 +40,12 @@ body {
     margin: 5px;
 }
 
+.actionButtonsWidth
+{
+    width: fit-content;
+    margin: auto;
+}
+
 
 @media only screen and (max-width: 600px)
 {
@@ -49,9 +60,12 @@ body {
         background-color: lightgray;
         border: 0px;
     }
+}
 
-    .form-group
+@media only screen and (max-width: 1000px)
+{
+    .actionButtonsWidth div a
     {
-
+        width: 100%;
     }
 }
