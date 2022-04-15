@@ -22,7 +22,6 @@
 - ***password:*** 1234
 
 ## Known bugs
-- loading default filter values after filter aplication (filter is working)
 - bad document items responsivity
 - updating address on document edit page rewrite this address globally
 
