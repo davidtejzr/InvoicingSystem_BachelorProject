@@ -423,12 +423,16 @@ namespace TEJ0017_FakturacniSystem.Controllers
         {
             Customer customer = _context.Customers.Include("Address").FirstOrDefault(m => m.Name == customerName);
             Dictionary<string, string> customerData = new Dictionary<string, string>();
-            customerData.Add("customerStreet", customer.Address.Street);
-            customerData.Add("customerHouseNumber", customer.Address.HouseNumber);
-            customerData.Add("customerCity", customer.Address.City);
-            customerData.Add("customerZip", customer.Address.Zip);
-            customerData.Add("customerIco", customer.Ico.ToString());
-            customerData.Add("customerDic", customer.Dic);
+
+            if (customer != null)
+            {
+                customerData.Add("customerStreet", customer.Address.Street);
+                customerData.Add("customerHouseNumber", customer.Address.HouseNumber);
+                customerData.Add("customerCity", customer.Address.City);
+                customerData.Add("customerZip", customer.Address.Zip);
+                customerData.Add("customerIco", customer.Ico.ToString());
+                customerData.Add("customerDic", customer.Dic);
+            }
 
             string jsonResult = JsonConvert.SerializeObject(customerData);
             return Content(jsonResult);
@@ -437,7 +441,7 @@ namespace TEJ0017_FakturacniSystem.Controllers
         public ContentResult IsBankMethod(string paymentMethodName)
         {
             PaymentMethod paymentMethod = _context.PaymentMethods.FirstOrDefault(m => m.Name == paymentMethodName);
-            if(paymentMethod.IsBank)
+            if((paymentMethod != null) && paymentMethod.IsBank)
                 return Content("true");
             else
                 return Content("false");
