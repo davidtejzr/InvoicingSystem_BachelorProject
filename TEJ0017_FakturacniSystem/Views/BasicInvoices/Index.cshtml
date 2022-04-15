@@ -9,6 +9,7 @@
         firstInvoice = (DateTime)ViewData["FirstInvoice"];
     }
     var ourCompany = ViewData["OurCompany"] as OurCompany;
+    List<string> customers = (List<string>)ViewData["Customers"];
 }
 
 <h1><i class="bi bi-receipt"></i> Výdejové doklady</h1>
@@ -69,7 +70,7 @@
     <div class="card">
         <h4 class="card-header">Filtr</h4>
         <div class="card-body">
-            <form asp-action="Index">
+            <form asp-action="Index" method="get" novalidate>
                 <div class="row">
                     <div class="col-md-2">
                         <h5>Stav úhrady</h5>
@@ -90,13 +91,25 @@
                         <h5>Vystaveno</h5>
                         <div class="input-group mb-3">
                             <span class="input-group-text">Od</span>
-                            <input type="datetime-local" name="filterMinDatetime" value="@firstInvoice.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
+                            <input type="datetime-local" id="filterMinDatetime" name="filterMinDatetime" value="@firstInvoice.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
                             <span class="input-group-text">Do</span>
-                            <input type="datetime-local" name="filterMaxDatetime" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
+                            <input type="datetime-local" id="filterMaxDatetime" name="filterMaxDatetime" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" class="form-control">
+                        </div>
+                        <h5>Odběratel</h5>
+                        <div class="col-md-5">
+                            <select class="form-select" name="filterCustomerSelect" id="filterCustomerSelect">
+                                <option selected value="Nevybráno">Nevybráno</option>
+                                @{
+                                    foreach(string customer in customers)
+                                    {
+                                        <option value=@customer>@customer</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex" style="margin-top: 5px;">
                     <div class="ms-auto">
                         <input class="btn btn-primary" type="submit" value="Aplikovat" />
                     </div>
@@ -227,3 +240,5 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/documentFilter.js" asp-append-version="true"></script>

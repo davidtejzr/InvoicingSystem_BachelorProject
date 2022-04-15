@@ -41,39 +41,45 @@ namespace TEJ0017_FakturacniSystem.Controllers
             }
         }
 
-        // GET: Documents
-        public async Task<IActionResult> Index()
+        // GET: Index
+        public async Task<IActionResult> Index(string? filterRadioPaid, string? filterMinDatetime, string? filterMaxDatetime, string? filterCustomerSelect)
         {
             ViewData["OurCompany"] = OurCompany.getInstance();
-            var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+            List<string> customers = _context.Customers.Where(c => c.IsVisible == true).Select(c => c.Name).Distinct().ToList();
+            ViewData["Customers"] = customers;
 
-            if(documents.Count > 0)
-                ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
-
-            return View(documents);
-        }
-
-        // POST: Documents
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(IFormCollection filterValue)
-        {
-            ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
-            ViewData["OurCompany"] = OurCompany.getInstance();
-            DateTime minDateTime = Convert.ToDateTime(filterValue["filterMinDatetime"].ToString());
-            DateTime maxDateTime = Convert.ToDateTime(filterValue["filterMaxDatetime"].ToString());
-
-            var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
-            if(filterValue["filterRadioPaid"] == "paid")
+            if ((filterRadioPaid != null) && (filterMinDatetime != null) && (filterMaxDatetime != null) && (filterCustomerSelect != null))
             {
-                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
-            }
-            else if(filterValue["filterRadioPaid"] == "unpaid")
-            {
-                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
-            }
+                //ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
+                DateTime minDateTime = Convert.ToDateTime(filterMinDatetime);
+                DateTime maxDateTime = Convert.ToDateTime(filterMaxDatetime);
 
-            return View(documents);
+                var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
+                if (filterRadioPaid == "paid")
+                {
+                    documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
+                }
+                else if (filterRadioPaid == "unpaid")
+                {
+                    documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && !d.IsPaid).ToListAsync();
+                }
+
+                if (filterCustomerSelect != "Nevybráno")
+                {
+                    documents = documents.Where(c => c.Customer.Name == filterCustomerSelect).ToList();
+                }
+
+                return View(documents);
+            }
+            else
+            {
+                var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+
+                if (documents.Count > 0)
+                    ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
+
+                return View(documents);
+            }
         }
 
         // GET: Documents/Detail/5
