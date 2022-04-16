@@ -42,19 +42,19 @@ namespace TEJ0017_FakturacniSystem.Controllers
         }
 
         // GET: Index
-        public async Task<IActionResult> Index(string? filterRadioPaid, string? filterMinDatetime, string? filterMaxDatetime, string? filterCustomerSelect)
+        public async Task<IActionResult> Index(string? filterRadioPaid, string? filterMinDatetime, string? filterMaxDatetime, string? filterCustomerSelect, int? pageNumber)
         {
             ViewData["OurCompany"] = OurCompany.getInstance();
             List<string> customers = _context.Customers.Where(c => c.IsVisible == true).Select(c => c.Name).Distinct().ToList();
             ViewData["Customers"] = customers;
+            var documents = _context.CorrectiveTaxDocuments.ToList();
 
             if ((filterRadioPaid != null) && (filterMinDatetime != null) && (filterMaxDatetime != null) && (filterCustomerSelect != null))
             {
-                //ViewData["FirstInvoice"] = _context.BasicInvoices.ToList().Min(d => d.IssueDate);
                 DateTime minDateTime = Convert.ToDateTime(filterMinDatetime);
                 DateTime maxDateTime = Convert.ToDateTime(filterMaxDatetime);
 
-                var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
+                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime)).ToListAsync();
                 if (filterRadioPaid == "paid")
                 {
                     documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).Where(d => (d.IssueDate >= minDateTime) && (d.IssueDate <= maxDateTime) && d.IsPaid).ToListAsync();
@@ -68,18 +68,17 @@ namespace TEJ0017_FakturacniSystem.Controllers
                 {
                     documents = documents.Where(c => c.Customer.Name == filterCustomerSelect).ToList();
                 }
-
-                return View(documents);
             }
             else
             {
-                var documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
+                documents = await _context.CorrectiveTaxDocuments.Include(c => c.Customer).OrderByDescending(d => d.IssueDate).ToListAsync();
 
                 if (documents.Count > 0)
                     ViewData["FirstInvoice"] = _context.CorrectiveTaxDocuments.ToList().Min(d => d.IssueDate);
-
-                return View(documents);
             }
+
+            int pageSize = 10;
+            return View(await PaginatedList<Document>.Create(documents.AsQueryable().AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Documents/Detail/5

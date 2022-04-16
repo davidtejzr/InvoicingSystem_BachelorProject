@@ -21,3 +21,8 @@ if (urlParams.has('filterMaxDatetime')) {
 if (urlParams.has('filterCustomerSelect')) {
     document.getElementById('filterCustomerSelect').value = urlParams.get('filterCustomerSelect');
 }
+
+function pageClick(page) {
+    document.getElementById('filterPageNumber').value = page;
+    document.getElementById('filterForm').submit();
+}

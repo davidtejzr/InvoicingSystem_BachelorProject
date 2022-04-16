@@ -1,5 +1,5 @@
 ﻿@using TEJ0017_FakturacniSystem.Models.Subject
-@model IEnumerable<TEJ0017_FakturacniSystem.Models.Document.Document>
+@model PaginatedList<TEJ0017_FakturacniSystem.Models.Document.Document>
 
 @{
     ViewData["Title"] = "Vydané faktury";
@@ -70,7 +70,7 @@
     <div class="card">
         <h4 class="card-header">Filtr</h4>
         <div class="card-body">
-            <form asp-action="Index" method="get" novalidate>
+            <form id="filterForm" asp-action="Index" method="get" novalidate>
                 <div class="row">
                     <div class="col-md-2">
                         <h5>Stav úhrady</h5>
@@ -110,6 +110,7 @@
                     </div>
                 </div>
                 <div class="d-flex" style="margin-top: 5px;">
+                    <input type="text" name="pageNumber" id="filterPageNumber" hidden/>
                     <div class="ms-auto">
                         <input class="btn btn-primary" type="submit" value="Aplikovat" />
                     </div>
@@ -124,24 +125,12 @@
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.DocumentNo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IsPaid)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TotalAmount)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IssueDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DueDate)
-                </th>
+                <th>Číslo dokladu</th>
+                <th>Uhrazeno</th>
+                <th>Název subjektu</th>
+                <th>Celková částka</th>
+                <th>Datum vystavení</th>
+                <th>Datum splatnosti</th>
                 <th></th>
             </tr>
         </thead>
@@ -188,9 +177,21 @@
     }
         </tbody>
     </table>
+
+    @{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled btn-outline-secondary" : "btn-outline-primary";
+        var nextDisabled = !Model.HasNextPage ? "disabled btn-outline-secondary" : "btn-outline-primary";
+    }
+
+    <div class="col" style="margin: auto; width: fit-content;">
+        <a onclick="pageClick('@(Model.PageIndex - 1)')"  class="btn btn-sm @prevDisabled"><i class="bi bi-arrow-left"></i></a>
+        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">@Model.PageIndex</span>
+        <a onclick="pageClick('@(Model.PageIndex + 1)')" class="btn btn-sm @nextDisabled"><i class="bi bi-arrow-right"></i></a>
+    </div>
 </div>
 
 <!-- Remove modal -->
+
 <div class="modal fade" id="removeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
