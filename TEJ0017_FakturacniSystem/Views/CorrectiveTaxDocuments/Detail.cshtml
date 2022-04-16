@@ -8,6 +8,7 @@
     var identity = (System.Security.Claims.ClaimsIdentity)Context.User.Identity;
     ViewData["UserName"] = identity.Claims.FirstOrDefault(c => c.Type == "userName").Value;
     double sumTotalOnResult = 0;
+    DateTime taxDate = Model.TaxDate ?? DateTime.Now;
 
     //vypocet sazeb DPH
     Dictionary<string, float> vatsDict = new Dictionary<string, float>();
@@ -85,7 +86,7 @@
                 <p class="fs-5">Datum vystavení: <b>@Model.IssueDate.ToShortDateString()</b></p>
                 @if(Model.IsWithVat)
                 {
-                    <p class="fs-5">Datum zdanitelného plnění: <b>@Model.TaxDate</b></p>
+                    <p class="fs-5">Datum zdanitelného plnění: <b>@taxDate.ToShortDateString()</b></p>
                 }
             </div>
             <div class="col">
@@ -101,7 +102,7 @@
                     <div class="col">
                         <p class="fs-5">@Model.BankDetail.AccountNumber/@Model.BankDetail.BankCode</p>
                         <p class="fs-5">IBAN: @Model.BankDetail.Iban</p>
-                        <p class="fs-5">SWIFT @Model.BankDetail.Swift</p>
+                        <p class="fs-5">SWIFT: @Model.BankDetail.Swift</p>
                     </div>
                 }
                 <div class="col">

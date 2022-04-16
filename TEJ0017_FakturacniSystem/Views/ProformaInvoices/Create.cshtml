@@ -162,7 +162,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="VariableSymbol" class="control-label"></label>
-                        <input asp-for="VariableSymbol" class="form-control" value="@ViewData["NextNum"]" />
+                        <input asp-for="VariableSymbol" class="form-control" value="@ViewData["NextNum"].ToString().Replace("Z", "")" />
                         <span asp-validation-for="VariableSymbol" class="text-danger"></span>
                     </div>
                     <div class="form-group">
