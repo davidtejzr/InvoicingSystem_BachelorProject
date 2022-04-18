@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Web.Helpers;
 using TEJ0017_FakturacniSystem.Models;
-using TEJ0017_FakturacniSystem.Models.User;
 
 namespace TEJ0017_FakturacniSystem.Controllers
 {

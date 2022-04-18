@@ -1,5 +1,4 @@
 ﻿using SelectPdf;
-using TEJ0017_FakturacniSystem.Models.Document.DocumentTypes;
 
 namespace TEJ0017_FakturacniSystem
 {

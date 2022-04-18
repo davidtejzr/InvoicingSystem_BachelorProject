@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+﻿
 namespace TEJ0017_FakturacniSystem
 {
     public class PaginatedList<T> : List<T>
